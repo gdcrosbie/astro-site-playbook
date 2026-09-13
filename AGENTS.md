@@ -1,172 +1,44 @@
-# Project Guidelines & Agent Instructions (Astro Starter)
+# Agent adapter: Astro Starter
 
-> [!IMPORTANT]
-> **This is a standalone, performance-first Astro project.**
-> - Zero runtime framework overhead (vanilla progressive enhancement only).
-> - All components live in `src/components/*.astro` with scoped `<style>` blocks.
-> - Data is managed via Astro Content Collections in `src/content/` and `src/content.config.ts`.
-> - Strict BEM CSS architecture and flow-relative CSS Logical Properties.
+This file is the short operational entry point for coding agents. The canonical human-readable methodology is [docs/playbook.md](docs/playbook.md); read it and the relevant linked guide before making changes. `CLAUDE.md` intentionally points to this same adapter so agent-specific instructions cannot drift.
 
----
+## Instruction order
 
-## 1. Development & Build Commands
+1. Follow explicit project requirements and user decisions.
+2. Follow [docs/playbook.md](docs/playbook.md) and its supporting guides.
+3. Treat documented implementation defaults as replaceable only when requirements justify a change.
+4. Keep this adapter concise; put durable methodology in `docs/`, not here.
 
-Always use standard `npm` (never pnpm or yarn unless explicitly instructed):
+Do not weaken accessibility, security, privacy, or validation obligations when replacing a default. Record consequential architecture decisions and update affected documentation and checks with the implementation.
+
+## Repository workflow
+
+- Use `npm`; `package-lock.json` is authoritative.
+- Inspect the relevant implementation and documentation before editing.
+- Preserve static output and vanilla progressive enhancement unless an explicit requirement calls for another architecture.
+- Keep components in `src/components/*.astro` with scoped styles; reserve global styles for resets, document defaults, tokens, and shared layout objects.
+- Keep secrets out of source and browser bundles.
+- Do not rename the project, change providers, or add dependencies as an incidental part of another task.
+
+## Required contracts
+
+- Follow [docs/design-system.md](docs/design-system.md): BEM classes, CSS logical properties, OKLCH primitives, semantic aliases in components, and the two-tier fluid scale. Do not add Tailwind-style utility markup or inline styles.
+- Follow [docs/content-modeling.md](docs/content-modeling.md): use the four-pattern content model, validate schemas, add explicit ordering where sequence matters, and stop at the ambiguous-entity decision gate.
+- Follow [docs/forms.md](docs/forms.md): stop at the form-handling decision gate, preserve a non-JavaScript path, validate server-side, and implement accessible field and status feedback.
+- Follow [docs/quality.md](docs/quality.md): WCAG 2.2 AA, local production assets, intentional external requests, production-build performance checks, and manual verification where automation is insufficient.
+- Use [docs/architecture.md](docs/architecture.md) to distinguish repository conventions from replaceable defaults such as Cloudflare Pages, Mailgun, Turnstile, sample fonts, and the example domain.
+
+## Commands
 
 ```bash
-# Run local dev server
-npm run dev
-
-# Typecheck and validate content schemas
-npm run check
-
-# Build static production bundle to dist/
-npm run build
-
-# Preview static production bundle
-npm run preview
-
-# Run automated WCAG 2.2 AA accessibility audit
-npm run test:a11y
-
-# Verify tokens contract
-npm run test:tokens
-
-# Verify WCAG 2.2 AA color contrast on semantic tokens
+npm run dev          # local development server
+npm run preview      # preview the production build
+npm run test:tokens  # token contract
 npm run test:contrast
+npm run check
+npm run build
+npm run test:a11y
+npm test             # complete verification pipeline
 ```
 
----
-
-## 2. Design Tokens & Styling Contract
-
-- **Token Source**: `src/styles/tokens.css` (imported via `src/styles/global.css`).
-- **Color Format: Native OKLCH (Mandatory)**:
-  - All color primitives in `src/styles/tokens.css` must be authored in native `oklch(L C H)` format.
-  - Never use raw Hex or RGB in component stylesheets or token definitions.
-  - **Perceptual Uniformity**: OKLCH lightness `L` predictably correlates with visual contrast, ensuring compliance with WCAG 2.2 AA (normal text ≥ 4.5:1, large/UI ≥ 3.0:1).
-  - **Wide Gamut**: Leverages Display P3 on modern screens without color clipping.
-  - **Derived Tones**: Use CSS Relative Color syntax: `oklch(from var(--c-surface) calc(l - 0.05) c h)`.
-- **Token Schema**: All components must consume semantic tokens:
-  - Colors: `--color-bg`, `--color-surface`, `--color-text`, `--color-muted`, `--border-subtle`.
-- **Two-Tier Fluid Scale System**:
-  - **Tier 1 (Canvas/Viewport `vw`)**: Used for page sections, layout gutters (`--gutter`), site headers, and page titles (`--h1` to `--h4`, `--space-3xs` to `--space-3xl`, `--text-xs` to `--text-xl`).
-  - **Tier 2 (Component/Container `cqi`)**: Used for modular components (cards, badges, teasers, dialogs) that live inside multi-column grids or sidebars (`--cq-text-*`, `--cq-card-padding`, `--cq-gap`). Components carry their container context via `:has(> &) { container-type: inline-size; }`.
-- **No Utility Soup**: Never use Tailwind or inline `style=""` attributes.
-- **Methodology**: Strict BEM (`.c-block`, `.c-block__element`, `.c-block--modifier`, `.l-section`, `.l-container`).
-- **Component Styling Rule (Strict)**: All components (`src/components/*.astro`) MUST consume Semantic Aliases (`--color-primary`, `--color-text`, `--color-bg`, `--color-muted`, `--space-m`), NEVER raw framework/primitive names (`--primary`, `--base-dark`) or hex values directly. This guarantees 100% component portability across projects.
-- **Mandatory: CSS Logical Properties**:
-  - Padding: `padding-block`, `padding-inline` (never top/bottom/left/right).
-  - Margins: `margin-block`, `margin-inline` (never top/bottom/left/right).
-  - Sizing: `inline-size`, `block-size`, `max-inline-size`, `min-block-size`.
-  - Positioning: `inset`, `inset-block-start`, `inset-inline-start`.
-
----
-
-## 3. Token Ingestion & Design Translation (Figma, Paper.design, BYOT)
-
-Establish `src/styles/tokens.css` using the **3-Path Token Ingestion Gate**:
-
-1. **Path 1: Bring Your Own `tokens.css` (BYOT)**:
-   - If the developer provides an existing `tokens.css` (e.g. brand system, Automatic.css / SchemaWP kit, Utopia):
-     1. Place the file at `src/styles/tokens.css`.
-     2. Append a **Semantic Alias Bridge** at the bottom of `tokens.css` mapping the developer's primitives (e.g. `--primary`, `--base-dark`) to the semantic schema (`--color-primary: var(--primary); --color-text: var(--base-dark);`).
-     3. Verify immediately: `npm run test:tokens` && `npm run test:contrast`.
-2. **Path 2: Design Ingestion (Figma, Paper.design, Claude Design)**:
-   - **HTML-First Rule**: If a Figma Make export contains both `*.html` and `App.tsx`, always use `*.html` as the primary source of truth for markup and layout. Do not unwind React JSX/hooks.
-   - **Color Conversion**: Always convert incoming Hex/sRGB colors into native `oklch(L C H)` primitives.
-   - Generate two-tier fluid scales (`vw` for canvas, `cqi` for components).
-3. **Path 3: Template Baseline**:
-   - Use the template's built-in `src/styles/tokens.css` as-is.
-
----
-
-## 4. Content Modeling Strategy (Astro Content Layer)
-
-Dynamic content must be modeled according to the **4-Tier Content Decision Tree**:
-
-| Pattern | Storage Structure | Astro 7 Loader | When to Use |
-| :--- | :--- | :--- | :--- |
-| **Pattern A: Editorial Prose** | `src/content/<name>/*.md` | `glob({ pattern: '**/*.md' })` | Articles, blog posts, case studies, rich documentation with Markdown body and dedicated URLs (`/writing/[slug]`). |
-| **Pattern B: Entity Records** | `src/content/<name>/*.yaml` | `glob({ pattern: '**/*.yaml' })` | Modular entities (Services, Case Studies, Team) that have dedicated detail pages (`/services/[slug]`) or will be managed individually via a Git CMS. Prefer YAML for clean multiline text without JSON escaping. |
-| **Pattern C: In-Page Repeaters** | `src/content/<name>.json` | `file('src/content/<name>.json')` | Cohesive, in-page repetitive components (stats tickers, feature grids, pricing tiers, FAQs) that live on a single page and do **not** have individual URLs. |
-| **Pattern D: Global Singletons** | `src/data/site.json` | Direct ESM import (`import site from '../data/site.json'`) | Static site identity, company number, phone, navigation hierarchy, social links that don't need Zod collection querying. |
-
-### The "Stop & Ask" Decision Gate
-Before authoring `src/content.config.ts` or creating content files:
-1. **Auto-classify** obvious repeaters (stats, trust badges) as Pattern C, and global settings (phone, nav) as Pattern D.
-2. **Ambiguous Entities Gate**: When encountering **Services, Projects, Case Studies, Testimonials, or Team Members**, you MUST stop and ask the user:
-   > *"I detected [Services] in the design. Should we implement these as:*
-   > *1. (Recommended) Pattern B (`src/content/services/*.yaml`) with dedicated detail pages / CMS compatibility?*
-   > *2. Pattern C (`src/content/services.json`) as in-page data only?*
-   > *3. Pattern A (`src/content/services/*.md`) with full long-form markdown bodies?"*
-
-### Ordering Rule (Crucial)
-Astro's internal store indexes entries by ID and sorts alphabetically by default. Where visual order matters:
-1. Always provide `"order": number` in JSON entries or `order: number` in YAML records.
-2. Always add `order: z.number().default(0)` to the Zod schema in `src/content.config.ts`.
-3. Sort explicitly in components:
-   ```astro
-   const items = (await getCollection('<name>')).map(e => e.data).sort((a, b) => a.order - b.order);
-   ```
-
-### RSS Syndication for Pattern A
-When implementing **Pattern A (Editorial Prose)**:
-1. Always provide an automated RSS 2.0 feed using `@astrojs/rss` at `src/pages/rss.xml.ts`.
-2. Ensure `site: 'https://example.com'` is set in `astro.config.mjs` for absolute canonical URLs.
-3. Include auto-discovery in `BaseLayout.astro`: `<link rel="alternate" type="application/rss+xml" title={title} href={new URL('rss.xml', Astro.site)} />`.
-
----
-
-## 5. Forms & Submissions Architecture
-
-Astro static builds (`output: 'static'`) have no server backend. Form handling must follow these rules:
-
-1. **Recommended Baseline**: Cloudflare Pages Native Functions (`functions/api/contact.ts`) + Mailgun REST API:
-   - Astro remains 100% static; Cloudflare automatically mounts `functions/api/*` as an edge Worker.
-   - Mailgun credentials (`MAILGUN_API_KEY`, `MAILGUN_DOMAIN`, `MAILGUN_REGION`) are stored securely in Cloudflare Pages environment variables.
-2. **3-Layer Anti-Spam Architecture**:
-   - **Layer 1 (Honeypot `_hp`)**: Hidden from users and assistive tech (`aria-hidden="true"`, `tabindex="-1"`). If populated, silently drop and return a fake success response.
-   - **Layer 2 (Timestamp `_timestamp`)**: Compare submission time against page render time. If `< 2` seconds, silently drop.
-   - **Layer 3 (Cloudflare Turnstile)**: Privacy-preserving challenge. Zero Google reCAPTCHA scripts or tracking cookies.
-3. **Dual Response (Progressive Enhancement)**:
-   - Baseline HTML `<form method="POST" action="/api/contact">` responds with `303 See Other` redirect to `/contact/success` or `/contact/error`.
-   - Client JS submits via `fetch()` with `Accept: application/json` for in-place JSON response `{ success: true }`.
-4. **The Form "Stop & Ask" Decision Gate**:
-   When encountering a form in a design, STOP and ask the user:
-   > *"I detected a [Contact Form] in the design. How would you like submissions handled?*
-   > *1. (Recommended) Cloudflare Pages Function + Mailgun (`functions/api/contact.ts` with 3-layer anti-spam)?*
-   > *2. Hosted Static Endpoint (Formspree / Web3Forms / Basin)?*
-   > *3. Webhook to CRM / Automation (Make / Zapier / n8n / HubSpot)?*
-   > *4. UI-Only / Mock (accessible frontend with simulated submission)?"*
-5. **Accessibility Standards (WCAG 2.2 AA)**:
-   - Explicit `<label for="...">` on every field (never placeholder-only).
-   - Validation states: `aria-invalid="true"` and `aria-describedby="[field]-error"`.
-   - On failed submission, programmatic keyboard focus moves to the first invalid input.
-   - Live announcements via `<div role="status" aria-live="polite">`.
-
----
-
-## 6. Performance & GDPR Rules
-
-1. **Zero External Runtime Media**:
-   - Download all images to `public/images/` as WebP files. Never load external CDNs (Unsplash, etc.) in production.
-2. **Core Web Vitals (95–100 Target)**:
-   - **Hero/LCP Image**: Preload in `BaseLayout.astro` (`<link rel="preload" as="image" ... fetchpriority="high">`).
-   - Provide `width` and `height` on every `<img>`.
-   - Set `aspect-ratio` on image wrappers.
-   - Preload Latin WOFF2 variable fonts in `BaseLayout.astro`.
-   - Stack carousel slides in CSS Grid (`grid-template-areas: "slide"`) to eliminate CLS.
-3. **Audit Rule**:
-   - Never audit Core Web Vitals on `npm run dev`. Always test against `npm run build` / `npm run preview`.
-
----
-
-## 7. Verification Checklist
-
-Before reporting completion on any build or refactor, you MUST execute:
-- [ ] `npm run test:tokens` (Conforms to token contract)
-- [ ] `npm run test:contrast` (0 WCAG 2.2 AA contrast violations)
-- [ ] `npm run check` (0 errors, 0 warnings, 0 hints)
-- [ ] `npm run build` (Successful static pre-render)
-- [ ] `npm run test:a11y` (0 WCAG 2.2 AA violations)
+Before reporting a build or refactor complete, run `npm test`. If any check cannot run or fails, report the exact failure and remaining risk.

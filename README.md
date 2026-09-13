@@ -7,15 +7,12 @@ A lightweight, accessible, high-performance static starter template for Astro pr
 ## Table of Contents
 
 - [Quick Start](#quick-start)
+- [The Playbook](#the-playbook)
 - [Available Scripts](#available-scripts)
 - [Installed Packages & Core Stack](#installed-packages--core-stack)
 - [Project Structure](#project-structure)
 - [Key Features](#key-features)
 - [Architecture & Guides](#architecture--guides)
-  - [Design Token Architecture](#design-token-architecture)
-  - [Forms & Submissions (Cloudflare Pages + Mailgun)](#forms--submissions-cloudflare-pages--mailgun)
-  - [Content Modeling & RSS Syndication (Pattern A)](#content-modeling--rss-syndication-pattern-a)
-  - [SEO, Sitemaps & Deployment Headers](#seo-sitemaps--deployment-headers)
 - [Working with AI Agents](#working-with-ai-agents)
 - [License](#license)
 
@@ -36,6 +33,18 @@ npm install
 # Start development server
 npm run dev
 ```
+
+---
+
+## The Playbook
+
+The starter is backed by a human-readable delivery methodology in [`docs/playbook.md`](docs/playbook.md). It separates:
+
+- durable principles, such as static-first delivery, progressive enhancement, accessibility, performance, privacy, and evidence-based completion;
+- repository conventions, such as BEM, CSS logical properties, semantic tokens, and the four-pattern content model;
+- replaceable implementation defaults, such as Cloudflare Pages, Mailgun, Turnstile, the sample fonts, and the example domain.
+
+Read the playbook before adapting the starter. Supporting guides cover architecture, design tokens, content modelling, forms, and verification without duplicating those rules across agent files.
 
 ---
 
@@ -74,6 +83,13 @@ This template maintains a lean, performance-first dependency footprint with zero
 astro-starter/
 ├── .github/workflows/
 │   └── ci.yml                 # CI pipeline running lint, build, and a11y tests
+├── docs/
+│   ├── playbook.md            # Canonical human-readable methodology
+│   ├── architecture.md        # Conventions versus replaceable defaults
+│   ├── design-system.md       # Tokens, BEM, and logical-property contract
+│   ├── content-modeling.md    # Four-pattern content decision model
+│   ├── forms.md               # Provider-neutral form contract and default stack
+│   └── quality.md             # Accessibility, performance, privacy, and checks
 ├── functions/
 │   └── api/
 │       └── contact.ts         # Cloudflare Pages edge function (Mailgun + anti-spam)
@@ -106,8 +122,8 @@ astro-starter/
 │   │   ├── reset.css          # Modern CSS Logical Properties reset
 │   │   └── global.css         # Global typography & layout rules
 │   └── content.config.ts      # Astro Content Layer schemas with Zod validation
-├── AGENTS.md                  # Unified AI coding agent guidelines
-├── CLAUDE.md                  # Claude Code / Anthropic specific guidelines
+├── AGENTS.md                  # Concise agent adapter pointing to the playbook
+├── CLAUDE.md                  # Symlink to AGENTS.md to prevent instruction drift
 ├── astro.config.mjs           # Astro configuration (static output, sitemap integration)
 └── tsconfig.json              # Strict TypeScript config with @/* path aliases
 ```
@@ -116,158 +132,41 @@ astro-starter/
 
 ## Key Features
 
-- **100/100 Core Web Vitals Ready**: Font preloads, zero-layout-shift patterns, and responsive image configurations.
+- **Performance-Oriented Baseline**: Local font preloads, layout-shift prevention patterns, and production-build verification guidance.
 - **Two-Tier Fluid Design Tokens**:
-  - **Tier 1 (Canvas / Viewport `vw`)**: Fluid scaling for site landmarks, page headings, and layout gutters (`--text-*`, `--h1`–`--h6`, `--space-*`).
-  - **Tier 2 (Component / Container `cqi`)**: Fluid scaling for modular cards, widgets, and dialogs (`--cq-text-*`, `--cq-h1`–`--cq-h4`, `--cq-gap`, `--cq-card-padding`).
+  - **Tier 1 (Canvas / Viewport `vw`)**: Fluid scaling for site landmarks, page headings, and layout gutters (`--text-*`, `--h1`–`--h4`, `--space-*`).
+  - **Tier 2 (Component / Container `cqi`)**: Fluid scaling for modular cards, widgets, and dialogs (`--cq-text-*`, `--cq-h3`, `--cq-gap`, `--cq-card-padding`).
 - **Auto-Enabling Container Queries**: Components self-declare container context on parents via `:has(> .c-component) { container-type: inline-size; }` without manual wrapper classes.
 - **CSS Logical Properties**: Strictly flow-relative properties throughout (`padding-block`, `margin-inline`, `inset`, `inline-size`).
 - **Astro Content Layer & 4-Tier Strategy**: Clear heuristics for Editorial Prose (Markdown), Entity Records (YAML), In-Page Repeaters (JSON), and Global Singletons, backed by strict Zod schemas and alphabetical sorting protection (`order: number`).
-- **Production-Ready Contact Form**: Accessible `ContactForm.astro` with 3-layer anti-spam (honeypot, timestamp heuristic, Turnstile) and Cloudflare Pages Functions (`functions/api/contact.ts`) + Mailgun integration.
+- **Form Delivery Reference**: `ContactForm.astro` and `functions/api/contact.ts` demonstrate progressive enhancement, layered anti-spam, optional Turnstile, and Mailgun delivery. Production configuration and redirect destinations remain project setup tasks.
 - **Automated RSS 2.0 Feed**: Turnkey `@astrojs/rss` feed generation at `/rss.xml` for Pattern A editorial content with auto-discovery in `BaseLayout.astro`.
 - **Automated XML Sitemap**: Turnkey `@astrojs/sitemap` integration generating `/sitemap-index.xml` and `/sitemap-0.xml` during static pre-rendering, with auto-discovery in `BaseLayout.astro`.
 - **SEO & Social Sharing Baseline**: Dynamic absolute canonical URLs, full Open Graph and Twitter Card tags, `public/robots.txt`, and Cloudflare Pages `_headers` (security policies and 1-year immutable caching).
 - **Accessible 404 Error Handling**: Built-in `404.astro` error page styled with semantic tokens, skip-link support, and automatic exclusion from the XML sitemap via `noindex={true}`.
-- **WCAG 2.2 AA Out-of-the-Box**: Semantic landmarks, skip links, accessible components, and automated `axe-core` CI tests.
-- **GDPR-Safe**: Zero runtime third-party tracking or CDN requests. All fonts and assets are local/self-hosted.
-- **Multi-Agent Rails**: Built-in `AGENTS.md` and `CLAUDE.md` providing instant context and strict architectural guardrails to AI pair programmers.
+- **WCAG 2.2 AA Baseline**: Semantic landmarks, skip links, accessible component patterns, and automated `axe-core` CI tests.
+- **Privacy-Minded Defaults**: Fonts and production media are self-hosted; runtime services remain explicit project decisions.
+- **Playbook-Backed Agent Rails**: `AGENTS.md` and its `CLAUDE.md` symlink are concise adapters to one canonical methodology in `docs/`.
 
 ---
 
 ## Architecture & Guides
 
-### Design Token Architecture
+[`docs/playbook.md`](docs/playbook.md) is the canonical guide. Its focused supporting documents are:
 
-Tokens are authored in `src/styles/tokens.css` using native `oklch()` color formulas and fluid `clamp()` scales:
+- [`docs/architecture.md`](docs/architecture.md) — the static-first architecture, repository conventions, replaceable implementation defaults, and pre-launch placeholders.
+- [`docs/design-system.md`](docs/design-system.md) — OKLCH primitives, semantic aliases, fluid scales, BEM, logical properties, and token ingestion.
+- [`docs/content-modeling.md`](docs/content-modeling.md) — the four-pattern content model, decision gate, schemas, ordering, and RSS guidance.
+- [`docs/forms.md`](docs/forms.md) — the provider-independent form contract and the included Cloudflare Pages, Mailgun, and Turnstile reference path.
+- [`docs/quality.md`](docs/quality.md) — WCAG 2.2 AA, production performance, privacy, automated checks, and manual verification.
 
-- **Color Tokens (Native OKLCH)**: All raw primitives use `oklch(L C H)` for wide Display P3 gamut support and predictable perceptual contrast matching WCAG 2.2 Level AA. Derived tones leverage CSS Relative Colors (`oklch(from var(...) calc(l - 0.05) c h)`).
-- **Scale Tokens (Two-Tier Fluid System)**:
-
-#### 1. Viewport Tokens (Tier 1)
-Used on layout landmarks, page wrappers, and primary section headings:
-```css
-.l-section__title {
-  font-size: var(--h1);
-  margin-block-end: var(--space-m);
-}
-```
-
-#### 2. Container Query Tokens (Tier 2)
-Used within reusable components placed in dynamic grid columns:
-```css
-:has(> .c-card) {
-  container-type: inline-size;
-}
-
-.c-card {
-  padding: var(--cq-card-padding);
-  gap: var(--cq-gap);
-}
-
-.c-card__title {
-  font-size: var(--cq-h3);
-}
-```
-
-#### 3. "Bring Your Own Tokens" (BYOT) & Semantic Alias Bridge
-
-Already have an established `tokens.css` from Automatic.css (ACSS), Utopia, Open Props, or a brand system?
-1. Replace `src/styles/tokens.css` with your file.
-2. Append a **Semantic Alias Bridge** at the bottom of `tokens.css` mapping your custom primitives to the semantic schema:
-   ```css
-   :root {
-     --color-primary: var(--primary);
-     --color-bg:      var(--base-light);
-     --color-surface: var(--base-light);
-     --color-text:    var(--base-dark);
-     --font-display:  var(--font-heading);
-   }
-   ```
-3. Modular components (`src/components/*.astro`) always consume semantic aliases (`--color-primary`, `--color-text`, `--space-m`), ensuring 100% portability across projects and instant compatibility with `npm run test:tokens` and `npm run test:contrast`.
-
----
-
-### Forms & Submissions (Cloudflare Pages + Mailgun)
-
-This starter provides a production-grade form handling architecture designed specifically for static Astro sites:
-
-- **Zero SSR Overhead**: Astro stays 100% static (`output: 'static'`). Cloudflare Pages automatically mounts `functions/api/contact.ts` as an edge Worker on `/api/contact`.
-- **3-Layer Anti-Spam Architecture**:
-  1. **Honeypot (`_hp`)**: Hidden input field. If populated, silently returns fake success to discard bots.
-  2. **Timestamp (`_timestamp`)**: Hidden Unix timestamp. Discards instant submissions (< 2s).
-  3. **Cloudflare Turnstile**: Optional non-intrusive challenge verifying against Cloudflare's API via `TURNSTILE_SECRET_KEY`. Zero Google reCAPTCHA tracking cookies.
-- **Dual Response (Progressive Enhancement)**:
-  - If JS is disabled: Issues a standard `303 See Other` redirect to `/contact/success` or `/contact/error`.
-  - If JS is enabled: Submits via `fetch()` with `Accept: application/json` for in-place UI updates and screen reader announcements (`role="status" aria-live="polite"`).
-
-#### Required Cloudflare Environment Variables
-
-Configure these in the Cloudflare Dashboard under **Workers & Pages** → **[Your Project]** → **Settings** → **Environment Variables**:
-
-| Variable | Description | Example |
-| :--- | :--- | :--- |
-| `MAILGUN_API_KEY` | Mailgun Sending API Key (Secret) | `key-xxxxxxxxxxxx` |
-| `MAILGUN_DOMAIN` | Verified Mailgun Sending Domain | `mg.yourdomain.com` |
-| `MAILGUN_REGION` | Mailgun Datacenter region | `us` or `eu` |
-| `CONTACT_TO_EMAIL` | Destination mailbox for incoming enquiries | `hello@yourdomain.com` |
-| `TURNSTILE_SECRET_KEY` | *(Optional)* Cloudflare Turnstile Secret Key | `0x4AAAAAA...` |
-
-> [!TIP]
-> **Not deploying to Cloudflare Pages?** You can easily switch to hosted static form endpoints like Formspree or Web3Forms by passing `<ContactForm action="https://formspree.io/f/YOUR_ID" />`.
-
----
-
-### Content Modeling & RSS Syndication (Pattern A)
-
-Long-form editorial articles (blog posts, case studies, writing) are managed via **Pattern A (Editorial Prose)** using Astro 7 Content Collections:
-
-1. **Storage**: Markdown files in `src/content/posts/*.md`.
-2. **Schema & Loader**: Configured with `glob({ pattern: '**/*.md', base: 'src/content/posts' })` in `src/content.config.ts`.
-3. **Dynamic Routes**: Static detail pages pre-rendered at `src/pages/posts/[slug].astro`.
-4. **Automated RSS 2.0 XML Feed**:
-   - Generated automatically at `/rss.xml` via `src/pages/rss.xml.ts` using `@astrojs/rss`.
-   - Update your canonical domain in `astro.config.mjs` (`site: 'https://example.com'`).
-   - Auto-discovery `<link rel="alternate" type="application/rss+xml" ... />` is built into `BaseLayout.astro`.
-
----
-
-### SEO, Sitemaps & Deployment Headers
-
-This starter provides an automated production baseline for search engine discovery and security:
-
-1. **XML Sitemap Generation**:
-   - Integrated via `@astrojs/sitemap` in `astro.config.mjs`.
-   - Pre-renders `/sitemap-index.xml` and `/sitemap-0.xml` during static builds.
-   - Auto-discovered via `<link rel="sitemap" href="/sitemap-index.xml" />` in `BaseLayout.astro`.
-2. **Dynamic Canonical URLs & Social Sharing**:
-   - `BaseLayout.astro` calculates absolute canonical URLs from `Astro.site` and `Astro.url.pathname`.
-   - Generates complete Open Graph (`og:*`) and Twitter Card (`twitter:*`) metadata tags with configurable fallback image (`image="/images/og-default.jpg"`).
-   - Supports `noindex={true}` for utility routes (such as `src/pages/404.astro`), instructing search engines not to index and keeping them out of the XML sitemap.
-   - Provides a `<slot name="head" />` for per-page JSON-LD schemas or custom head metadata.
-3. **Robots Policy (`public/robots.txt`)**:
-   - Pre-configured to allow crawling while declaring the canonical sitemap index location:
-     ```text
-     User-agent: *
-     Allow: /
-
-     Sitemap: https://example.com/sitemap-index.xml
-     ```
-4. **Cloudflare Security & Cache Headers (`public/_headers`)**:
-   - Enforces essential security policies (`X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, `Strict-Transport-Security`, `Permissions-Policy`).
-   - Sets 1-year immutable caching (`Cache-Control: public, max-age=31536000, immutable`) for hashed assets in `/_astro/*`, `/fonts/*`, and `/images/*`.
+The README introduces the starter; these documents own the methodology and detailed operating rules.
 
 ---
 
 ## Working with AI Agents
 
-This repository includes both `AGENTS.md` and `CLAUDE.md` at the root directory. AI pair-programming tools (such as Antigravity, Claude Code, Cursor, Windsurf, or Codex) will read these rules automatically and adhere to:
-1. Strict BEM class naming conventions.
-2. CSS Logical Properties (no physical `margin-top` / `padding-left`).
-3. 4-Tier content modeling strategy and "Stop & Ask" gate for ambiguous dynamic data.
-4. Content Collections sorting protection (`order: number`).
-5. Form handling heuristics (Cloudflare Pages Function + Mailgun baseline and Stop & Ask gate).
-6. Automated RSS 2.0 feed syndication for Pattern A editorial content.
-7. WCAG 2.2 AA accessibility requirements.
+`AGENTS.md` is a concise operational adapter that tells coding agents how to enter the project, which contracts are mandatory, and how to validate their work. `CLAUDE.md` is a relative symlink to the same adapter. Both defer to `docs/playbook.md`, so methodology is maintained in one place instead of copied into tool-specific files.
 
 ---
 
