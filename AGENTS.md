@@ -76,17 +76,31 @@ npm run test:contrast
 
 ---
 
-## 4. Content Modeling (Astro Content Layer)
+## 4. Content Modeling Strategy (Astro Content Layer)
 
-1. Define collections in `src/content.config.ts` using `file()` loaders and Zod schemas:
-   ```typescript
-   import { defineCollection } from 'astro:content';
-   import { z } from 'astro/zod';
-   import { file } from 'astro/loaders';
-   ```
-2. Store data in `src/content/<name>.json` as an array of objects.
-3. **Ordering Rule**: Always provide `"order": number` in JSON entries and `order: z.number().default(0)` in schemas where display order matters. Astro sorts collections by ID alphabetically by default.
-4. Sort explicitly in components:
+Dynamic content must be modeled according to the **4-Tier Content Decision Tree**:
+
+| Pattern | Storage Structure | Astro 7 Loader | When to Use |
+| :--- | :--- | :--- | :--- |
+| **Pattern A: Editorial Prose** | `src/content/<name>/*.md` | `glob({ pattern: '**/*.md' })` | Articles, blog posts, case studies, rich documentation with Markdown body and dedicated URLs (`/writing/[slug]`). |
+| **Pattern B: Entity Records** | `src/content/<name>/*.yaml` | `glob({ pattern: '**/*.yaml' })` | Modular entities (Services, Case Studies, Team) that have dedicated detail pages (`/services/[slug]`) or will be managed individually via a Git CMS. Prefer YAML for clean multiline text without JSON escaping. |
+| **Pattern C: In-Page Repeaters** | `src/content/<name>.json` | `file('src/content/<name>.json')` | Cohesive, in-page repetitive components (stats tickers, feature grids, pricing tiers, FAQs) that live on a single page and do **not** have individual URLs. |
+| **Pattern D: Global Singletons** | `src/data/site.json` | Direct ESM import (`import site from '../data/site.json'`) | Static site identity, company number, phone, navigation hierarchy, social links that don't need Zod collection querying. |
+
+### The "Stop & Ask" Decision Gate
+Before authoring `src/content.config.ts` or creating content files:
+1. **Auto-classify** obvious repeaters (stats, trust badges) as Pattern C, and global settings (phone, nav) as Pattern D.
+2. **Ambiguous Entities Gate**: When encountering **Services, Projects, Case Studies, Testimonials, or Team Members**, you MUST stop and ask the user:
+   > *"I detected [Services] in the design. Should we implement these as:*
+   > *1. (Recommended) Pattern B (`src/content/services/*.yaml`) with dedicated detail pages / CMS compatibility?*
+   > *2. Pattern C (`src/content/services.json`) as in-page data only?*
+   > *3. Pattern A (`src/content/services/*.md`) with full long-form markdown bodies?"*
+
+### Ordering Rule (Crucial)
+Astro's internal store indexes entries by ID and sorts alphabetically by default. Where visual order matters:
+1. Always provide `"order": number` in JSON entries or `order: number` in YAML records.
+2. Always add `order: z.number().default(0)` to the Zod schema in `src/content.config.ts`.
+3. Sort explicitly in components:
    ```astro
    const items = (await getCollection('<name>')).map(e => e.data).sort((a, b) => a.order - b.order);
    ```

@@ -12,10 +12,10 @@ A lightweight, accessible, high-performance static starter template for Astro pr
   - **Tier 2 (Component / Container `cqi`)**: Fluid scaling for modular cards, widgets, and dialogs (`--cq-text-*`, `--cq-h1`–`--cq-h4`, `--cq-gap`, `--cq-card-padding`).
 - **Auto-Enabling Container Queries**: Components self-declare container context on parents via `:has(> .c-component) { container-type: inline-size; }` without manual wrapper classes.
 - **CSS Logical Properties**: Strictly flow-relative properties throughout (`padding-block`, `margin-inline`, `inset`, `inline-size`).
-- **Astro Content Layer**: Strict Zod schemas with alphabetical sorting protection (`order: number`).
+- **Astro Content Layer & 4-Tier Strategy**: Clear heuristics for Editorial Prose (Markdown), Entity Records (YAML), In-Page Repeaters (JSON), and Global Singletons, backed by strict Zod schemas and alphabetical sorting protection (`order: number`).
 - **WCAG 2.2 AA Out-of-the-Box**: Semantic landmarks, skip links, accessible components, and automated `axe-core` CI tests.
 - **GDPR-Safe**: Zero runtime third-party tracking or CDN requests. All fonts and assets are local/self-hosted.
-- **Multi-Agent Rails**: Built-in `AGENTS.md` and `CLAUDE.md` providing instant context to AI pair programmers.
+- **Multi-Agent Rails**: Built-in `AGENTS.md` and `CLAUDE.md` providing instant context and strict architectural guardrails to AI pair programmers.
 
 ---
 
@@ -124,8 +124,9 @@ Used within reusable components placed in dynamic grid columns:
 This repository includes both `AGENTS.md` and `CLAUDE.md` at the root directory. AI pair-programming tools (such as Antigravity, Claude Code, Cursor, Windsurf, or Codex) will read these rules automatically and adhere to:
 1. Strict BEM class naming conventions.
 2. CSS Logical Properties (no physical `margin-top` / `padding-left`).
-3. Content Collections sorting protection.
-4. WCAG 2.2 AA accessibility requirements.
+3. 4-Tier content modeling strategy and "Stop & Ask" gate for ambiguous dynamic data.
+4. Content Collections sorting protection (`order: number`).
+5. WCAG 2.2 AA accessibility requirements.
 
 ---
 
