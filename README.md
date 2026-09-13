@@ -4,37 +4,20 @@ A lightweight, accessible, high-performance static starter template for Astro pr
 
 ---
 
-## Key Features
+## Table of Contents
 
-- **100/100 Core Web Vitals Ready**: Font preloads, zero-layout-shift patterns, and responsive image configurations.
-- **Two-Tier Fluid Design Tokens**:
-  - **Tier 1 (Canvas / Viewport `vw`)**: Fluid scaling for site landmarks, page headings, and layout gutters (`--text-*`, `--h1`–`--h6`, `--space-*`).
-  - **Tier 2 (Component / Container `cqi`)**: Fluid scaling for modular cards, widgets, and dialogs (`--cq-text-*`, `--cq-h1`–`--cq-h4`, `--cq-gap`, `--cq-card-padding`).
-- **Auto-Enabling Container Queries**: Components self-declare container context on parents via `:has(> .c-component) { container-type: inline-size; }` without manual wrapper classes.
-- **CSS Logical Properties**: Strictly flow-relative properties throughout (`padding-block`, `margin-inline`, `inset`, `inline-size`).
-- **Astro Content Layer & 4-Tier Strategy**: Clear heuristics for Editorial Prose (Markdown), Entity Records (YAML), In-Page Repeaters (JSON), and Global Singletons, backed by strict Zod schemas and alphabetical sorting protection (`order: number`).
-- **Production-Ready Contact Form**: Accessible `ContactForm.astro` with 3-layer anti-spam (honeypot, timestamp heuristic, Turnstile) and Cloudflare Pages Functions (`functions/api/contact.ts`) + Mailgun integration.
-- **Automated RSS 2.0 Feed**: Turnkey `@astrojs/rss` feed generation at `/rss.xml` for Pattern A editorial content with auto-discovery in `BaseLayout.astro`.
-- **Automated XML Sitemap**: Turnkey `@astrojs/sitemap` integration generating `/sitemap-index.xml` and `/sitemap-0.xml` during static pre-rendering, with auto-discovery in `BaseLayout.astro`.
-- **SEO & Social Sharing Baseline**: Dynamic absolute canonical URLs, full Open Graph and Twitter Card tags, `public/robots.txt`, and Cloudflare Pages `_headers` (security policies and 1-year immutable caching).
-- **Accessible 404 Error Handling**: Built-in `404.astro` error page styled with semantic tokens, skip-link support, and automatic exclusion from the XML sitemap via `noindex={true}`.
-- **WCAG 2.2 AA Out-of-the-Box**: Semantic landmarks, skip links, accessible components, and automated `axe-core` CI tests.
-- **GDPR-Safe**: Zero runtime third-party tracking or CDN requests. All fonts and assets are local/self-hosted.
-- **Multi-Agent Rails**: Built-in `AGENTS.md` and `CLAUDE.md` providing instant context and strict architectural guardrails to AI pair programmers.
-
----
-
-## Installed Packages & Core Stack
-
-This template maintains a lean, performance-first dependency footprint with zero runtime framework overhead:
-
-| Package | Version | Purpose |
-| :--- | :--- | :--- |
-| [`astro`](https://astro.build/) | `^7.3.1` | Static pre-rendering framework with zero runtime JS by default and the Astro 7 Content Layer. |
-| [`@astrojs/sitemap`](https://docs.astro.build/en/guides/integrations-guide/sitemap/) | `^3.7.4` | Automated XML sitemap generation (`/sitemap-index.xml`) on build, excluding `404.astro` (`noindex={true}`). |
-| [`@astrojs/rss`](https://docs.astro.build/en/recipes/rss/) | `^4.0.19` | Automated RSS 2.0 XML feed endpoint generation at `/rss.xml` for editorial prose and articles. |
-| [`@fontsource-variable/fraunces`](https://fontsource.org/fonts/fraunces) | `^5.3.0` | Self-hosted variable serif display font with zero third-party tracking or CDN overhead. |
-| [`@fontsource-variable/dm-sans`](https://fontsource.org/fonts/dm-sans) | `^5.3.0` | Self-hosted variable sans-serif body font preloaded in `BaseLayout.astro` to eliminate FOUT and CLS. |
+- [Quick Start](#quick-start)
+- [Available Scripts](#available-scripts)
+- [Installed Packages & Core Stack](#installed-packages--core-stack)
+- [Project Structure](#project-structure)
+- [Key Features](#key-features)
+- [Architecture & Guides](#architecture--guides)
+  - [Design Token Architecture](#design-token-architecture)
+  - [Forms & Submissions (Cloudflare Pages + Mailgun)](#forms--submissions-cloudflare-pages--mailgun)
+  - [Content Modeling & RSS Syndication (Pattern A)](#content-modeling--rss-syndication-pattern-a)
+  - [SEO, Sitemaps & Deployment Headers](#seo-sitemaps--deployment-headers)
+- [Working with AI Agents](#working-with-ai-agents)
+- [License](#license)
 
 ---
 
@@ -68,6 +51,20 @@ npm run dev
 | `npm run test:contrast` | Verifies WCAG 2.2 AA contrast on semantic tokens (Hex, OKLCH, relative colors) |
 | `npm run test:a11y` | Runs headless `axe-core` WCAG 2.2 AA audit on `dist/` |
 | `npm test` | Runs the full verification pipeline (`test:tokens` + `test:contrast` + `check` + `build` + `test:a11y`) |
+
+---
+
+## Installed Packages & Core Stack
+
+This template maintains a lean, performance-first dependency footprint with zero runtime framework overhead:
+
+| Package | Version | Purpose |
+| :--- | :--- | :--- |
+| [`astro`](https://astro.build/) | `^7.3.1` | Static pre-rendering framework with zero runtime JS by default and the Astro 7 Content Layer. |
+| [`@astrojs/sitemap`](https://docs.astro.build/en/guides/integrations-guide/sitemap/) | `^3.7.4` | Automated XML sitemap generation (`/sitemap-index.xml`) on build, excluding `404.astro` (`noindex={true}`). |
+| [`@astrojs/rss`](https://docs.astro.build/en/recipes/rss/) | `^4.0.19` | Automated RSS 2.0 XML feed endpoint generation at `/rss.xml` for editorial prose and articles. |
+| [`@fontsource-variable/fraunces`](https://fontsource.org/fonts/fraunces) | `^5.3.0` | Self-hosted variable serif display font with zero third-party tracking or CDN overhead. |
+| [`@fontsource-variable/dm-sans`](https://fontsource.org/fonts/dm-sans) | `^5.3.0` | Self-hosted variable sans-serif body font preloaded in `BaseLayout.astro` to eliminate FOUT and CLS. |
 
 ---
 
@@ -117,14 +114,36 @@ astro-starter/
 
 ---
 
-## Design Token Architecture
+## Key Features
+
+- **100/100 Core Web Vitals Ready**: Font preloads, zero-layout-shift patterns, and responsive image configurations.
+- **Two-Tier Fluid Design Tokens**:
+  - **Tier 1 (Canvas / Viewport `vw`)**: Fluid scaling for site landmarks, page headings, and layout gutters (`--text-*`, `--h1`–`--h6`, `--space-*`).
+  - **Tier 2 (Component / Container `cqi`)**: Fluid scaling for modular cards, widgets, and dialogs (`--cq-text-*`, `--cq-h1`–`--cq-h4`, `--cq-gap`, `--cq-card-padding`).
+- **Auto-Enabling Container Queries**: Components self-declare container context on parents via `:has(> .c-component) { container-type: inline-size; }` without manual wrapper classes.
+- **CSS Logical Properties**: Strictly flow-relative properties throughout (`padding-block`, `margin-inline`, `inset`, `inline-size`).
+- **Astro Content Layer & 4-Tier Strategy**: Clear heuristics for Editorial Prose (Markdown), Entity Records (YAML), In-Page Repeaters (JSON), and Global Singletons, backed by strict Zod schemas and alphabetical sorting protection (`order: number`).
+- **Production-Ready Contact Form**: Accessible `ContactForm.astro` with 3-layer anti-spam (honeypot, timestamp heuristic, Turnstile) and Cloudflare Pages Functions (`functions/api/contact.ts`) + Mailgun integration.
+- **Automated RSS 2.0 Feed**: Turnkey `@astrojs/rss` feed generation at `/rss.xml` for Pattern A editorial content with auto-discovery in `BaseLayout.astro`.
+- **Automated XML Sitemap**: Turnkey `@astrojs/sitemap` integration generating `/sitemap-index.xml` and `/sitemap-0.xml` during static pre-rendering, with auto-discovery in `BaseLayout.astro`.
+- **SEO & Social Sharing Baseline**: Dynamic absolute canonical URLs, full Open Graph and Twitter Card tags, `public/robots.txt`, and Cloudflare Pages `_headers` (security policies and 1-year immutable caching).
+- **Accessible 404 Error Handling**: Built-in `404.astro` error page styled with semantic tokens, skip-link support, and automatic exclusion from the XML sitemap via `noindex={true}`.
+- **WCAG 2.2 AA Out-of-the-Box**: Semantic landmarks, skip links, accessible components, and automated `axe-core` CI tests.
+- **GDPR-Safe**: Zero runtime third-party tracking or CDN requests. All fonts and assets are local/self-hosted.
+- **Multi-Agent Rails**: Built-in `AGENTS.md` and `CLAUDE.md` providing instant context and strict architectural guardrails to AI pair programmers.
+
+---
+
+## Architecture & Guides
+
+### Design Token Architecture
 
 Tokens are authored in `src/styles/tokens.css` using native `oklch()` color formulas and fluid `clamp()` scales:
 
 - **Color Tokens (Native OKLCH)**: All raw primitives use `oklch(L C H)` for wide Display P3 gamut support and predictable perceptual contrast matching WCAG 2.2 Level AA. Derived tones leverage CSS Relative Colors (`oklch(from var(...) calc(l - 0.05) c h)`).
 - **Scale Tokens (Two-Tier Fluid System)**:
 
-### 1. Viewport Tokens (Tier 1)
+#### 1. Viewport Tokens (Tier 1)
 Used on layout landmarks, page wrappers, and primary section headings:
 ```css
 .l-section__title {
@@ -133,7 +152,7 @@ Used on layout landmarks, page wrappers, and primary section headings:
 }
 ```
 
-### 2. Container Query Tokens (Tier 2)
+#### 2. Container Query Tokens (Tier 2)
 Used within reusable components placed in dynamic grid columns:
 ```css
 :has(> .c-card) {
@@ -150,7 +169,7 @@ Used within reusable components placed in dynamic grid columns:
 }
 ```
 
-### 3. "Bring Your Own Tokens" (BYOT) & Semantic Alias Bridge
+#### 3. "Bring Your Own Tokens" (BYOT) & Semantic Alias Bridge
 
 Already have an established `tokens.css` from Automatic.css (ACSS), Utopia, Open Props, or a brand system?
 1. Replace `src/styles/tokens.css` with your file.
@@ -168,7 +187,7 @@ Already have an established `tokens.css` from Automatic.css (ACSS), Utopia, Open
 
 ---
 
-## Forms & Submissions (Cloudflare Pages + Mailgun)
+### Forms & Submissions (Cloudflare Pages + Mailgun)
 
 This starter provides a production-grade form handling architecture designed specifically for static Astro sites:
 
@@ -181,7 +200,7 @@ This starter provides a production-grade form handling architecture designed spe
   - If JS is disabled: Issues a standard `303 See Other` redirect to `/contact/success` or `/contact/error`.
   - If JS is enabled: Submits via `fetch()` with `Accept: application/json` for in-place UI updates and screen reader announcements (`role="status" aria-live="polite"`).
 
-### Required Cloudflare Environment Variables
+#### Required Cloudflare Environment Variables
 
 Configure these in the Cloudflare Dashboard under **Workers & Pages** → **[Your Project]** → **Settings** → **Environment Variables**:
 
@@ -198,7 +217,7 @@ Configure these in the Cloudflare Dashboard under **Workers & Pages** → **[You
 
 ---
 
-## Content Modeling & RSS Syndication (Pattern A)
+### Content Modeling & RSS Syndication (Pattern A)
 
 Long-form editorial articles (blog posts, case studies, writing) are managed via **Pattern A (Editorial Prose)** using Astro 7 Content Collections:
 
@@ -212,7 +231,7 @@ Long-form editorial articles (blog posts, case studies, writing) are managed via
 
 ---
 
-## SEO, Sitemaps & Deployment Headers
+### SEO, Sitemaps & Deployment Headers
 
 This starter provides an automated production baseline for search engine discovery and security:
 
@@ -255,4 +274,3 @@ This repository includes both `AGENTS.md` and `CLAUDE.md` at the root directory.
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
-
