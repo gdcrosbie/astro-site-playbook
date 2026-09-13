@@ -120,3 +120,4 @@ This covers the token contract, semantic colour contrast, Astro/TypeScript diagn
 - [Forms and submissions](forms.md)
 - [Quality, accessibility, performance, and privacy](quality.md)
 - [Cloudflare Pages and Mailgun contact form](recipes/cloudflare-mailgun-contact.md)
+- [Releasing](releasing.md)

@@ -1,4 +1,6 @@
 ---
+import { CONTACT_FIELD_LIMITS } from '../lib/contact-validation';
+
 interface Props {
   action?: string;
   turnstileSiteKey?: string;
@@ -8,7 +10,7 @@ const { action = '/api/contact', turnstileSiteKey } = Astro.props;
 const timestamp = Math.floor(Date.now() / 1000);
 ---
 
-<form class="c-contact-form" method="POST" action={action} novalidate>
+<form class="c-contact-form" method="POST" action={action}>
   <!-- Anti-spam: Honeypot & Timestamp -->
   <div class="c-contact-form__honey" aria-hidden="true">
     <label for="contact-form-hp">Do not fill this out if human</label>
@@ -25,6 +27,7 @@ const timestamp = Math.floor(Date.now() / 1000);
       id="contact-form-name"
       name="name"
       required
+      maxlength={CONTACT_FIELD_LIMITS.name}
       aria-required="true"
       aria-describedby="name-error"
       autocomplete="name"
@@ -42,6 +45,7 @@ const timestamp = Math.floor(Date.now() / 1000);
       id="contact-form-email"
       name="email"
       required
+      maxlength={CONTACT_FIELD_LIMITS.email}
       aria-required="true"
       aria-describedby="email-error"
       autocomplete="email"
@@ -59,6 +63,7 @@ const timestamp = Math.floor(Date.now() / 1000);
       name="message"
       rows="5"
       required
+      maxlength={CONTACT_FIELD_LIMITS.message}
       aria-required="true"
       aria-describedby="message-error"
       class="c-contact-form__textarea"
@@ -98,6 +103,7 @@ const timestamp = Math.floor(Date.now() / 1000);
     forms.forEach((form) => {
       if (form.dataset.initialized === 'true') return;
       form.dataset.initialized = 'true';
+      form.noValidate = true;
 
       const submitBtn = form.querySelector<HTMLButtonElement>('.c-contact-form__submit');
       const submitText = form.querySelector<HTMLElement>('.c-contact-form__submit-text');
@@ -266,9 +272,9 @@ const timestamp = Math.floor(Date.now() / 1000);
 
   .c-contact-form__input:focus-visible,
   .c-contact-form__textarea:focus-visible {
-    outline: none;
+    outline: 3px solid var(--color-primary);
+    outline-offset: 3px;
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px oklch(from var(--color-primary) l c h / 0.2);
   }
 
   .c-contact-form__input[aria-invalid="true"],
@@ -313,8 +319,8 @@ const timestamp = Math.floor(Date.now() / 1000);
   }
 
   .c-contact-form__submit:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 3px oklch(from var(--color-primary) l c h / 0.35);
+    outline: 3px solid var(--color-primary);
+    outline-offset: 3px;
   }
 
   .c-contact-form__submit:disabled {

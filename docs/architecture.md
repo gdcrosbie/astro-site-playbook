@@ -57,3 +57,9 @@ The starter intentionally contains placeholders. At minimum, replace:
 The included `/contact/success` and `/contact/error` pages complete the default non-JavaScript redirect flow. Customise their copy and destinations alongside the rest of the form before launch.
 
 Use [Getting started](getting-started.md) for a new project and [Customising a project](customization.md) for the complete launch checklist. Provider-specific setup for the included form lives in the [Cloudflare Pages and Mailgun recipe](recipes/cloudflare-mailgun-contact.md).
+
+## Version 1.0 contact-recipe decision
+
+The optional contact implementation remains bundled in version 1.0 because it demonstrates the playbook's server-side validation, layered abuse protection, accessible error handling, and progressive-enhancement contracts as a coherent working example. It stays isolated in the form component, shared validation module, result routes, Function, tests, and provider recipe so projects can replace or remove it deliberately.
+
+Bundling the example does not select Cloudflare, Mailgun, or Turnstile for a downstream project. That decision still belongs at the form-handling gate, before the project collects real submissions.

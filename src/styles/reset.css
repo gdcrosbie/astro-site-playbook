@@ -21,6 +21,13 @@ html {
   html {
     scroll-behavior: auto;
   }
+
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 body {
@@ -40,7 +47,7 @@ input, button, textarea, select {
   color: inherit;
 }
 
-ul, ol {
+ul[role='list'], ol[role='list'] {
   list-style: none;
 }
 

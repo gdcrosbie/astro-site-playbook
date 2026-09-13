@@ -3,21 +3,21 @@
     "id": "performance",
     "title": "Performance by Default",
     "description": "Static rendering, local assets, explicit dimensions, and production-build checks create a strong performance baseline.",
-    "href": "#",
+    "href": "https://github.com/gdcrosbie/astro-site-playbook/blob/main/docs/quality.md#performance-baseline",
     "order": 1
   },
   {
     "id": "accessibility",
     "title": "Accessibility in the Workflow",
     "description": "Semantic landmarks, visible focus, accessible forms, contrast checks, and axe regression testing make accessibility continuous.",
-    "href": "#",
+    "href": "https://github.com/gdcrosbie/astro-site-playbook/blob/main/docs/quality.md#accessibility-baseline",
     "order": 2
   },
   {
     "id": "tokens",
     "title": "Two-Tier Fluid Tokens",
     "description": "Canvas-level viewport scales paired with container-query-relative (cqi) scales for truly portable components.",
-    "href": "#",
+    "href": "https://github.com/gdcrosbie/astro-site-playbook/blob/main/docs/design-system.md#fluid-scales",
     "order": 3
   }
 ]

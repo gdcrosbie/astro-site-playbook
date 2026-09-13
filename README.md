@@ -65,6 +65,7 @@ The [Astro Site Playbook](docs/playbook.md) is canonical. Agent files are adapte
 | [Forms and submissions](docs/forms.md) | Provider-independent form and accessibility contracts. |
 | [Quality](docs/quality.md) | Accessibility, performance, privacy, automated checks, and manual verification. |
 | [Cloudflare Pages and Mailgun recipe](docs/recipes/cloudflare-mailgun-contact.md) | Configuring, replacing, or removing the included contact delivery reference. |
+| [Releasing](docs/releasing.md) | Running the release audit, publishing a tag, and creating release notes. |
 
 ## Included implementation
 
@@ -90,6 +91,7 @@ The contact provider and deployment host are not universal requirements. No prod
 | `npm run test:docs` | Verify local documentation links. |
 | `npm run test:tokens` | Verify the design-token contract. |
 | `npm run test:contrast` | Check configured semantic colour pairings. |
+| `npm run test:discovery` | Check canonical, article, noindex, sitemap, and RSS metadata. |
 | `npm run test:social-image` | Check the built default social image and dimensions. |
 | `npm run test:forms` | Test built form semantics and endpoint behaviour. |
 | `npm run test:a11y` | Run the axe-core audit against built HTML. |
@@ -125,3 +127,5 @@ When adapting this repository, keep universal principles separate from project c
 ## License
 
 [MIT](LICENSE)
+
+Release history is recorded in [CHANGELOG.md](CHANGELOG.md).

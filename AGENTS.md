@@ -38,6 +38,7 @@ npm run test:tokens  # token contract
 npm run test:contrast
 npm run check
 npm run build
+npm run test:discovery
 npm run test:social-image
 npm run test:forms   # form markup and endpoint contract
 npm run test:a11y
