@@ -15,9 +15,26 @@ A lightweight, accessible, high-performance static starter template for Astro pr
 - **Astro Content Layer & 4-Tier Strategy**: Clear heuristics for Editorial Prose (Markdown), Entity Records (YAML), In-Page Repeaters (JSON), and Global Singletons, backed by strict Zod schemas and alphabetical sorting protection (`order: number`).
 - **Production-Ready Contact Form**: Accessible `ContactForm.astro` with 3-layer anti-spam (honeypot, timestamp heuristic, Turnstile) and Cloudflare Pages Functions (`functions/api/contact.ts`) + Mailgun integration.
 - **Automated RSS 2.0 Feed**: Turnkey `@astrojs/rss` feed generation at `/rss.xml` for Pattern A editorial content with auto-discovery in `BaseLayout.astro`.
+- **Automated XML Sitemap**: Turnkey `@astrojs/sitemap` integration generating `/sitemap-index.xml` and `/sitemap-0.xml` during static pre-rendering, with auto-discovery in `BaseLayout.astro`.
+- **SEO & Social Sharing Baseline**: Dynamic absolute canonical URLs, full Open Graph and Twitter Card tags, `public/robots.txt`, and Cloudflare Pages `_headers` (security policies and 1-year immutable caching).
+- **Accessible 404 Error Handling**: Built-in `404.astro` error page styled with semantic tokens, skip-link support, and automatic exclusion from the XML sitemap via `noindex={true}`.
 - **WCAG 2.2 AA Out-of-the-Box**: Semantic landmarks, skip links, accessible components, and automated `axe-core` CI tests.
 - **GDPR-Safe**: Zero runtime third-party tracking or CDN requests. All fonts and assets are local/self-hosted.
 - **Multi-Agent Rails**: Built-in `AGENTS.md` and `CLAUDE.md` providing instant context and strict architectural guardrails to AI pair programmers.
+
+---
+
+## Installed Packages & Core Stack
+
+This template maintains a lean, performance-first dependency footprint with zero runtime framework overhead:
+
+| Package | Version | Purpose |
+| :--- | :--- | :--- |
+| [`astro`](https://astro.build/) | `^7.3.1` | Static pre-rendering framework with zero runtime JS by default and the Astro 7 Content Layer. |
+| [`@astrojs/sitemap`](https://docs.astro.build/en/guides/integrations-guide/sitemap/) | `^3.7.4` | Automated XML sitemap generation (`/sitemap-index.xml`) on build, excluding `404.astro` (`noindex={true}`). |
+| [`@astrojs/rss`](https://docs.astro.build/en/recipes/rss/) | `^4.0.19` | Automated RSS 2.0 XML feed endpoint generation at `/rss.xml` for editorial prose and articles. |
+| [`@fontsource-variable/fraunces`](https://fontsource.org/fonts/fraunces) | `^5.3.0` | Self-hosted variable serif display font with zero third-party tracking or CDN overhead. |
+| [`@fontsource-variable/dm-sans`](https://fontsource.org/fonts/dm-sans) | `^5.3.0` | Self-hosted variable sans-serif body font preloaded in `BaseLayout.astro` to eliminate FOUT and CLS. |
 
 ---
 
@@ -63,6 +80,10 @@ astro-starter/
 ├── functions/
 │   └── api/
 │       └── contact.ts         # Cloudflare Pages edge function (Mailgun + anti-spam)
+├── public/
+│   ├── _headers               # Cloudflare Pages security & immutable cache policies
+│   ├── favicon.svg
+│   └── robots.txt             # Crawl policy and sitemap index declaration
 ├── scripts/
 │   ├── test-tokens.cjs        # Token schema validation script
 │   ├── test-contrast.cjs      # Automated WCAG 2.2 color contrast validator
@@ -76,10 +97,11 @@ astro-starter/
 │   │   │   └── welcome.md
 │   │   └── sample.json        # Pattern C: In-page repeater data
 │   ├── layouts/
-│   │   └── BaseLayout.astro   # Root HTML shell with font preloads, skip link & RSS
+│   │   └── BaseLayout.astro   # Root HTML shell with font preloads, skip link, sitemap & RSS
 │   ├── pages/
 │   │   ├── posts/
 │   │   │   └── [slug].astro   # Dynamic route for Pattern A posts
+│   │   ├── 404.astro          # Accessible, token-compliant 404 error page (noindex)
 │   │   ├── index.astro        # Demonstration page
 │   │   └── rss.xml.ts         # Automated RSS 2.0 XML feed endpoint
 │   ├── styles/
@@ -89,7 +111,7 @@ astro-starter/
 │   └── content.config.ts      # Astro Content Layer schemas with Zod validation
 ├── AGENTS.md                  # Unified AI coding agent guidelines
 ├── CLAUDE.md                  # Claude Code / Anthropic specific guidelines
-├── astro.config.mjs           # Astro configuration (static output)
+├── astro.config.mjs           # Astro configuration (static output, sitemap integration)
 └── tsconfig.json              # Strict TypeScript config with @/* path aliases
 ```
 
@@ -187,6 +209,33 @@ Long-form editorial articles (blog posts, case studies, writing) are managed via
    - Generated automatically at `/rss.xml` via `src/pages/rss.xml.ts` using `@astrojs/rss`.
    - Update your canonical domain in `astro.config.mjs` (`site: 'https://example.com'`).
    - Auto-discovery `<link rel="alternate" type="application/rss+xml" ... />` is built into `BaseLayout.astro`.
+
+---
+
+## SEO, Sitemaps & Deployment Headers
+
+This starter provides an automated production baseline for search engine discovery and security:
+
+1. **XML Sitemap Generation**:
+   - Integrated via `@astrojs/sitemap` in `astro.config.mjs`.
+   - Pre-renders `/sitemap-index.xml` and `/sitemap-0.xml` during static builds.
+   - Auto-discovered via `<link rel="sitemap" href="/sitemap-index.xml" />` in `BaseLayout.astro`.
+2. **Dynamic Canonical URLs & Social Sharing**:
+   - `BaseLayout.astro` calculates absolute canonical URLs from `Astro.site` and `Astro.url.pathname`.
+   - Generates complete Open Graph (`og:*`) and Twitter Card (`twitter:*`) metadata tags with configurable fallback image (`image="/images/og-default.jpg"`).
+   - Supports `noindex={true}` for utility routes (such as `src/pages/404.astro`), instructing search engines not to index and keeping them out of the XML sitemap.
+   - Provides a `<slot name="head" />` for per-page JSON-LD schemas or custom head metadata.
+3. **Robots Policy (`public/robots.txt`)**:
+   - Pre-configured to allow crawling while declaring the canonical sitemap index location:
+     ```text
+     User-agent: *
+     Allow: /
+
+     Sitemap: https://example.com/sitemap-index.xml
+     ```
+4. **Cloudflare Security & Cache Headers (`public/_headers`)**:
+   - Enforces essential security policies (`X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, `Strict-Transport-Security`, `Permissions-Policy`).
+   - Sets 1-year immutable caching (`Cache-Control: public, max-age=31536000, immutable`) for hashed assets in `/_astro/*`, `/fonts/*`, and `/images/*`.
 
 ---
 
