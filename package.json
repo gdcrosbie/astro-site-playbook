@@ -10,8 +10,9 @@
     "preview": "astro preview",
     "check": "astro check",
     "test:tokens": "node scripts/test-tokens.cjs",
+    "test:contrast": "node scripts/test-contrast.cjs",
     "test:a11y": "node scripts/run-axe.cjs",
-    "test": "npm run test:tokens && npm run check && npm run build && npm run test:a11y",
+    "test": "npm run test:tokens && npm run test:contrast && npm run check && npm run build && npm run test:a11y",
     "astro": "astro"
   },
   "dependencies": {
