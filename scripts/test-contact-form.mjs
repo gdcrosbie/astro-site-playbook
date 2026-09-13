@@ -5,6 +5,7 @@ import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
 import { onRequestGet, onRequestPost } from '../functions/api/contact.ts';
+import { CONTACT_FIELD_LIMITS } from '../src/lib/contact-validation.ts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -34,6 +35,7 @@ test('built form exposes labels, requirements, descriptions, and status semantic
   assert.ok(form);
   assert.equal(form.getAttribute('method'), 'POST');
   assert.equal(form.getAttribute('action'), '/api/contact');
+  assert.equal(form.noValidate, false, 'Expected native validation without JavaScript');
 
   for (const field of ['name', 'email', 'message']) {
     const input = form.elements.namedItem(field);
@@ -41,6 +43,7 @@ test('built form exposes labels, requirements, descriptions, and status semantic
     assert.ok(document.querySelector(`label[for="${input.id}"]`), `Expected label for ${field}`);
     assert.ok(input.hasAttribute('required'), `Expected ${field} to be required`);
     assert.equal(input.getAttribute('aria-required'), 'true');
+    assert.equal(Number(input.getAttribute('maxlength')), CONTACT_FIELD_LIMITS[field]);
 
     const descriptionId = input.getAttribute('aria-describedby');
     assert.ok(descriptionId, `Expected ${field} error relationship`);
@@ -76,6 +79,19 @@ test('endpoint returns field-specific errors for missing and malformed values', 
   const emptyResponse = await postRequest({ name: '', email: '', message: '' });
   const emptyData = await emptyResponse.json();
   assert.deepEqual(Object.keys(emptyData.fieldErrors).sort(), ['email', 'message', 'name']);
+});
+
+test('endpoint rejects excessive input and name header injection', async () => {
+  const response = await postRequest({
+    name: 'Ada\r\nBcc: target@example.com',
+    email: `${'a'.repeat(245)}@example.com`,
+    message: 'x'.repeat(CONTACT_FIELD_LIMITS.message + 1),
+  });
+  assert.equal(response.status, 400);
+  const data = await response.json();
+  assert.equal(data.fieldErrors.name, 'Enter your name without line breaks.');
+  assert.equal(data.fieldErrors.email, `Email must be ${CONTACT_FIELD_LIMITS.email} characters or fewer.`);
+  assert.equal(data.fieldErrors.message, `Message must be ${CONTACT_FIELD_LIMITS.message} characters or fewer.`);
 });
 
 test('standard HTML submission redirects invalid input to the error page', async () => {

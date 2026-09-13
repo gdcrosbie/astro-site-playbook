@@ -22,6 +22,7 @@ Confirm the resulting canonical URLs, sitemap, RSS links, and social metadata in
 
 - Replace the defaults in `src/layouts/BaseLayout.astro`.
 - Update page-level titles and descriptions.
+- Replace `public/favicon.svg` and provide meaningful social-image alternative text.
 - Replace `public/images/og-default.jpg` with a real 1200×630 JPEG, or update the layout and corresponding test when the project uses another format or size.
 - Update the RSS title and description when editorial syndication remains enabled.
 

@@ -43,6 +43,7 @@ Use standard `npm`; do not switch package managers without an explicit project d
 | `npm run test:contrast` | Checks configured semantic colour pairs for WCAG AA contrast. |
 | `npm run check` | Runs Astro content, TypeScript, and template diagnostics. |
 | `npm run build` | Produces the static site and catches build-time integration failures. |
+| `npm run test:discovery` | Checks canonical, article, noindex, sitemap, and RSS metadata. |
 | `npm run test:social-image` | Checks the built default Open Graph image and its dimensions. |
 | `npm run test:forms` | Checks built form semantics and the submission endpoint contract. |
 | `npm run test:a11y` | Audits the built HTML with axe-core. |
@@ -63,3 +64,5 @@ Add focused manual checks when a change affects:
 - no-JavaScript journeys;
 - provider-backed forms and their success, error, and abuse-protection paths;
 - canonical, sitemap, RSS, or social metadata.
+
+Use the repeatable project-level process in [Releasing](releasing.md) before publishing a repository release.
