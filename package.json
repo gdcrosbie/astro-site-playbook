@@ -3,6 +3,7 @@
   "type": "module",
   "version": "1.0.0",
   "description": "Production-ready, accessible, high-performance Astro starter template with two-tier fluid design tokens and automated verification.",
+  "license": "MIT",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",

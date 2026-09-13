@@ -121,3 +121,10 @@ This repository includes both `AGENTS.md` and `CLAUDE.md` at the root directory.
 2. CSS Logical Properties (no physical `margin-top` / `padding-left`).
 3. Content Collections sorting protection.
 4. WCAG 2.2 AA accessibility requirements.
+
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
