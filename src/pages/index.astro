@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Card from '../components/Card.astro';
+import ContactForm from '../components/ContactForm.astro';
 import { getCollection } from 'astro:content';
 
 const sampleEntries = await getCollection('sample');
@@ -26,6 +27,16 @@ const cards = sampleEntries
             </div>
           ))}
         </div>
+      </div>
+    </section>
+
+    <section class="l-section c-contact-section">
+      <div class="l-container">
+        <h2 class="c-contact-section__title">Get in touch</h2>
+        <p class="c-contact-section__lead">
+          Have a question or looking to kick off a project? Send a message below.
+        </p>
+        <ContactForm />
       </div>
     </section>
   </main>
@@ -80,5 +91,25 @@ const cards = sampleEntries
     .c-hero-starter__grid {
       grid-template-columns: 1fr;
     }
+  }
+
+  .c-contact-section {
+    padding-block: var(--space-3xl);
+    border-block-start: 1px solid var(--border-subtle);
+  }
+
+  .c-contact-section__title {
+    font-family: var(--font-display);
+    font-size: var(--h2);
+    color: var(--color-text);
+    margin-block-end: var(--space-xs);
+  }
+
+  .c-contact-section__lead {
+    font-size: var(--text-m);
+    color: var(--color-muted);
+    line-height: 1.6;
+    margin-block-end: var(--space-l);
+    max-inline-size: 50ch;
   }
 </style>

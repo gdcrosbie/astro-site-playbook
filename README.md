@@ -13,6 +13,7 @@ A lightweight, accessible, high-performance static starter template for Astro pr
 - **Auto-Enabling Container Queries**: Components self-declare container context on parents via `:has(> .c-component) { container-type: inline-size; }` without manual wrapper classes.
 - **CSS Logical Properties**: Strictly flow-relative properties throughout (`padding-block`, `margin-inline`, `inset`, `inline-size`).
 - **Astro Content Layer & 4-Tier Strategy**: Clear heuristics for Editorial Prose (Markdown), Entity Records (YAML), In-Page Repeaters (JSON), and Global Singletons, backed by strict Zod schemas and alphabetical sorting protection (`order: number`).
+- **Production-Ready Contact Form**: Accessible `ContactForm.astro` with 3-layer anti-spam (honeypot, timestamp heuristic, Turnstile) and Cloudflare Pages Functions (`functions/api/contact.ts`) + Mailgun integration.
 - **WCAG 2.2 AA Out-of-the-Box**: Semantic landmarks, skip links, accessible components, and automated `axe-core` CI tests.
 - **GDPR-Safe**: Zero runtime third-party tracking or CDN requests. All fonts and assets are local/self-hosted.
 - **Multi-Agent Rails**: Built-in `AGENTS.md` and `CLAUDE.md` providing instant context and strict architectural guardrails to AI pair programmers.
@@ -58,13 +59,17 @@ npm run dev
 astro-starter/
 ├── .github/workflows/
 │   └── ci.yml                 # CI pipeline running lint, build, and a11y tests
+├── functions/
+│   └── api/
+│       └── contact.ts         # Cloudflare Pages edge function (Mailgun + anti-spam)
 ├── scripts/
 │   ├── test-tokens.cjs        # Token schema validation script
 │   ├── test-contrast.cjs      # Automated WCAG 2.2 color contrast validator
 │   └── run-axe.cjs            # Headless axe-core a11y runner using JSDOM
 ├── src/
 │   ├── components/
-│   │   └── Card.astro         # Modular component with container query tokens
+│   │   ├── Card.astro         # Modular component with container query tokens
+│   │   └── ContactForm.astro  # Accessible contact form with anti-spam
 │   ├── content/
 │   │   └── sample.json        # Sample Content Layer data with "order": number
 │   ├── layouts/
@@ -126,7 +131,8 @@ This repository includes both `AGENTS.md` and `CLAUDE.md` at the root directory.
 2. CSS Logical Properties (no physical `margin-top` / `padding-left`).
 3. 4-Tier content modeling strategy and "Stop & Ask" gate for ambiguous dynamic data.
 4. Content Collections sorting protection (`order: number`).
-5. WCAG 2.2 AA accessibility requirements.
+5. Form handling heuristics (Cloudflare Pages Function + Mailgun baseline and Stop & Ask gate).
+6. WCAG 2.2 AA accessibility requirements.
 
 ---
 

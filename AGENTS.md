@@ -107,7 +107,36 @@ Astro's internal store indexes entries by ID and sorts alphabetically by default
 
 ---
 
-## 5. Performance & GDPR Rules
+## 5. Forms & Submissions Architecture
+
+Astro static builds (`output: 'static'`) have no server backend. Form handling must follow these rules:
+
+1. **Recommended Baseline**: Cloudflare Pages Native Functions (`functions/api/contact.ts`) + Mailgun REST API:
+   - Astro remains 100% static; Cloudflare automatically mounts `functions/api/*` as an edge Worker.
+   - Mailgun credentials (`MAILGUN_API_KEY`, `MAILGUN_DOMAIN`, `MAILGUN_REGION`) are stored securely in Cloudflare Pages environment variables.
+2. **3-Layer Anti-Spam Architecture**:
+   - **Layer 1 (Honeypot `_hp`)**: Hidden from users and assistive tech (`aria-hidden="true"`, `tabindex="-1"`). If populated, silently drop and return a fake success response.
+   - **Layer 2 (Timestamp `_timestamp`)**: Compare submission time against page render time. If `< 2` seconds, silently drop.
+   - **Layer 3 (Cloudflare Turnstile)**: Privacy-preserving challenge. Zero Google reCAPTCHA scripts or tracking cookies.
+3. **Dual Response (Progressive Enhancement)**:
+   - Baseline HTML `<form method="POST" action="/api/contact">` responds with `303 See Other` redirect to `/contact/success` or `/contact/error`.
+   - Client JS submits via `fetch()` with `Accept: application/json` for in-place JSON response `{ success: true }`.
+4. **The Form "Stop & Ask" Decision Gate**:
+   When encountering a form in a design, STOP and ask the user:
+   > *"I detected a [Contact Form] in the design. How would you like submissions handled?*
+   > *1. (Recommended) Cloudflare Pages Function + Mailgun (`functions/api/contact.ts` with 3-layer anti-spam)?*
+   > *2. Hosted Static Endpoint (Formspree / Web3Forms / Basin)?*
+   > *3. Webhook to CRM / Automation (Make / Zapier / n8n / HubSpot)?*
+   > *4. UI-Only / Mock (accessible frontend with simulated submission)?"*
+5. **Accessibility Standards (WCAG 2.2 AA)**:
+   - Explicit `<label for="...">` on every field (never placeholder-only).
+   - Validation states: `aria-invalid="true"` and `aria-describedby="[field]-error"`.
+   - On failed submission, programmatic keyboard focus moves to the first invalid input.
+   - Live announcements via `<div role="status" aria-live="polite">`.
+
+---
+
+## 6. Performance & GDPR Rules
 
 1. **Zero External Runtime Media**:
    - Download all images to `public/images/` as WebP files. Never load external CDNs (Unsplash, etc.) in production.
@@ -122,9 +151,10 @@ Astro's internal store indexes entries by ID and sorts alphabetically by default
 
 ---
 
-## 6. Verification Checklist
+## 7. Verification Checklist
 
 Before reporting completion on any build or refactor, you MUST execute:
+- [ ] `npm run test:tokens` (Conforms to token contract)
 - [ ] `npm run test:contrast` (0 WCAG 2.2 AA contrast violations)
 - [ ] `npm run check` (0 errors, 0 warnings, 0 hints)
 - [ ] `npm run build` (Successful static pre-render)
