@@ -51,7 +51,7 @@ Required environment variables are `MAILGUN_API_KEY`, `MAILGUN_DOMAIN`, and norm
 
 Before using this path in production:
 
-- add `/contact/success` and `/contact/error` pages, or intentionally change the redirect destinations;
+- customise and test the included `/contact/success` and `/contact/error` destinations;
 - replace the example fallback recipient;
 - configure and test the chosen Mailgun region and domain;
 - test the Turnstile-enabled and Turnstile-disabled paths as applicable;

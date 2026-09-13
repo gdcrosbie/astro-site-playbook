@@ -56,10 +56,13 @@ Read the playbook before adapting the starter. Supporting guides cover architect
 | `npm run build` | Builds static production bundle into `dist/` |
 | `npm run preview` | Previews production build locally |
 | `npm run check` | Runs Astro and TypeScript diagnostics |
+| `npm run test:docs` | Verifies that local links in repository documentation resolve |
 | `npm run test:tokens` | Verifies Tier 1 and Tier 2 tokens in `src/styles/tokens.css` |
 | `npm run test:contrast` | Verifies WCAG 2.2 AA contrast on semantic tokens (Hex, OKLCH, relative colors) |
+| `npm run test:social-image` | Verifies the built default Open Graph image exists and is a 1200×630 JPEG |
+| `npm run test:forms` | Tests built form semantics, validation, redirects, anti-spam, and Mailgun delivery |
 | `npm run test:a11y` | Runs headless `axe-core` WCAG 2.2 AA audit on `dist/` |
-| `npm test` | Runs the full verification pipeline (`test:tokens` + `test:contrast` + `check` + `build` + `test:a11y`) |
+| `npm test` | Runs the full documentation, token, contrast, type, build, form, and accessibility pipeline |
 
 ---
 
@@ -96,15 +99,26 @@ astro-starter/
 ├── public/
 │   ├── _headers               # Cloudflare Pages security & immutable cache policies
 │   ├── favicon.svg
+│   ├── images/
+│   │   └── og-default.jpg     # Verified 1200×630 default social image
 │   └── robots.txt             # Crawl policy and sitemap index declaration
 ├── scripts/
 │   ├── test-tokens.cjs        # Token schema validation script
 │   ├── test-contrast.cjs      # Automated WCAG 2.2 color contrast validator
+│   ├── test-doc-links.cjs     # Local documentation-link validator
+│   ├── test-social-image.cjs  # Default Open Graph asset validator
+│   ├── test-contact-form.mjs  # Built form and endpoint contract tests
 │   └── run-axe.cjs            # Headless axe-core a11y runner using JSDOM
+├── skills/
+│   └── astro-site-builder/
+│       └── SKILL.md            # Thin reusable adapter to the canonical playbook
 ├── src/
 │   ├── components/
 │   │   ├── Card.astro         # Modular component with container query tokens
-│   │   └── ContactForm.astro  # Accessible contact form with anti-spam
+│   │   ├── ContactForm.astro  # Accessible contact form with anti-spam
+│   │   └── FormResult.astro   # Shared success/error result layout
+│   ├── lib/
+│   │   └── contact-validation.ts # Shared browser/server form validation
 │   ├── content/
 │   │   ├── posts/             # Pattern A: Editorial Prose (Markdown)
 │   │   │   └── welcome.md
@@ -114,6 +128,9 @@ astro-starter/
 │   ├── pages/
 │   │   ├── posts/
 │   │   │   └── [slug].astro   # Dynamic route for Pattern A posts
+│   │   ├── contact/
+│   │   │   ├── error.astro     # Non-JavaScript submission error destination
+│   │   │   └── success.astro   # Non-JavaScript submission success destination
 │   │   ├── 404.astro          # Accessible, token-compliant 404 error page (noindex)
 │   │   ├── index.astro        # Demonstration page
 │   │   └── rss.xml.ts         # Automated RSS 2.0 XML feed endpoint
@@ -167,6 +184,8 @@ The README introduces the starter; these documents own the methodology and detai
 ## Working with AI Agents
 
 `AGENTS.md` is a concise operational adapter that tells coding agents how to enter the project, which contracts are mandatory, and how to validate their work. `CLAUDE.md` is a relative symlink to the same adapter. Both defer to `docs/playbook.md`, so methodology is maintained in one place instead of copied into tool-specific files.
+
+The repository-local `skills/astro-site-builder/SKILL.md` packages the same approach for skill-aware agents. It routes agents to the relevant canonical guide and contains only the workflow needed to apply it; it does not maintain another copy of the playbook.
 
 ---
 

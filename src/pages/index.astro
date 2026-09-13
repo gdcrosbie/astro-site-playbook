@@ -12,10 +12,10 @@ const cards = sampleEntries
 
 <BaseLayout>
   <main id="main-content">
-    <section class="l-section c-hero-starter">
+    <section class="l-section c-hero-starter" aria-labelledby="hero-title">
       <div class="l-container">
         <span class="c-hero-starter__badge">Production Starter</span>
-        <h1 class="c-hero-starter__title">Fast. Accessible. Portable.</h1>
+        <h1 id="hero-title" class="c-hero-starter__title">Fast. Accessible. Portable.</h1>
         <p class="c-hero-starter__lead">
           A battle-tested foundation for turning Figma, Paper.design, or generative designs into high-performance static websites.
         </p>
@@ -30,9 +30,9 @@ const cards = sampleEntries
       </div>
     </section>
 
-    <section class="l-section c-contact-section">
+    <section id="contact" class="l-section c-contact-section" aria-labelledby="contact-title">
       <div class="l-container">
-        <h2 class="c-contact-section__title">Get in touch</h2>
+        <h2 id="contact-title" class="c-contact-section__title">Get in touch</h2>
         <p class="c-contact-section__lead">
           Have a question or looking to kick off a project? Send a message below.
         </p>
@@ -95,7 +95,7 @@ const cards = sampleEntries
 
   .c-contact-section {
     padding-block: var(--space-3xl);
-    border-block-start: 1px solid var(--border-subtle);
+    border-block-start: var(--border-subtle);
   }
 
   .c-contact-section__title {

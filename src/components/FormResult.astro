@@ -1,0 +1,74 @@
+---
+interface Props {
+  eyebrow: string;
+  title: string;
+  message: string;
+  linkText: string;
+  linkHref: string;
+}
+
+const { eyebrow, title, message, linkText, linkHref } = Astro.props;
+---
+
+<main id="main-content" class="l-section c-form-result">
+  <div class="l-container l-container--narrow c-form-result__container">
+    <p class="c-form-result__eyebrow">{eyebrow}</p>
+    <h1 class="c-form-result__title">{title}</h1>
+    <p class="c-form-result__message">{message}</p>
+    <a class="c-form-result__link" href={linkHref}>{linkText}</a>
+  </div>
+</main>
+
+<style>
+  .c-form-result {
+    min-block-size: 70vh;
+    display: flex;
+    align-items: center;
+  }
+
+  .c-form-result__container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .c-form-result__eyebrow {
+    margin-block-end: var(--space-s);
+    color: var(--color-accent);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .c-form-result__title {
+    margin-block-end: var(--space-m);
+    color: var(--color-primary);
+    font-family: var(--font-display);
+    font-size: var(--h1);
+    line-height: 1.1;
+  }
+
+  .c-form-result__message {
+    max-inline-size: 48ch;
+    margin-block-end: var(--space-xl);
+    color: var(--color-muted);
+    font-size: var(--text-l);
+    line-height: 1.6;
+  }
+
+  .c-form-result__link {
+    display: inline-flex;
+    padding-block: var(--space-s);
+    padding-inline: var(--space-l);
+    border-radius: var(--radius-m);
+    background-color: var(--color-primary);
+    color: var(--color-bg);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .c-form-result__link:hover {
+    opacity: 0.9;
+  }
+</style>

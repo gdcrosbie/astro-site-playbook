@@ -1,3 +1,5 @@
+import { validateContactFields } from '../../src/lib/contact-validation.ts';
+
 interface Env {
   TURNSTILE_SECRET_KEY?: string;
   MAILGUN_API_KEY?: string;
@@ -12,7 +14,7 @@ interface EventContext {
 }
 
 export async function onRequestGet(context: EventContext): Promise<Response> {
-  return Response.redirect(new URL('/contact', context.request.url).toString(), 302);
+  return Response.redirect(new URL('/#contact', context.request.url).toString(), 302);
 }
 
 export async function onRequestPost(context: EventContext): Promise<Response> {
@@ -86,8 +88,20 @@ export async function onRequestPost(context: EventContext): Promise<Response> {
     const email = String(formData.get('email') || '').trim();
     const message = String(formData.get('message') || '').trim();
 
-    if (!name || !email || !message) {
-      return redirectOrJson('/contact/error', 303, 'Required fields missing');
+    const fieldErrors = validateContactFields({ name, email, message });
+    if (Object.keys(fieldErrors).length > 0) {
+      if (wantsJson) {
+        return new Response(JSON.stringify({
+          success: false,
+          error: 'Check the highlighted fields and try again.',
+          fieldErrors,
+        }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+
+      return redirectOrJson('/contact/error');
     }
 
     // 5. Send via Mailgun REST API

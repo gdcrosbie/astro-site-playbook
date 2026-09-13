@@ -54,4 +54,4 @@ The starter intentionally contains placeholders. At minimum, replace:
 - the example contact recipient and all provider configuration;
 - sample content, brand tokens, and fonts as required.
 
-The repository does not currently include `/contact/success` or `/contact/error` pages. Add equivalent destinations before relying on the contact form's non-JavaScript redirect flow, or change the endpoint contract and document that decision.
+The included `/contact/success` and `/contact/error` pages complete the default non-JavaScript redirect flow. Customise their copy and destinations alongside the rest of the form before launch.

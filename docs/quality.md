@@ -38,10 +38,13 @@ Use standard `npm`; do not switch package managers without an explicit project d
 
 | Command | Purpose |
 | --- | --- |
+| `npm run test:docs` | Checks that local documentation links resolve. |
 | `npm run test:tokens` | Checks the required token contract. |
 | `npm run test:contrast` | Checks configured semantic colour pairs for WCAG AA contrast. |
 | `npm run check` | Runs Astro content, TypeScript, and template diagnostics. |
 | `npm run build` | Produces the static site and catches build-time integration failures. |
+| `npm run test:social-image` | Checks the built default Open Graph image and its dimensions. |
+| `npm run test:forms` | Checks built form semantics and the submission endpoint contract. |
 | `npm run test:a11y` | Audits the built HTML with axe-core. |
 | `npm test` | Runs all of the checks above in repository order. |
 

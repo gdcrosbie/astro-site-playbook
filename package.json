@@ -9,10 +9,13 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
+    "test:docs": "node scripts/test-doc-links.cjs",
     "test:tokens": "node scripts/test-tokens.cjs",
     "test:contrast": "node scripts/test-contrast.cjs",
+    "test:social-image": "node scripts/test-social-image.cjs",
+    "test:forms": "node --experimental-strip-types --test scripts/test-contact-form.mjs",
     "test:a11y": "node scripts/run-axe.cjs",
-    "test": "npm run test:tokens && npm run test:contrast && npm run check && npm run build && npm run test:a11y",
+    "test": "npm run test:docs && npm run test:tokens && npm run test:contrast && npm run check && npm run build && npm run test:social-image && npm run test:forms && npm run test:a11y",
     "astro": "astro"
   },
   "dependencies": {

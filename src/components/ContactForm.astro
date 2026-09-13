@@ -25,10 +25,12 @@ const timestamp = Math.floor(Date.now() / 1000);
       id="contact-form-name"
       name="name"
       required
+      aria-required="true"
+      aria-describedby="name-error"
       autocomplete="name"
       class="c-contact-form__input"
     />
-    <span class="c-contact-form__error" id="name-error" aria-live="polite"></span>
+    <span class="c-contact-form__error" id="name-error"></span>
   </div>
 
   <div class="c-contact-form__field">
@@ -40,10 +42,12 @@ const timestamp = Math.floor(Date.now() / 1000);
       id="contact-form-email"
       name="email"
       required
+      aria-required="true"
+      aria-describedby="email-error"
       autocomplete="email"
       class="c-contact-form__input"
     />
-    <span class="c-contact-form__error" id="email-error" aria-live="polite"></span>
+    <span class="c-contact-form__error" id="email-error"></span>
   </div>
 
   <div class="c-contact-form__field">
@@ -55,9 +59,11 @@ const timestamp = Math.floor(Date.now() / 1000);
       name="message"
       rows="5"
       required
+      aria-required="true"
+      aria-describedby="message-error"
       class="c-contact-form__textarea"
     ></textarea>
-    <span class="c-contact-form__error" id="message-error" aria-live="polite"></span>
+    <span class="c-contact-form__error" id="message-error"></span>
   </div>
 
   {turnstileSiteKey && (
@@ -72,7 +78,7 @@ const timestamp = Math.floor(Date.now() / 1000);
     </button>
   </div>
 
-  <div class="c-contact-form__status" role="status" aria-live="polite"></div>
+  <div class="c-contact-form__status" role="status" aria-live="polite" aria-atomic="true"></div>
 </form>
 
 {turnstileSiteKey && (
@@ -80,35 +86,64 @@ const timestamp = Math.floor(Date.now() / 1000);
 )}
 
 <script>
+  import {
+    validateContactFields,
+    type ContactField,
+    type ContactFieldErrors,
+  } from '../lib/contact-validation';
+
   function initContactForm() {
     const forms = document.querySelectorAll<HTMLFormElement>('.c-contact-form');
 
     forms.forEach((form) => {
+      if (form.dataset.initialized === 'true') return;
+      form.dataset.initialized = 'true';
+
       const submitBtn = form.querySelector<HTMLButtonElement>('.c-contact-form__submit');
       const submitText = form.querySelector<HTMLElement>('.c-contact-form__submit-text');
       const statusEl = form.querySelector<HTMLElement>('.c-contact-form__status');
+      const fields = {
+        name: form.elements.namedItem('name') as HTMLInputElement | null,
+        email: form.elements.namedItem('email') as HTMLInputElement | null,
+        message: form.elements.namedItem('message') as HTMLTextAreaElement | null,
+      };
+
+      const setFieldError = (field: ContactField, message?: string) => {
+        const input = fields[field];
+        const error = form.querySelector<HTMLElement>(`#${field}-error`);
+        if (!input || !error) return;
+
+        if (message) {
+          input.setAttribute('aria-invalid', 'true');
+          error.textContent = message;
+        } else {
+          input.removeAttribute('aria-invalid');
+          error.textContent = '';
+        }
+      };
+
+      const renderFieldErrors = (errors: ContactFieldErrors) => {
+        (Object.keys(fields) as ContactField[]).forEach((field) => {
+          setFieldError(field, errors[field]);
+        });
+      };
+
+      (Object.keys(fields) as ContactField[]).forEach((field) => {
+        fields[field]?.addEventListener('input', () => setFieldError(field));
+      });
 
       form.addEventListener('submit', async (e) => {
-        // Client-side required field validation
-        const nameInput = form.querySelector<HTMLInputElement>('#contact-form-name');
-        const emailInput = form.querySelector<HTMLInputElement>('#contact-form-email');
-        const messageInput = form.querySelector<HTMLTextAreaElement>('#contact-form-message');
-
-        let isValid = true;
-        [nameInput, emailInput, messageInput].forEach((input) => {
-          if (!input) return;
-          if (!input.value.trim()) {
-            input.setAttribute('aria-invalid', 'true');
-            isValid = false;
-          } else {
-            input.removeAttribute('aria-invalid');
-          }
+        const fieldErrors = validateContactFields({
+          name: fields.name?.value ?? '',
+          email: fields.email?.value ?? '',
+          message: fields.message?.value ?? '',
         });
+        renderFieldErrors(fieldErrors);
 
-        if (!isValid) {
+        if (Object.keys(fieldErrors).length > 0) {
           e.preventDefault();
           if (statusEl) {
-            statusEl.textContent = 'Please fill in all required fields.';
+            statusEl.textContent = 'Check the highlighted fields and try again.';
             statusEl.className = 'c-contact-form__status c-contact-form__status--error';
           }
           const firstInvalid = form.querySelector<HTMLElement>('[aria-invalid="true"]');
@@ -138,7 +173,11 @@ const timestamp = Math.floor(Date.now() / 1000);
             },
           });
 
-          const data = (await response.json().catch(() => null)) as { success?: boolean; error?: string } | null;
+          const data = (await response.json().catch(() => null)) as {
+            success?: boolean;
+            error?: string;
+            fieldErrors?: ContactFieldErrors;
+          } | null;
 
           if (response.ok && data?.success !== false) {
             form.reset();
@@ -147,6 +186,11 @@ const timestamp = Math.floor(Date.now() / 1000);
               statusEl.className = 'c-contact-form__status c-contact-form__status--success';
             }
           } else {
+            if (data?.fieldErrors) {
+              renderFieldErrors(data.fieldErrors);
+              const firstInvalid = form.querySelector<HTMLElement>('[aria-invalid="true"]');
+              firstInvalid?.focus();
+            }
             const errorMsg = data?.error || 'Unable to send your message. Please try again later.';
             if (statusEl) {
               statusEl.textContent = errorMsg;
@@ -211,7 +255,7 @@ const timestamp = Math.floor(Date.now() / 1000);
     font-size: var(--text-base);
     color: var(--color-text);
     background: var(--color-surface);
-    border: 1px solid var(--border-subtle);
+    border: var(--border-subtle);
     border-radius: var(--radius-s);
     padding-block: var(--space-2xs);
     padding-inline: var(--space-xs);
@@ -229,7 +273,7 @@ const timestamp = Math.floor(Date.now() / 1000);
 
   .c-contact-form__input[aria-invalid="true"],
   .c-contact-form__textarea[aria-invalid="true"] {
-    border-color: oklch(0.6 0.22 25);
+    border-color: var(--color-error-border);
   }
 
   .c-contact-form__textarea {
@@ -297,20 +341,23 @@ const timestamp = Math.floor(Date.now() / 1000);
   }
 
   .c-contact-form__status--success {
-    color: oklch(0.35 0.12 145);
-    background: oklch(0.95 0.04 145);
-    border: 1px solid oklch(0.85 0.08 145);
+    color: var(--color-success);
+    background: var(--color-success-surface);
+    border: 1px solid var(--color-success-border);
   }
 
   .c-contact-form__status--error {
-    color: oklch(0.35 0.18 25);
-    background: oklch(0.96 0.04 25);
-    border: 1px solid oklch(0.88 0.1 25);
+    color: var(--color-error);
+    background: var(--color-error-surface);
+    border: 1px solid var(--color-error-border);
   }
 
   .c-contact-form__error {
-    display: none;
     font-size: var(--text-xs);
-    color: oklch(0.5 0.2 25);
+    color: var(--color-error);
+  }
+
+  .c-contact-form__error:empty {
+    display: none;
   }
 </style>

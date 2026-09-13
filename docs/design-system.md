@@ -9,7 +9,7 @@ This is the styling contract for the starter. It turns the broader playbook prin
 Keep two layers distinct:
 
 - **Primitives** describe raw choices such as palette values, typefaces, radii, and scale steps.
-- **Semantic aliases** describe intent, such as `--color-bg`, `--color-surface`, `--color-text`, `--color-muted`, `--color-primary`, `--color-accent`, and `--border-subtle`.
+- **Semantic aliases** describe intent, such as `--color-bg`, `--color-surface`, `--color-text`, `--color-muted`, `--color-primary`, `--color-accent`, `--color-success`, `--color-error`, and `--border-subtle`.
 
 Components must consume semantic aliases and shared scale tokens. They must not depend directly on brand-system primitive names such as `--primary` or `--base-dark`, or introduce one-off colour literals where a semantic role is needed.
 
