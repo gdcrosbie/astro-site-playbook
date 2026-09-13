@@ -128,6 +128,22 @@ Used within reusable components placed in dynamic grid columns:
 }
 ```
 
+### 3. "Bring Your Own Tokens" (BYOT) & Semantic Alias Bridge
+
+Already have an established `tokens.css` from Automatic.css (ACSS), Utopia, Open Props, or a brand system?
+1. Replace `src/styles/tokens.css` with your file.
+2. Append a **Semantic Alias Bridge** at the bottom of `tokens.css` mapping your custom primitives to the semantic schema:
+   ```css
+   :root {
+     --color-primary: var(--primary);
+     --color-bg:      var(--base-light);
+     --color-surface: var(--base-light);
+     --color-text:    var(--base-dark);
+     --font-display:  var(--font-heading);
+   }
+   ```
+3. Modular components (`src/components/*.astro`) always consume semantic aliases (`--color-primary`, `--color-text`, `--space-m`), ensuring 100% portability across projects and instant compatibility with `npm run test:tokens` and `npm run test:contrast`.
+
 ---
 
 ## Forms & Submissions (Cloudflare Pages + Mailgun)

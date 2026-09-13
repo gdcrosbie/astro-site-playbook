@@ -54,6 +54,7 @@ npm run test:contrast
   - **Tier 2 (Component/Container `cqi`)**: Used for modular components (cards, badges, teasers, dialogs) that live inside multi-column grids or sidebars (`--cq-text-*`, `--cq-card-padding`, `--cq-gap`). Components carry their container context via `:has(> &) { container-type: inline-size; }`.
 - **No Utility Soup**: Never use Tailwind or inline `style=""` attributes.
 - **Methodology**: Strict BEM (`.c-block`, `.c-block__element`, `.c-block--modifier`, `.l-section`, `.l-container`).
+- **Component Styling Rule (Strict)**: All components (`src/components/*.astro`) MUST consume Semantic Aliases (`--color-primary`, `--color-text`, `--color-bg`, `--color-muted`, `--space-m`), NEVER raw framework/primitive names (`--primary`, `--base-dark`) or hex values directly. This guarantees 100% component portability across projects.
 - **Mandatory: CSS Logical Properties**:
   - Padding: `padding-block`, `padding-inline` (never top/bottom/left/right).
   - Margins: `margin-block`, `margin-inline` (never top/bottom/left/right).
@@ -62,17 +63,21 @@ npm run test:contrast
 
 ---
 
-## 3. Ingesting Designs (Figma, Paper.design, Claude Design)
+## 3. Token Ingestion & Design Translation (Figma, Paper.design, BYOT)
 
-1. **HTML-First Rule**:
-   - If a Figma Make export contains both `*.html` and `App.tsx`, **always use the `*.html` file as the primary source of truth for markup and layout**.
-   - Do not unwind React JSX/hooks. Only look at `App.tsx` to extract raw data arrays for JSON files.
-2. **Tokens First**:
-   - Before building components, ensure `src/styles/tokens.css` satisfies the schema.
-   - Run `npm run test:tokens`.
-3. **Color Conversion**:
-   - Always convert incoming Hex/sRGB colors from Figma or Paper into native `oklch(L C H)` primitives in `src/styles/tokens.css`.
-   - Verify semantic contrast immediately with `npm run test:contrast`.
+Establish `src/styles/tokens.css` using the **3-Path Token Ingestion Gate**:
+
+1. **Path 1: Bring Your Own `tokens.css` (BYOT)**:
+   - If the developer provides an existing `tokens.css` (e.g. brand system, Automatic.css / SchemaWP kit, Utopia):
+     1. Place the file at `src/styles/tokens.css`.
+     2. Append a **Semantic Alias Bridge** at the bottom of `tokens.css` mapping the developer's primitives (e.g. `--primary`, `--base-dark`) to the semantic schema (`--color-primary: var(--primary); --color-text: var(--base-dark);`).
+     3. Verify immediately: `npm run test:tokens` && `npm run test:contrast`.
+2. **Path 2: Design Ingestion (Figma, Paper.design, Claude Design)**:
+   - **HTML-First Rule**: If a Figma Make export contains both `*.html` and `App.tsx`, always use `*.html` as the primary source of truth for markup and layout. Do not unwind React JSX/hooks.
+   - **Color Conversion**: Always convert incoming Hex/sRGB colors into native `oklch(L C H)` primitives.
+   - Generate two-tier fluid scales (`vw` for canvas, `cqi` for components).
+3. **Path 3: Template Baseline**:
+   - Use the template's built-in `src/styles/tokens.css` as-is.
 
 ---
 
