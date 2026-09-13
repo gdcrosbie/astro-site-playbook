@@ -11,7 +11,7 @@
   --c-surface-dim: oklch(from var(--c-surface) 0.96 c h);
   --c-surface-tint: oklch(from var(--c-primary) 0.93 c h);
   --c-text-muted: oklch(from var(--c-text) 0.45 c h);
-  --c-text-dim: oklch(from var(--c-text) 0.70 c h);
+  --c-text-dim: oklch(from var(--c-text) 0.52 c h);
 
   /* ════════════════════════════════════════════════════════════════════════════
      2. SEMANTIC ROLES (What Components & Layouts Consume)

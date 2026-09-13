@@ -31,6 +31,9 @@ npm run test:a11y
 
 # Verify tokens contract
 npm run test:tokens
+
+# Verify WCAG 2.2 AA color contrast on semantic tokens
+npm run test:contrast
 ```
 
 ---
@@ -99,6 +102,7 @@ npm run test:tokens
 ## 6. Verification Checklist
 
 Before reporting completion on any build or refactor, you MUST execute:
+- [ ] `npm run test:contrast` (0 WCAG 2.2 AA contrast violations)
 - [ ] `npm run check` (0 errors, 0 warnings, 0 hints)
 - [ ] `npm run build` (Successful static pre-render)
 - [ ] `npm run test:a11y` (0 WCAG 2.2 AA violations)

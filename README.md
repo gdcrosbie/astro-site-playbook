@@ -46,8 +46,9 @@ npm run dev
 | `npm run preview` | Previews production build locally |
 | `npm run check` | Runs Astro and TypeScript diagnostics |
 | `npm run test:tokens` | Verifies Tier 1 and Tier 2 tokens in `src/styles/tokens.css` |
+| `npm run test:contrast` | Verifies WCAG 2.2 AA contrast on semantic tokens (Hex, OKLCH, relative colors) |
 | `npm run test:a11y` | Runs headless `axe-core` WCAG 2.2 AA audit on `dist/` |
-| `npm test` | Runs the full verification pipeline (`test:tokens` + `check` + `build` + `test:a11y`) |
+| `npm test` | Runs the full verification pipeline (`test:tokens` + `test:contrast` + `check` + `build` + `test:a11y`) |
 
 ---
 
@@ -59,6 +60,7 @@ astro-starter/
 │   └── ci.yml                 # CI pipeline running lint, build, and a11y tests
 ├── scripts/
 │   ├── test-tokens.cjs        # Token schema validation script
+│   ├── test-contrast.cjs      # Automated WCAG 2.2 color contrast validator
 │   └── run-axe.cjs            # Headless axe-core a11y runner using JSDOM
 ├── src/
 │   ├── components/
