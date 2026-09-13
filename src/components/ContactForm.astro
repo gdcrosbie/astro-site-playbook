@@ -1,0 +1,316 @@
+---
+interface Props {
+  action?: string;
+  turnstileSiteKey?: string;
+}
+
+const { action = '/api/contact', turnstileSiteKey } = Astro.props;
+const timestamp = Math.floor(Date.now() / 1000);
+---
+
+<form class="c-contact-form" method="POST" action={action} novalidate>
+  <!-- Anti-spam: Honeypot & Timestamp -->
+  <div class="c-contact-form__honey" aria-hidden="true">
+    <label for="contact-form-hp">Do not fill this out if human</label>
+    <input type="text" id="contact-form-hp" name="_hp" tabindex="-1" autocomplete="off" />
+    <input type="hidden" name="_timestamp" value={timestamp} />
+  </div>
+
+  <div class="c-contact-form__field">
+    <label for="contact-form-name" class="c-contact-form__label">
+      Name <span class="c-contact-form__required" aria-hidden="true">*</span>
+    </label>
+    <input
+      type="text"
+      id="contact-form-name"
+      name="name"
+      required
+      autocomplete="name"
+      class="c-contact-form__input"
+    />
+    <span class="c-contact-form__error" id="name-error" aria-live="polite"></span>
+  </div>
+
+  <div class="c-contact-form__field">
+    <label for="contact-form-email" class="c-contact-form__label">
+      Email <span class="c-contact-form__required" aria-hidden="true">*</span>
+    </label>
+    <input
+      type="email"
+      id="contact-form-email"
+      name="email"
+      required
+      autocomplete="email"
+      class="c-contact-form__input"
+    />
+    <span class="c-contact-form__error" id="email-error" aria-live="polite"></span>
+  </div>
+
+  <div class="c-contact-form__field">
+    <label for="contact-form-message" class="c-contact-form__label">
+      Message <span class="c-contact-form__required" aria-hidden="true">*</span>
+    </label>
+    <textarea
+      id="contact-form-message"
+      name="message"
+      rows="5"
+      required
+      class="c-contact-form__textarea"
+    ></textarea>
+    <span class="c-contact-form__error" id="message-error" aria-live="polite"></span>
+  </div>
+
+  {turnstileSiteKey && (
+    <div class="c-contact-form__turnstile">
+      <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="light"></div>
+    </div>
+  )}
+
+  <div class="c-contact-form__actions">
+    <button type="submit" class="c-contact-form__submit">
+      <span class="c-contact-form__submit-text">Send Message</span>
+    </button>
+  </div>
+
+  <div class="c-contact-form__status" role="status" aria-live="polite"></div>
+</form>
+
+{turnstileSiteKey && (
+  <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+)}
+
+<script>
+  function initContactForm() {
+    const forms = document.querySelectorAll<HTMLFormElement>('.c-contact-form');
+
+    forms.forEach((form) => {
+      const submitBtn = form.querySelector<HTMLButtonElement>('.c-contact-form__submit');
+      const submitText = form.querySelector<HTMLElement>('.c-contact-form__submit-text');
+      const statusEl = form.querySelector<HTMLElement>('.c-contact-form__status');
+
+      form.addEventListener('submit', async (e) => {
+        // Client-side required field validation
+        const nameInput = form.querySelector<HTMLInputElement>('#contact-form-name');
+        const emailInput = form.querySelector<HTMLInputElement>('#contact-form-email');
+        const messageInput = form.querySelector<HTMLTextAreaElement>('#contact-form-message');
+
+        let isValid = true;
+        [nameInput, emailInput, messageInput].forEach((input) => {
+          if (!input) return;
+          if (!input.value.trim()) {
+            input.setAttribute('aria-invalid', 'true');
+            isValid = false;
+          } else {
+            input.removeAttribute('aria-invalid');
+          }
+        });
+
+        if (!isValid) {
+          e.preventDefault();
+          if (statusEl) {
+            statusEl.textContent = 'Please fill in all required fields.';
+            statusEl.className = 'c-contact-form__status c-contact-form__status--error';
+          }
+          const firstInvalid = form.querySelector<HTMLElement>('[aria-invalid="true"]');
+          firstInvalid?.focus();
+          return;
+        }
+
+        // Progressive enhancement: submit via fetch
+        e.preventDefault();
+
+        if (submitBtn) submitBtn.disabled = true;
+        if (submitText) submitText.textContent = 'Sending...';
+        form.setAttribute('aria-busy', 'true');
+
+        if (statusEl) {
+          statusEl.textContent = 'Sending message...';
+          statusEl.className = 'c-contact-form__status c-contact-form__status--pending';
+        }
+
+        try {
+          const formData = new FormData(form);
+          const response = await fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+              Accept: 'application/json',
+            },
+          });
+
+          const data = (await response.json().catch(() => null)) as { success?: boolean; error?: string } | null;
+
+          if (response.ok && data?.success !== false) {
+            form.reset();
+            if (statusEl) {
+              statusEl.textContent = 'Thank you! Your message has been sent successfully.';
+              statusEl.className = 'c-contact-form__status c-contact-form__status--success';
+            }
+          } else {
+            const errorMsg = data?.error || 'Unable to send your message. Please try again later.';
+            if (statusEl) {
+              statusEl.textContent = errorMsg;
+              statusEl.className = 'c-contact-form__status c-contact-form__status--error';
+            }
+          }
+        } catch {
+          if (statusEl) {
+            statusEl.textContent = 'Network error. Please check your connection and try again.';
+            statusEl.className = 'c-contact-form__status c-contact-form__status--error';
+          }
+        } finally {
+          if (submitBtn) submitBtn.disabled = false;
+          if (submitText) submitText.textContent = 'Send Message';
+          form.removeAttribute('aria-busy');
+        }
+      });
+    });
+  }
+
+  // Run on initial load and View Transitions page changes
+  initContactForm();
+  document.addEventListener('astro:page-load', initContactForm);
+</script>
+
+<style>
+  .c-contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
+    max-inline-size: 600px;
+    inline-size: 100%;
+  }
+
+  .c-contact-form__honey {
+    position: absolute;
+    inset-inline-start: -9999px;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+  }
+
+  .c-contact-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+  }
+
+  .c-contact-form__label {
+    font-size: var(--text-s);
+    font-weight: 500;
+    color: var(--color-text);
+  }
+
+  .c-contact-form__required {
+    color: var(--color-primary);
+  }
+
+  .c-contact-form__input,
+  .c-contact-form__textarea {
+    font-family: inherit;
+    font-size: var(--text-base);
+    color: var(--color-text);
+    background: var(--color-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-s);
+    padding-block: var(--space-2xs);
+    padding-inline: var(--space-xs);
+    inline-size: 100%;
+    box-sizing: border-box;
+    transition: border-color 140ms ease, box-shadow 140ms ease;
+  }
+
+  .c-contact-form__input:focus-visible,
+  .c-contact-form__textarea:focus-visible {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px oklch(from var(--color-primary) l c h / 0.2);
+  }
+
+  .c-contact-form__input[aria-invalid="true"],
+  .c-contact-form__textarea[aria-invalid="true"] {
+    border-color: oklch(0.6 0.22 25);
+  }
+
+  .c-contact-form__textarea {
+    resize: vertical;
+    min-block-size: 130px;
+  }
+
+  .c-contact-form__turnstile {
+    min-block-size: 65px;
+  }
+
+  .c-contact-form__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+  }
+
+  .c-contact-form__submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding-block: var(--space-2xs);
+    padding-inline: var(--space-m);
+    font-family: inherit;
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--color-surface);
+    background: var(--color-primary);
+    border: none;
+    border-radius: var(--radius-s);
+    cursor: pointer;
+    transition: opacity 140ms ease, transform 140ms ease;
+  }
+
+  .c-contact-form__submit:hover:not(:disabled) {
+    opacity: 0.92;
+  }
+
+  .c-contact-form__submit:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(from var(--color-primary) l c h / 0.35);
+  }
+
+  .c-contact-form__submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .c-contact-form__status {
+    font-size: var(--text-s);
+    line-height: 1.5;
+    padding-block: var(--space-2xs);
+    padding-inline: var(--space-xs);
+    border-radius: var(--radius-s);
+    empty-cells: hide;
+  }
+
+  .c-contact-form__status:empty {
+    display: none;
+  }
+
+  .c-contact-form__status--pending {
+    color: var(--color-muted);
+    background: var(--color-bg);
+  }
+
+  .c-contact-form__status--success {
+    color: oklch(0.35 0.12 145);
+    background: oklch(0.95 0.04 145);
+    border: 1px solid oklch(0.85 0.08 145);
+  }
+
+  .c-contact-form__status--error {
+    color: oklch(0.35 0.18 25);
+    background: oklch(0.96 0.04 25);
+    border: 1px solid oklch(0.88 0.1 25);
+  }
+
+  .c-contact-form__error {
+    display: none;
+    font-size: var(--text-xs);
+    color: oklch(0.5 0.2 25);
+  }
+</style>
