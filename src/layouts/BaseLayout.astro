@@ -8,12 +8,22 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   description?: string;
+  image?: string;
+  articleDate?: Date;
+  noindex?: boolean;
 }
 
 const {
   title = "Astro Starter — Production-Ready Static Template",
   description = "Performance-first, accessible, and portable Astro starter template with two-tier fluid design tokens.",
+  image = "/images/og-default.jpg",
+  articleDate,
+  noindex = false,
 } = Astro.props;
+
+const siteURL = Astro.site ?? new URL('https://example.com');
+const canonicalURL = new URL(Astro.url.pathname, siteURL);
+const socialImageURL = new URL(image, siteURL);
 ---
 
 <!doctype html>
@@ -22,17 +32,43 @@ const {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content={Astro.generator} />
-    <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Primary Meta Tags -->
+    <title>{title}</title>
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <!-- Open Graph / Facebook / LinkedIn -->
+    <meta property="og:type" content={articleDate ? 'article' : 'website'} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={socialImageURL} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    {articleDate && <meta property="article:published_time" content={articleDate.toISOString()} />}
+
+    <!-- Twitter / X -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalURL} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={socialImageURL} />
 
     <!-- Performance: Preload Primary Font Subsets to Prevent FOUT & CLS -->
     <link rel="preload" href={frauncesWoff2} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={dmSansWoff2} as="font" type="font/woff2" crossorigin />
 
-    <!-- RSS Feed Auto-Discovery -->
-    <link rel="alternate" type="application/rss+xml" title={title} href={new URL('rss.xml', Astro.site ?? 'https://example.com')} />
+    <!-- Sitemap & RSS Auto-Discovery -->
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="alternate" type="application/rss+xml" title={title} href={new URL('rss.xml', siteURL)} />
 
-    <title>{title}</title>
+    <slot name="head" />
   </head>
   <body id="top">
     <a href="#main-content" class="c-skip-link">Skip to main content</a>
