@@ -105,6 +105,12 @@ Astro's internal store indexes entries by ID and sorts alphabetically by default
    const items = (await getCollection('<name>')).map(e => e.data).sort((a, b) => a.order - b.order);
    ```
 
+### RSS Syndication for Pattern A
+When implementing **Pattern A (Editorial Prose)**:
+1. Always provide an automated RSS 2.0 feed using `@astrojs/rss` at `src/pages/rss.xml.ts`.
+2. Ensure `site: 'https://example.com'` is set in `astro.config.mjs` for absolute canonical URLs.
+3. Include auto-discovery in `BaseLayout.astro`: `<link rel="alternate" type="application/rss+xml" title={title} href={new URL('rss.xml', Astro.site)} />`.
+
 ---
 
 ## 5. Forms & Submissions Architecture
