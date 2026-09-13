@@ -14,6 +14,7 @@ A lightweight, accessible, high-performance static starter template for Astro pr
 - **CSS Logical Properties**: Strictly flow-relative properties throughout (`padding-block`, `margin-inline`, `inset`, `inline-size`).
 - **Astro Content Layer & 4-Tier Strategy**: Clear heuristics for Editorial Prose (Markdown), Entity Records (YAML), In-Page Repeaters (JSON), and Global Singletons, backed by strict Zod schemas and alphabetical sorting protection (`order: number`).
 - **Production-Ready Contact Form**: Accessible `ContactForm.astro` with 3-layer anti-spam (honeypot, timestamp heuristic, Turnstile) and Cloudflare Pages Functions (`functions/api/contact.ts`) + Mailgun integration.
+- **Automated RSS 2.0 Feed**: Turnkey `@astrojs/rss` feed generation at `/rss.xml` for Pattern A editorial content with auto-discovery in `BaseLayout.astro`.
 - **WCAG 2.2 AA Out-of-the-Box**: Semantic landmarks, skip links, accessible components, and automated `axe-core` CI tests.
 - **GDPR-Safe**: Zero runtime third-party tracking or CDN requests. All fonts and assets are local/self-hosted.
 - **Multi-Agent Rails**: Built-in `AGENTS.md` and `CLAUDE.md` providing instant context and strict architectural guardrails to AI pair programmers.
@@ -71,11 +72,16 @@ astro-starter/
 │   │   ├── Card.astro         # Modular component with container query tokens
 │   │   └── ContactForm.astro  # Accessible contact form with anti-spam
 │   ├── content/
-│   │   └── sample.json        # Sample Content Layer data with "order": number
+│   │   ├── posts/             # Pattern A: Editorial Prose (Markdown)
+│   │   │   └── welcome.md
+│   │   └── sample.json        # Pattern C: In-page repeater data
 │   ├── layouts/
-│   │   └── BaseLayout.astro   # Root HTML shell with font preloads & skip link
+│   │   └── BaseLayout.astro   # Root HTML shell with font preloads, skip link & RSS
 │   ├── pages/
-│   │   └── index.astro        # Demonstration page
+│   │   ├── posts/
+│   │   │   └── [slug].astro   # Dynamic route for Pattern A posts
+│   │   ├── index.astro        # Demonstration page
+│   │   └── rss.xml.ts         # Automated RSS 2.0 XML feed endpoint
 │   ├── styles/
 │   │   ├── tokens.css         # Two-tier fluid design token system
 │   │   ├── reset.css          # Modern CSS Logical Properties reset
@@ -124,6 +130,50 @@ Used within reusable components placed in dynamic grid columns:
 
 ---
 
+## Forms & Submissions (Cloudflare Pages + Mailgun)
+
+This starter provides a production-grade form handling architecture designed specifically for static Astro sites:
+
+- **Zero SSR Overhead**: Astro stays 100% static (`output: 'static'`). Cloudflare Pages automatically mounts `functions/api/contact.ts` as an edge Worker on `/api/contact`.
+- **3-Layer Anti-Spam Architecture**:
+  1. **Honeypot (`_hp`)**: Hidden input field. If populated, silently returns fake success to discard bots.
+  2. **Timestamp (`_timestamp`)**: Hidden Unix timestamp. Discards instant submissions (< 2s).
+  3. **Cloudflare Turnstile**: Optional non-intrusive challenge verifying against Cloudflare's API via `TURNSTILE_SECRET_KEY`. Zero Google reCAPTCHA tracking cookies.
+- **Dual Response (Progressive Enhancement)**:
+  - If JS is disabled: Issues a standard `303 See Other` redirect to `/contact/success` or `/contact/error`.
+  - If JS is enabled: Submits via `fetch()` with `Accept: application/json` for in-place UI updates and screen reader announcements (`role="status" aria-live="polite"`).
+
+### Required Cloudflare Environment Variables
+
+Configure these in the Cloudflare Dashboard under **Workers & Pages** → **[Your Project]** → **Settings** → **Environment Variables**:
+
+| Variable | Description | Example |
+| :--- | :--- | :--- |
+| `MAILGUN_API_KEY` | Mailgun Sending API Key (Secret) | `key-xxxxxxxxxxxx` |
+| `MAILGUN_DOMAIN` | Verified Mailgun Sending Domain | `mg.yourdomain.com` |
+| `MAILGUN_REGION` | Mailgun Datacenter region | `us` or `eu` |
+| `CONTACT_TO_EMAIL` | Destination mailbox for incoming enquiries | `hello@yourdomain.com` |
+| `TURNSTILE_SECRET_KEY` | *(Optional)* Cloudflare Turnstile Secret Key | `0x4AAAAAA...` |
+
+> [!TIP]
+> **Not deploying to Cloudflare Pages?** You can easily switch to hosted static form endpoints like Formspree or Web3Forms by passing `<ContactForm action="https://formspree.io/f/YOUR_ID" />`.
+
+---
+
+## Content Modeling & RSS Syndication (Pattern A)
+
+Long-form editorial articles (blog posts, case studies, writing) are managed via **Pattern A (Editorial Prose)** using Astro 7 Content Collections:
+
+1. **Storage**: Markdown files in `src/content/posts/*.md`.
+2. **Schema & Loader**: Configured with `glob({ pattern: '**/*.md', base: 'src/content/posts' })` in `src/content.config.ts`.
+3. **Dynamic Routes**: Static detail pages pre-rendered at `src/pages/posts/[slug].astro`.
+4. **Automated RSS 2.0 XML Feed**:
+   - Generated automatically at `/rss.xml` via `src/pages/rss.xml.ts` using `@astrojs/rss`.
+   - Update your canonical domain in `astro.config.mjs` (`site: 'https://example.com'`).
+   - Auto-discovery `<link rel="alternate" type="application/rss+xml" ... />` is built into `BaseLayout.astro`.
+
+---
+
 ## Working with AI Agents
 
 This repository includes both `AGENTS.md` and `CLAUDE.md` at the root directory. AI pair-programming tools (such as Antigravity, Claude Code, Cursor, Windsurf, or Codex) will read these rules automatically and adhere to:
@@ -132,7 +182,8 @@ This repository includes both `AGENTS.md` and `CLAUDE.md` at the root directory.
 3. 4-Tier content modeling strategy and "Stop & Ask" gate for ambiguous dynamic data.
 4. Content Collections sorting protection (`order: number`).
 5. Form handling heuristics (Cloudflare Pages Function + Mailgun baseline and Stop & Ask gate).
-6. WCAG 2.2 AA accessibility requirements.
+6. Automated RSS 2.0 feed syndication for Pattern A editorial content.
+7. WCAG 2.2 AA accessibility requirements.
 
 ---
 

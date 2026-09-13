@@ -1,0 +1,111 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<BaseLayout title={`${entry.data.title} — Astro Starter`} description={entry.data.description}>
+  <main id="main-content">
+    <article class="l-container c-post">
+      <header class="c-post__header">
+        <a href="/" class="c-post__back">← Back to Home</a>
+        <time class="c-post__date" datetime={entry.data.pubDate.toISOString()}>
+          {entry.data.pubDate.toLocaleDateString('en-GB', { dateStyle: 'long' })}
+        </time>
+        <h1 class="c-post__title">{entry.data.title}</h1>
+        <p class="c-post__lead">{entry.data.description}</p>
+      </header>
+
+      <div class="c-post__body">
+        <Content />
+      </div>
+    </article>
+  </main>
+</BaseLayout>
+
+<style>
+  .c-post {
+    padding-block: var(--space-3xl);
+    max-inline-size: 72ch;
+  }
+
+  .c-post__back {
+    display: inline-block;
+    font-size: var(--text-s);
+    color: var(--color-primary);
+    text-decoration: none;
+    margin-block-end: var(--space-l);
+  }
+
+  .c-post__back:hover {
+    text-decoration: underline;
+  }
+
+  .c-post__back:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .c-post__date {
+    display: block;
+    font-size: var(--text-xs);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    margin-block-end: var(--space-2xs);
+  }
+
+  .c-post__title {
+    font-family: var(--font-display);
+    font-size: var(--h1);
+    color: var(--color-primary);
+    line-height: 1.15;
+    margin-block-end: var(--space-s);
+  }
+
+  .c-post__lead {
+    font-size: var(--text-l);
+    color: var(--color-muted);
+    line-height: 1.6;
+    margin-block-end: var(--space-xl);
+    padding-block-end: var(--space-l);
+    border-block-end: 1px solid var(--border-subtle);
+  }
+
+  .c-post__body {
+    font-size: var(--text-base);
+    line-height: 1.8;
+    color: var(--color-text);
+  }
+
+  .c-post__body :global(h2) {
+    font-family: var(--font-display);
+    font-size: var(--h2);
+    color: var(--color-text);
+    margin-block-start: var(--space-xl);
+    margin-block-end: var(--space-xs);
+  }
+
+  .c-post__body :global(p) {
+    margin-block-end: var(--space-m);
+  }
+
+  .c-post__body :global(ul) {
+    padding-inline-start: var(--space-l);
+    margin-block-end: var(--space-m);
+  }
+
+  .c-post__body :global(li) {
+    margin-block-end: var(--space-2xs);
+  }
+</style>
