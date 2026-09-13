@@ -12,17 +12,17 @@ const cards = sampleEntries
 
 <BaseLayout>
   <main id="main-content">
-    <section class="l-section c-hero-starter" aria-labelledby="hero-title">
+    <section class="l-section c-playbook-hero" aria-labelledby="hero-title">
       <div class="l-container">
-        <span class="c-hero-starter__badge">Production Starter</span>
-        <h1 id="hero-title" class="c-hero-starter__title">Fast. Accessible. Portable.</h1>
-        <p class="c-hero-starter__lead">
-          A battle-tested foundation for turning Figma, Paper.design, or generative designs into high-performance static websites.
+        <span class="c-playbook-hero__badge">Astro Site Playbook</span>
+        <h1 id="hero-title" class="c-playbook-hero__title">Build sites with a shared playbook.</h1>
+        <p class="c-playbook-hero__lead">
+          A runnable Astro starter, human-readable methodology, and agent skill for accessible, high-performance website delivery.
         </p>
 
-        <div class="c-hero-starter__grid">
+        <div class="c-playbook-hero__grid">
           {cards.map((card) => (
-            <div class="c-hero-starter__col">
+            <div class="c-playbook-hero__col">
               <Card title={card.title} description={card.description} href={card.href} />
             </div>
           ))}
@@ -32,9 +32,9 @@ const cards = sampleEntries
 
     <section id="contact" class="l-section c-contact-section" aria-labelledby="contact-title">
       <div class="l-container">
-        <h2 id="contact-title" class="c-contact-section__title">Get in touch</h2>
+        <h2 id="contact-title" class="c-contact-section__title">Reference contact flow</h2>
         <p class="c-contact-section__lead">
-          Have a question or looking to kick off a project? Send a message below.
+          An accessible, progressively enhanced form example. Configure or replace its delivery recipe before production.
         </p>
         <ContactForm />
       </div>
@@ -43,13 +43,13 @@ const cards = sampleEntries
 </BaseLayout>
 
 <style>
-  .c-hero-starter {
+  .c-playbook-hero {
     min-block-size: 80vh;
     display: flex;
     align-items: center;
   }
 
-  .c-hero-starter__badge {
+  .c-playbook-hero__badge {
     display: inline-block;
     font-size: var(--text-xs);
     letter-spacing: 0.15em;
@@ -59,7 +59,7 @@ const cards = sampleEntries
     margin-block-end: var(--space-s);
   }
 
-  .c-hero-starter__title {
+  .c-playbook-hero__title {
     font-family: var(--font-display);
     font-size: var(--h1);
     line-height: 1.1;
@@ -68,7 +68,7 @@ const cards = sampleEntries
     max-inline-size: 18ch;
   }
 
-  .c-hero-starter__lead {
+  .c-playbook-hero__lead {
     font-size: var(--text-l);
     color: var(--color-muted);
     line-height: 1.6;
@@ -76,19 +76,19 @@ const cards = sampleEntries
     margin-block-end: var(--space-2xl);
   }
 
-  .c-hero-starter__grid {
+  .c-playbook-hero__grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: var(--space-l);
   }
 
-  .c-hero-starter__col {
+  .c-playbook-hero__col {
     display: flex;
     flex-direction: column;
   }
 
   @media (max-width: 900px) {
-    .c-hero-starter__grid {
+    .c-playbook-hero__grid {
       grid-template-columns: 1fr;
     }
   }
