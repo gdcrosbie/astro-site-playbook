@@ -132,6 +132,12 @@ const colorText = vars['--color-text'] || vars['--c-text'];
 const colorMuted = vars['--color-muted'] || vars['--c-text-muted'];
 const colorDim = vars['--color-dim'] || vars['--c-text-dim'];
 const colorPrimary = vars['--color-primary'] || vars['--c-primary'];
+const colorSuccess = vars['--color-success'];
+const colorSuccessSurface = vars['--color-success-surface'];
+const colorSuccessBorder = vars['--color-success-border'];
+const colorError = vars['--color-error'];
+const colorErrorSurface = vars['--color-error-surface'];
+const colorErrorBorder = vars['--color-error-border'];
 
 const pairings = [
   { name: '--color-text on --color-bg', fg: colorText, bg: colorBg, min: 4.5 },
@@ -143,6 +149,20 @@ const pairings = [
 
 if (colorPrimary) {
   pairings.push({ name: '--color-primary on --color-bg', fg: colorPrimary, bg: colorBg, min: 4.5 });
+}
+
+if (colorSuccess && colorSuccessSurface && colorSuccessBorder) {
+  pairings.push(
+    { name: '--color-success on --color-success-surface', fg: colorSuccess, bg: colorSuccessSurface, min: 4.5 },
+    { name: '--color-success-border on --color-success-surface', fg: colorSuccessBorder, bg: colorSuccessSurface, min: 3 },
+  );
+}
+
+if (colorError && colorErrorSurface && colorErrorBorder) {
+  pairings.push(
+    { name: '--color-error on --color-error-surface', fg: colorError, bg: colorErrorSurface, min: 4.5 },
+    { name: '--color-error-border on --color-error-surface', fg: colorErrorBorder, bg: colorErrorSurface, min: 3 },
+  );
 }
 
 console.log('=== WCAG 2.2 COLOR CONTRAST AUDIT ===\n');

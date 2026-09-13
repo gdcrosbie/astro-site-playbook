@@ -6,6 +6,12 @@
   --c-accent: oklch(0.693 0.089 81.8);   /* Warm Ochre (#b8975a) */
   --c-surface: oklch(0.957 0.012 79.8);  /* Clean Parchment (#f5f0e8) */
   --c-text: oklch(0.284 0.007 106.8);    /* Deep Charcoal (#2a2a26) */
+  --c-success: oklch(0.35 0.12 145);
+  --c-success-surface: oklch(0.95 0.04 145);
+  --c-success-border: oklch(0.60 0.12 145);
+  --c-error: oklch(0.35 0.18 25);
+  --c-error-surface: oklch(0.96 0.04 25);
+  --c-error-border: oklch(0.60 0.14 25);
 
   /* Derived Tones (Generated via oklch relative syntax) */
   --c-surface-dim: oklch(from var(--c-surface) 0.96 c h);
@@ -24,6 +30,12 @@
   --color-dim: var(--c-text-dim);
   --color-primary: var(--c-primary);
   --color-accent: var(--c-accent);
+  --color-success: var(--c-success);
+  --color-success-surface: var(--c-success-surface);
+  --color-success-border: var(--c-success-border);
+  --color-error: var(--c-error);
+  --color-error-surface: var(--c-error-surface);
+  --color-error-border: var(--c-error-border);
 
   --border-subtle: 1px solid color-mix(in srgb, var(--color-text) 12%, transparent);
   --border-strong: 1px solid color-mix(in srgb, var(--color-text) 25%, transparent);

@@ -1,0 +1,18 @@
+---
+import FormResult from '../../components/FormResult.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Message sent — Astro Starter"
+  description="Your message was sent successfully."
+  noindex={true}
+>
+  <FormResult
+    eyebrow="Message sent"
+    title="Thank you"
+    message="Your message has been sent successfully."
+    linkText="Return home"
+    linkHref="/"
+  />
+</BaseLayout>
