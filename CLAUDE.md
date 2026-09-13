@@ -80,7 +80,7 @@ npm run test:contrast
 
 Dynamic content must be modeled according to the **4-Tier Content Decision Tree**:
 
-| Pattern | Storage Structure | Astro 5 Loader | When to Use |
+| Pattern | Storage Structure | Astro 7 Loader | When to Use |
 | :--- | :--- | :--- | :--- |
 | **Pattern A: Editorial Prose** | `src/content/<name>/*.md` | `glob({ pattern: '**/*.md' })` | Articles, blog posts, case studies, rich documentation with Markdown body and dedicated URLs (`/writing/[slug]`). |
 | **Pattern B: Entity Records** | `src/content/<name>/*.yaml` | `glob({ pattern: '**/*.yaml' })` | Modular entities (Services, Case Studies, Team) that have dedicated detail pages (`/services/[slug]`) or will be managed individually via a Git CMS. Prefer YAML for clean multiline text without JSON escaping. |
