@@ -1,13 +1,13 @@
 :root {
   /* ════════════════════════════════════════════════════════════════════════════
-     1. COLOR PRIMITIVES (Raw Palette from Design Source)
+     1. COLOR PRIMITIVES (Native OKLCH — Raw Palette from Design Source)
      ════════════════════════════════════════════════════════════════════════════ */
-  --c-primary: #4a5a4e;
-  --c-accent: #b8975a;
-  --c-surface: #f5f0e8;
-  --c-text: #2a2a26;
+  --c-primary: oklch(0.450 0.028 152.8); /* Forest Slate (#4a5a4e) */
+  --c-accent: oklch(0.693 0.089 81.8);   /* Warm Ochre (#b8975a) */
+  --c-surface: oklch(0.957 0.012 79.8);  /* Clean Parchment (#f5f0e8) */
+  --c-text: oklch(0.284 0.007 106.8);    /* Deep Charcoal (#2a2a26) */
 
-  /* Derived Tones (Generated via oklch or color-mix) */
+  /* Derived Tones (Generated via oklch relative syntax) */
   --c-surface-dim: oklch(from var(--c-surface) 0.96 c h);
   --c-surface-tint: oklch(from var(--c-primary) 0.93 c h);
   --c-text-muted: oklch(from var(--c-text) 0.45 c h);

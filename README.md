@@ -86,7 +86,10 @@ astro-starter/
 
 ## Design Token Architecture
 
-Tokens are authored in `src/styles/tokens.css` using fluid `clamp()` formulas:
+Tokens are authored in `src/styles/tokens.css` using native `oklch()` color formulas and fluid `clamp()` scales:
+
+- **Color Tokens (Native OKLCH)**: All raw primitives use `oklch(L C H)` for wide Display P3 gamut support and predictable perceptual contrast matching WCAG 2.2 Level AA. Derived tones leverage CSS Relative Colors (`oklch(from var(...) calc(l - 0.05) c h)`).
+- **Scale Tokens (Two-Tier Fluid System)**:
 
 ### 1. Viewport Tokens (Tier 1)
 Used on layout landmarks, page wrappers, and primary section headings:

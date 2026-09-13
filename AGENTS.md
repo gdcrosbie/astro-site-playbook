@@ -41,6 +41,12 @@ npm run test:contrast
 ## 2. Design Tokens & Styling Contract
 
 - **Token Source**: `src/styles/tokens.css` (imported via `src/styles/global.css`).
+- **Color Format: Native OKLCH (Mandatory)**:
+  - All color primitives in `src/styles/tokens.css` must be authored in native `oklch(L C H)` format.
+  - Never use raw Hex or RGB in component stylesheets or token definitions.
+  - **Perceptual Uniformity**: OKLCH lightness `L` predictably correlates with visual contrast, ensuring compliance with WCAG 2.2 AA (normal text ≥ 4.5:1, large/UI ≥ 3.0:1).
+  - **Wide Gamut**: Leverages Display P3 on modern screens without color clipping.
+  - **Derived Tones**: Use CSS Relative Color syntax: `oklch(from var(--c-surface) calc(l - 0.05) c h)`.
 - **Token Schema**: All components must consume semantic tokens:
   - Colors: `--color-bg`, `--color-surface`, `--color-text`, `--color-muted`, `--border-subtle`.
 - **Two-Tier Fluid Scale System**:
@@ -64,6 +70,9 @@ npm run test:contrast
 2. **Tokens First**:
    - Before building components, ensure `src/styles/tokens.css` satisfies the schema.
    - Run `npm run test:tokens`.
+3. **Color Conversion**:
+   - Always convert incoming Hex/sRGB colors from Figma or Paper into native `oklch(L C H)` primitives in `src/styles/tokens.css`.
+   - Verify semantic contrast immediately with `npm run test:contrast`.
 
 ---
 
