@@ -1,0 +1,79 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Card from '../components/Card.astro';
+import { getCollection } from 'astro:content';
+
+const sampleEntries = await getCollection('sample');
+const cards = sampleEntries
+  .map((e) => e.data)
+  .sort((a, b) => a.order - b.order);
+---
+
+<BaseLayout>
+  <main id="main-content">
+    <section class="l-section c-hero-starter">
+      <div class="l-container">
+        <span class="c-hero-starter__badge">Production Starter</span>
+        <h1 class="c-hero-starter__title">Fast. Accessible. Portable.</h1>
+        <p class="c-hero-starter__lead">
+          A battle-tested foundation for turning Figma, Paper.design, or generative designs into high-performance static websites.
+        </p>
+
+        <div class="c-hero-starter__grid">
+          {cards.map((card) => (
+            <div class="c-hero-starter__col">
+              <Card title={card.title} description={card.description} href={card.href} />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .c-hero-starter {
+    min-block-size: 80vh;
+    display: flex;
+    align-items: center;
+  }
+
+  .c-hero-starter__badge {
+    display: inline-block;
+    font-size: var(--text-xs);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    font-weight: 600;
+    margin-block-end: var(--space-s);
+  }
+
+  .c-hero-starter__title {
+    font-family: var(--font-display);
+    font-size: var(--h1);
+    line-height: 1.1;
+    color: var(--color-primary);
+    margin-block-end: var(--space-m);
+    max-inline-size: 18ch;
+  }
+
+  .c-hero-starter__lead {
+    font-size: var(--text-l);
+    color: var(--color-muted);
+    line-height: 1.6;
+    max-inline-size: 45ch;
+    margin-block-end: var(--space-2xl);
+  }
+
+  .c-hero-starter__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-l);
+  }
+
+  @media (max-width: 900px) {
+    .c-hero-starter__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

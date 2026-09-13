@@ -1,0 +1,38 @@
+---
+import '@fontsource-variable/fraunces';
+import '@fontsource-variable/dm-sans';
+import frauncesWoff2 from '@fontsource-variable/fraunces/files/fraunces-latin-wght-normal.woff2?url';
+import dmSansWoff2 from '@fontsource-variable/dm-sans/files/dm-sans-latin-wght-normal.woff2?url';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Astro Starter — Production-Ready Static Template",
+  description = "Performance-first, accessible, and portable Astro starter template with two-tier fluid design tokens.",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Performance: Preload Primary Font Subsets to Prevent FOUT & CLS -->
+    <link rel="preload" href={frauncesWoff2} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={dmSansWoff2} as="font" type="font/woff2" crossorigin />
+
+    <title>{title}</title>
+  </head>
+  <body id="top">
+    <a href="#main-content" class="c-skip-link">Skip to main content</a>
+    <slot />
+  </body>
+</html>

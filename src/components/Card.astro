@@ -1,0 +1,70 @@
+---
+export interface Props {
+  title: string;
+  description: string;
+  href?: string;
+  as?: 'h2' | 'h3' | 'h4';
+}
+
+const { title, description, href = '#', as: Heading = 'h2' } = Astro.props;
+---
+
+<article class="c-card">
+  <div class="c-card__content">
+    <Heading class="c-card__title">{title}</Heading>
+    <p class="c-card__description">{description}</p>
+  </div>
+  <a href={href} class="c-card__link" aria-label={"Read more about " + title}>
+    Learn more <span aria-hidden="true">&rarr;</span>
+  </a>
+</article>
+
+<style>
+  /* The direct parent becomes the query container */
+  :has(> .c-card) {
+    container-type: inline-size;
+  }
+
+  .c-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--cq-gap);
+    padding: var(--cq-card-padding);
+    background-color: var(--color-surface);
+    border: var(--border-subtle);
+    border-radius: var(--radius-m);
+    transition: transform var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  .c-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-accent);
+  }
+
+  .c-card__title {
+    font-family: var(--font-display);
+    font-size: var(--cq-h3);
+    line-height: 1.25;
+    margin-block-end: var(--space-xs);
+    color: var(--color-primary);
+  }
+
+  .c-card__description {
+    font-size: var(--cq-text-m);
+    line-height: 1.6;
+    color: var(--color-muted);
+  }
+
+  .c-card__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    font-size: var(--cq-text-s);
+    font-weight: 500;
+    color: var(--color-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-block-start: var(--space-s);
+  }
+</style>

@@ -1,0 +1,23 @@
+[
+  {
+    "id": "performance",
+    "title": "100/100 Performance",
+    "description": "Pre-rendered static HTML, self-hosted WebP images, and preloaded WOFF2 variable fonts deliver instant edge loads.",
+    "href": "#",
+    "order": 1
+  },
+  {
+    "id": "accessibility",
+    "title": "WCAG 2.2 AA Out of the Box",
+    "description": "Built-in skip links, semantic landmarks, keyboard focus rings, and automated axe-core regression testing.",
+    "href": "#",
+    "order": 2
+  },
+  {
+    "id": "tokens",
+    "title": "Two-Tier Fluid Tokens",
+    "description": "Canvas-level viewport scales paired with container-query-relative (cqi) scales for truly portable components.",
+    "href": "#",
+    "order": 3
+  }
+]
