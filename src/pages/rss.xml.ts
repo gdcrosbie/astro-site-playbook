@@ -7,8 +7,8 @@ export async function GET(context: APIContext) {
     .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
 
   return rss({
-    title: 'Astro Starter RSS Feed',
-    description: 'Latest articles and long-form editorial updates from Astro Starter.',
+    title: 'Astro Site Playbook RSS Feed',
+    description: 'Latest articles and long-form editorial updates from Astro Site Playbook.',
     site: context.site ?? 'https://example.com',
     items: posts.map((post) => ({
       title: post.data.title,

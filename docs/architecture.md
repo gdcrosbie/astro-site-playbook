@@ -55,3 +55,5 @@ The starter intentionally contains placeholders. At minimum, replace:
 - sample content, brand tokens, and fonts as required.
 
 The included `/contact/success` and `/contact/error` pages complete the default non-JavaScript redirect flow. Customise their copy and destinations alongside the rest of the form before launch.
+
+Use [Getting started](getting-started.md) for a new project and [Customising a project](customization.md) for the complete launch checklist. Provider-specific setup for the included form lives in the [Cloudflare Pages and Mailgun recipe](recipes/cloudflare-mailgun-contact.md).

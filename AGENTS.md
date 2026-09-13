@@ -1,4 +1,4 @@
-# Agent adapter: Astro Starter
+# Agent adapter: Astro Site Playbook
 
 This file is the short operational entry point for coding agents. The canonical human-readable methodology is [docs/playbook.md](docs/playbook.md); read it and the relevant linked guide before making changes. `CLAUDE.md` intentionally points to this same adapter so agent-specific instructions cannot drift.
 
@@ -18,7 +18,7 @@ Do not weaken accessibility, security, privacy, or validation obligations when r
 - Preserve static output and vanilla progressive enhancement unless an explicit requirement calls for another architecture.
 - Keep components in `src/components/*.astro` with scoped styles; reserve global styles for resets, document defaults, tokens, and shared layout objects.
 - Keep secrets out of source and browser bundles.
-- Do not rename the project, change providers, or add dependencies as an incidental part of another task.
+- Do not change the project identity, providers, or dependencies as an incidental part of another task.
 
 ## Required contracts
 
@@ -41,6 +41,7 @@ npm run build
 npm run test:social-image
 npm run test:forms   # form markup and endpoint contract
 npm run test:a11y
+npm run test:template # isolated release/adoption check
 npm test             # complete verification pipeline
 ```
 

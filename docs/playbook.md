@@ -112,8 +112,11 @@ This covers the token contract, semantic colour contrast, Astro/TypeScript diagn
 
 ## Supporting guides
 
+- [Getting started](getting-started.md)
+- [Customising a project](customization.md)
 - [Architecture and implementation defaults](architecture.md)
 - [Design system and CSS](design-system.md)
 - [Content modelling](content-modeling.md)
 - [Forms and submissions](forms.md)
 - [Quality, accessibility, performance, and privacy](quality.md)
+- [Cloudflare Pages and Mailgun contact form](recipes/cloudflare-mailgun-contact.md)

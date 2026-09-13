@@ -36,7 +36,7 @@ Whichever option is chosen:
 - Announce form-level progress and results with an appropriate live status region.
 - Preserve the user's entered values when a recoverable error occurs.
 
-## Included implementation default
+## Included reference recipe
 
 The starter includes:
 
@@ -56,3 +56,5 @@ Before using this path in production:
 - configure and test the chosen Mailgun region and domain;
 - test the Turnstile-enabled and Turnstile-disabled paths as applicable;
 - review the form fields and handling against the project's privacy obligations.
+
+See [Cloudflare Pages and Mailgun contact form](recipes/cloudflare-mailgun-contact.md) for the complete setup and replacement boundaries.

@@ -1,6 +1,6 @@
 ---
 name: astro-site-builder
-description: Build or adapt static Astro sites derived from this repository using its canonical playbook. Use for design translation, component construction, content modelling, forms, accessibility, performance, or verification work in the Astro starter; do not use as generic Astro documentation for unrelated architectures.
+description: Build or adapt static Astro sites derived from this repository using its canonical playbook. Use for design translation, component construction, content modelling, forms, accessibility, performance, or verification work with Astro Site Playbook; do not use as generic Astro documentation for unrelated architectures.
 ---
 
 # Astro Site Builder
@@ -29,4 +29,4 @@ The guides own the rules. If this skill and the playbook diverge, follow the pla
 6. Update the canonical guide when an architecture decision changes the methodology. Keep agent adapters and this skill short.
 7. Run `npm test` before reporting completion, plus relevant manual checks from the quality guide. Report any check that cannot run and its remaining risk.
 
-Do not rename the project, change providers, introduce a client framework, or add dependencies incidentally. Those are visible project decisions, not implementation shortcuts.
+Do not change the project identity or providers, introduce a client framework, or add dependencies incidentally. Those are visible project decisions, not implementation shortcuts.

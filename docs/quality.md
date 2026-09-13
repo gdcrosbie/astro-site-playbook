@@ -46,9 +46,12 @@ Use standard `npm`; do not switch package managers without an explicit project d
 | `npm run test:social-image` | Checks the built default Open Graph image and its dimensions. |
 | `npm run test:forms` | Checks built form semantics and the submission endpoint contract. |
 | `npm run test:a11y` | Audits the built HTML with axe-core. |
+| `npm run test:template` | Installs and tests an isolated copy for release-level adoption checks. |
 | `npm test` | Runs all of the checks above in repository order. |
 
 Run `npm test` before reporting a build or refactor complete. If a failure predates the current change, do not hide it: identify the failure, show that the change did not worsen it where possible, and record the remaining risk.
+
+Run `npm run test:template` before releases or substantial changes to the repository's starter structure. It is intentionally separate from the ordinary suite because it performs a second clean dependency installation and complete test run.
 
 ## Manual verification
 

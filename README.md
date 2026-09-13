@@ -1,194 +1,127 @@
-# Astro Starter (Production Template)
+# Astro Site Playbook
 
-A lightweight, accessible, high-performance static starter template for Astro projects, engineered for seamless collaboration with AI coding agents (Antigravity, Claude Code, Cursor, Windsurf) and human developers alike.
+An opinionated system for delivering accessible, high-performance, content-led Astro websites—with people and coding agents working from the same source of truth.
 
----
+It combines a runnable static starter, a human-readable delivery playbook, a repository-local agent skill, and automated quality gates. The goal is not simply to start an Astro project quickly; it is to keep design translation, content architecture, accessibility, performance, privacy, and implementation decisions coherent through delivery.
 
-## Table of Contents
+## What this repository contains
 
-- [Quick Start](#quick-start)
-- [The Playbook](#the-playbook)
-- [Available Scripts](#available-scripts)
-- [Installed Packages & Core Stack](#installed-packages--core-stack)
-- [Project Structure](#project-structure)
-- [Key Features](#key-features)
-- [Architecture & Guides](#architecture--guides)
-- [Working with AI Agents](#working-with-ai-agents)
-- [License](#license)
+| Part | Role |
+| --- | --- |
+| **Starter** | A working Astro site with static output, content collections, semantic tokens, accessible components, SEO metadata, RSS, sitemap, and a reference contact flow. |
+| **Playbook** | `docs/playbook.md` defines the principles, workflow, decision gates, and definition of done. |
+| **Focused guides** | Detailed contracts for architecture, design systems, content modelling, forms, quality, setup, and customisation. |
+| **Agent adapters** | `AGENTS.md`, its `CLAUDE.md` symlink, and `skills/astro-site-builder/SKILL.md` route agents to the canonical guidance. |
+| **Verification** | CI and local checks cover documentation, tokens, contrast, types, builds, social metadata, forms, and accessibility. |
 
----
+## Who it is for
 
-## Quick Start
+Astro Site Playbook is suited to developers, designers, freelancers, and small teams delivering mostly static marketing, editorial, portfolio, brochure, documentation, or content-rich sites—especially when coding agents participate in the work.
 
-### Use as a Template
+It is intentionally opinionated: static-first Astro, progressive enhancement, BEM, CSS logical properties, semantic OKLCH tokens, structured content, WCAG 2.2 AA, local production assets, and explicit human decision gates.
+
+## When not to use it
+
+Choose another foundation when the primary requirement is a highly stateful application, authenticated dashboard, real-time collaboration product, server-rendered personalisation system, or a client-framework architecture that deliberately conflicts with these conventions.
+
+The playbook can still inform those projects, but this starter should not be forced into a role it was not designed to fill.
+
+## Start a new site
+
+Requirements: Node.js 22.13 or newer, npm, and Git.
 
 ```bash
-# Using GitHub CLI
-gh repo create my-astro-site --template gdcrosbie/astro-starter --public --clone
+gh repo create my-astro-site \
+  --template gdcrosbie/astro-site-playbook \
+  --private \
+  --clone
 cd my-astro-site
-
-# Install dependencies
 npm install
-
-# Start development server
+npm test
 npm run dev
 ```
 
----
+Use `--public` if the new repository should be public. See [Getting started](docs/getting-started.md) for the first architecture decisions, then work through [Customising a project](docs/customization.md) before launch.
 
-## The Playbook
+## How the playbook works
 
-The starter is backed by a human-readable delivery methodology in [`docs/playbook.md`](docs/playbook.md). It separates:
+Guidance is deliberately split into three layers:
 
-- durable principles, such as static-first delivery, progressive enhancement, accessibility, performance, privacy, and evidence-based completion;
-- repository conventions, such as BEM, CSS logical properties, semantic tokens, and the four-pattern content model;
-- replaceable implementation defaults, such as Cloudflare Pages, Mailgun, Turnstile, the sample fonts, and the example domain.
+1. **Principles** protect outcomes such as accessibility, progressive enhancement, privacy, performance, and evidence-based completion.
+2. **Repository conventions** keep this implementation coherent: Astro static output, BEM, logical properties, semantic tokens, validated content, and npm-based verification.
+3. **Implementation defaults** are replaceable examples: Cloudflare Pages, Mailgun, Turnstile, the sample fonts and palette, and `example.com`.
 
-Read the playbook before adapting the starter. Supporting guides cover architecture, design tokens, content modelling, forms, and verification without duplicating those rules across agent files.
+The [Astro Site Playbook](docs/playbook.md) is canonical. Agent files are adapters, not parallel copies.
 
----
+## Documentation
 
-## Available Scripts
+| Guide | Use it for |
+| --- | --- |
+| [Getting started](docs/getting-started.md) | Creating a site and making the first decisions. |
+| [Customising a project](docs/customization.md) | Replacing identity, content, tokens, metadata, services, and launch placeholders. |
+| [Architecture and defaults](docs/architecture.md) | Distinguishing binding conventions from replaceable technology choices. |
+| [Design system and CSS](docs/design-system.md) | Tokens, OKLCH, BEM, logical properties, container scales, and design ingestion. |
+| [Content modelling](docs/content-modeling.md) | Choosing among editorial prose, entities, repeaters, and global singletons. |
+| [Forms and submissions](docs/forms.md) | Provider-independent form and accessibility contracts. |
+| [Quality](docs/quality.md) | Accessibility, performance, privacy, automated checks, and manual verification. |
+| [Cloudflare Pages and Mailgun recipe](docs/recipes/cloudflare-mailgun-contact.md) | Configuring, replacing, or removing the included contact delivery reference. |
 
-| Command | Action |
-| :--- | :--- |
-| `npm run dev` | Starts local dev server at `http://localhost:4321` |
-| `npm run build` | Builds static production bundle into `dist/` |
-| `npm run preview` | Previews production build locally |
-| `npm run check` | Runs Astro and TypeScript diagnostics |
-| `npm run test:docs` | Verifies that local links in repository documentation resolve |
-| `npm run test:tokens` | Verifies Tier 1 and Tier 2 tokens in `src/styles/tokens.css` |
-| `npm run test:contrast` | Verifies WCAG 2.2 AA contrast on semantic tokens (Hex, OKLCH, relative colors) |
-| `npm run test:social-image` | Verifies the built default Open Graph image exists and is a 1200×630 JPEG |
-| `npm run test:forms` | Tests built form semantics, validation, redirects, anti-spam, and Mailgun delivery |
-| `npm run test:a11y` | Runs headless `axe-core` WCAG 2.2 AA audit on `dist/` |
-| `npm test` | Runs the full documentation, token, contrast, type, build, form, and accessibility pipeline |
+## Included implementation
 
----
+- Astro static output with no client-framework runtime.
+- Astro Content Layer examples for Markdown prose and JSON repeaters.
+- Two-tier fluid design tokens: viewport scales for the page and container scales for components.
+- Scoped Astro component styles using BEM and logical properties.
+- Self-hosted variable fonts and a verified 1200×630 default social image.
+- Canonical, Open Graph, Twitter Card, sitemap, RSS, robots, and 404 foundations.
+- Accessible contact UI with shared browser/server validation and non-JavaScript outcomes.
+- A Cloudflare Pages Function, Mailgun delivery, and optional Turnstile as a reference recipe.
 
-## Installed Packages & Core Stack
+The contact provider and deployment host are not universal requirements. No production destination or provider credentials are configured automatically.
 
-This template maintains a lean, performance-first dependency footprint with zero runtime framework overhead:
+## Commands
 
-| Package | Version | Purpose |
-| :--- | :--- | :--- |
-| [`astro`](https://astro.build/) | `^7.3.1` | Static pre-rendering framework with zero runtime JS by default and the Astro 7 Content Layer. |
-| [`@astrojs/sitemap`](https://docs.astro.build/en/guides/integrations-guide/sitemap/) | `^3.7.4` | Automated XML sitemap generation (`/sitemap-index.xml`) on build, excluding `404.astro` (`noindex={true}`). |
-| [`@astrojs/rss`](https://docs.astro.build/en/recipes/rss/) | `^4.0.19` | Automated RSS 2.0 XML feed endpoint generation at `/rss.xml` for editorial prose and articles. |
-| [`@fontsource-variable/fraunces`](https://fontsource.org/fonts/fraunces) | `^5.3.0` | Self-hosted variable serif display font with zero third-party tracking or CDN overhead. |
-| [`@fontsource-variable/dm-sans`](https://fontsource.org/fonts/dm-sans) | `^5.3.0` | Self-hosted variable sans-serif body font preloaded in `BaseLayout.astro` to eliminate FOUT and CLS. |
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start the local development server. |
+| `npm run preview` | Preview the production build. |
+| `npm run check` | Run Astro and TypeScript diagnostics. |
+| `npm run build` | Build the static production output. |
+| `npm run test:docs` | Verify local documentation links. |
+| `npm run test:tokens` | Verify the design-token contract. |
+| `npm run test:contrast` | Check configured semantic colour pairings. |
+| `npm run test:social-image` | Check the built default social image and dimensions. |
+| `npm run test:forms` | Test built form semantics and endpoint behaviour. |
+| `npm run test:a11y` | Run the axe-core audit against built HTML. |
+| `npm run test:template` | Install and test a clean temporary copy of the repository. |
+| `npm test` | Run the complete verification pipeline. |
 
----
+## Project shape
 
-## Project Structure
-
-```
-astro-starter/
-├── .github/workflows/
-│   └── ci.yml                 # CI pipeline running lint, build, and a11y tests
-├── docs/
-│   ├── playbook.md            # Canonical human-readable methodology
-│   ├── architecture.md        # Conventions versus replaceable defaults
-│   ├── design-system.md       # Tokens, BEM, and logical-property contract
-│   ├── content-modeling.md    # Four-pattern content decision model
-│   ├── forms.md               # Provider-neutral form contract and default stack
-│   └── quality.md             # Accessibility, performance, privacy, and checks
-├── functions/
-│   └── api/
-│       └── contact.ts         # Cloudflare Pages edge function (Mailgun + anti-spam)
-├── public/
-│   ├── _headers               # Cloudflare Pages security & immutable cache policies
-│   ├── favicon.svg
-│   ├── images/
-│   │   └── og-default.jpg     # Verified 1200×630 default social image
-│   └── robots.txt             # Crawl policy and sitemap index declaration
-├── scripts/
-│   ├── test-tokens.cjs        # Token schema validation script
-│   ├── test-contrast.cjs      # Automated WCAG 2.2 color contrast validator
-│   ├── test-doc-links.cjs     # Local documentation-link validator
-│   ├── test-social-image.cjs  # Default Open Graph asset validator
-│   ├── test-contact-form.mjs  # Built form and endpoint contract tests
-│   └── run-axe.cjs            # Headless axe-core a11y runner using JSDOM
-├── skills/
-│   └── astro-site-builder/
-│       └── SKILL.md            # Thin reusable adapter to the canonical playbook
+```text
+astro-site-playbook/
+├── docs/                       # Canonical playbook, guides, and recipes
+├── functions/api/contact.ts    # Optional Cloudflare Pages contact endpoint
+├── public/                     # Local assets, robots, and host header reference
+├── scripts/                    # Deterministic quality checks
+├── skills/astro-site-builder/  # Thin repository-local agent skill
 ├── src/
-│   ├── components/
-│   │   ├── Card.astro         # Modular component with container query tokens
-│   │   ├── ContactForm.astro  # Accessible contact form with anti-spam
-│   │   └── FormResult.astro   # Shared success/error result layout
-│   ├── lib/
-│   │   └── contact-validation.ts # Shared browser/server form validation
-│   ├── content/
-│   │   ├── posts/             # Pattern A: Editorial Prose (Markdown)
-│   │   │   └── welcome.md
-│   │   └── sample.json        # Pattern C: In-page repeater data
-│   ├── layouts/
-│   │   └── BaseLayout.astro   # Root HTML shell with font preloads, skip link, sitemap & RSS
-│   ├── pages/
-│   │   ├── posts/
-│   │   │   └── [slug].astro   # Dynamic route for Pattern A posts
-│   │   ├── contact/
-│   │   │   ├── error.astro     # Non-JavaScript submission error destination
-│   │   │   └── success.astro   # Non-JavaScript submission success destination
-│   │   ├── 404.astro          # Accessible, token-compliant 404 error page (noindex)
-│   │   ├── index.astro        # Demonstration page
-│   │   └── rss.xml.ts         # Automated RSS 2.0 XML feed endpoint
-│   ├── styles/
-│   │   ├── tokens.css         # Two-tier fluid design token system
-│   │   ├── reset.css          # Modern CSS Logical Properties reset
-│   │   └── global.css         # Global typography & layout rules
-│   └── content.config.ts      # Astro Content Layer schemas with Zod validation
-├── AGENTS.md                  # Concise agent adapter pointing to the playbook
-├── CLAUDE.md                  # Symlink to AGENTS.md to prevent instruction drift
-├── astro.config.mjs           # Astro configuration (static output, sitemap integration)
-└── tsconfig.json              # Strict TypeScript config with @/* path aliases
+│   ├── components/             # Astro components with scoped styles
+│   ├── content/                # Example editorial and repeater content
+│   ├── layouts/                # Root document shell and metadata
+│   ├── lib/                    # Shared implementation logic
+│   ├── pages/                  # Static routes, RSS, and form outcomes
+│   └── styles/                 # Reset, tokens, and global layout rules
+├── AGENTS.md                   # Concise agent adapter
+└── CLAUDE.md                   # Relative symlink to AGENTS.md
 ```
 
----
+## Working with coding agents
 
-## Key Features
+Agents should begin with `AGENTS.md`. Skill-aware environments can use `skills/astro-site-builder/SKILL.md`. Both route into the same human-readable playbook and supporting guides, preventing tool-specific instruction drift.
 
-- **Performance-Oriented Baseline**: Local font preloads, layout-shift prevention patterns, and production-build verification guidance.
-- **Two-Tier Fluid Design Tokens**:
-  - **Tier 1 (Canvas / Viewport `vw`)**: Fluid scaling for site landmarks, page headings, and layout gutters (`--text-*`, `--h1`–`--h4`, `--space-*`).
-  - **Tier 2 (Component / Container `cqi`)**: Fluid scaling for modular cards, widgets, and dialogs (`--cq-text-*`, `--cq-h3`, `--cq-gap`, `--cq-card-padding`).
-- **Auto-Enabling Container Queries**: Components self-declare container context on parents via `:has(> .c-component) { container-type: inline-size; }` without manual wrapper classes.
-- **CSS Logical Properties**: Strictly flow-relative properties throughout (`padding-block`, `margin-inline`, `inset`, `inline-size`).
-- **Astro Content Layer & 4-Tier Strategy**: Clear heuristics for Editorial Prose (Markdown), Entity Records (YAML), In-Page Repeaters (JSON), and Global Singletons, backed by strict Zod schemas and alphabetical sorting protection (`order: number`).
-- **Form Delivery Reference**: `ContactForm.astro` and `functions/api/contact.ts` demonstrate progressive enhancement, layered anti-spam, optional Turnstile, and Mailgun delivery. Production configuration and redirect destinations remain project setup tasks.
-- **Automated RSS 2.0 Feed**: Turnkey `@astrojs/rss` feed generation at `/rss.xml` for Pattern A editorial content with auto-discovery in `BaseLayout.astro`.
-- **Automated XML Sitemap**: Turnkey `@astrojs/sitemap` integration generating `/sitemap-index.xml` and `/sitemap-0.xml` during static pre-rendering, with auto-discovery in `BaseLayout.astro`.
-- **SEO & Social Sharing Baseline**: Dynamic absolute canonical URLs, full Open Graph and Twitter Card tags, `public/robots.txt`, and Cloudflare Pages `_headers` (security policies and 1-year immutable caching).
-- **Accessible 404 Error Handling**: Built-in `404.astro` error page styled with semantic tokens, skip-link support, and automatic exclusion from the XML sitemap via `noindex={true}`.
-- **WCAG 2.2 AA Baseline**: Semantic landmarks, skip links, accessible component patterns, and automated `axe-core` CI tests.
-- **Privacy-Minded Defaults**: Fonts and production media are self-hosted; runtime services remain explicit project decisions.
-- **Playbook-Backed Agent Rails**: `AGENTS.md` and its `CLAUDE.md` symlink are concise adapters to one canonical methodology in `docs/`.
-
----
-
-## Architecture & Guides
-
-[`docs/playbook.md`](docs/playbook.md) is the canonical guide. Its focused supporting documents are:
-
-- [`docs/architecture.md`](docs/architecture.md) — the static-first architecture, repository conventions, replaceable implementation defaults, and pre-launch placeholders.
-- [`docs/design-system.md`](docs/design-system.md) — OKLCH primitives, semantic aliases, fluid scales, BEM, logical properties, and token ingestion.
-- [`docs/content-modeling.md`](docs/content-modeling.md) — the four-pattern content model, decision gate, schemas, ordering, and RSS guidance.
-- [`docs/forms.md`](docs/forms.md) — the provider-independent form contract and the included Cloudflare Pages, Mailgun, and Turnstile reference path.
-- [`docs/quality.md`](docs/quality.md) — WCAG 2.2 AA, production performance, privacy, automated checks, and manual verification.
-
-The README introduces the starter; these documents own the methodology and detailed operating rules.
-
----
-
-## Working with AI Agents
-
-`AGENTS.md` is a concise operational adapter that tells coding agents how to enter the project, which contracts are mandatory, and how to validate their work. `CLAUDE.md` is a relative symlink to the same adapter. Both defer to `docs/playbook.md`, so methodology is maintained in one place instead of copied into tool-specific files.
-
-The repository-local `skills/astro-site-builder/SKILL.md` packages the same approach for skill-aware agents. It routes agents to the relevant canonical guide and contains only the workflow needed to apply it; it does not maintain another copy of the playbook.
-
----
+When adapting this repository, keep universal principles separate from project conventions and replaceable defaults. Record consequential choices, use the content and form decision gates, and run `npm test` before reporting completion.
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+[MIT](LICENSE)
