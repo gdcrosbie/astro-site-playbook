@@ -30,6 +30,10 @@ The playbook can still inform those projects, but this starter should not be for
 
 Requirements: Node.js 22.13 or newer, npm, and Git.
 
+On GitHub, select **Use this template**, then **Create a new repository**. This creates a separate project from the playbook without carrying its development history into the new site.
+
+The equivalent GitHub CLI workflow is:
+
 ```bash
 gh repo create my-astro-site \
   --template gdcrosbie/astro-site-playbook \
@@ -42,6 +46,8 @@ npm run dev
 ```
 
 Use `--public` if the new repository should be public. See [Getting started](docs/getting-started.md) for the first architecture decisions, then work through [Customising a project](docs/customization.md) before launch.
+
+Clone this repository directly when you only want to evaluate the playbook locally. Fork it when you intend to contribute a change back to Astro Site Playbook.
 
 ## How the playbook works
 
