@@ -130,6 +130,12 @@ Agents should begin with `AGENTS.md`. Skill-aware environments can use `skills/a
 
 When adapting this repository, keep universal principles separate from project conventions and replaceable defaults. Record consequential choices, use the content and form decision gates, and run `npm test` before reporting completion.
 
+## Adapting it for an agency
+
+The public template may be all your agency needs. If you want to turn existing conventions, review practices, and delivery constraints into a bespoke playbook and working foundation, I can help you establish and test that system with your team.
+
+[See how I adapt Astro Site Playbook for agencies](https://grahamcrosbie.com/astro-site-playbook/).
+
 ## License
 
 [MIT](LICENSE)
