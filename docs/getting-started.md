@@ -12,7 +12,17 @@ The repository includes `.nvmrc`; run `nvm use` if you manage Node versions with
 
 ## Create a site from the template
 
-With the GitHub CLI:
+On GitHub, select **Use this template**, then **Create a new repository**. Clone the new repository GitHub creates, then install and verify it:
+
+```bash
+git clone https://github.com/YOUR-ACCOUNT/my-astro-site.git
+cd my-astro-site
+npm install
+npm test
+npm run dev
+```
+
+Alternatively, create and clone the new repository with the GitHub CLI:
 
 ```bash
 gh repo create my-astro-site \
@@ -25,7 +35,7 @@ npm test
 npm run dev
 ```
 
-Choose `--public` instead if the new repository should be public. You can also select **Use this template** on GitHub and clone the repository it creates.
+Choose `--public` instead if the new repository should be public.
 
 To explore the playbook without starting a new project, clone it directly:
 
@@ -35,6 +45,8 @@ cd astro-site-playbook
 npm ci
 npm test
 ```
+
+Fork the repository only when you intend to contribute a change back to Astro Site Playbook.
 
 ## Understand the three parts
 
