@@ -4,6 +4,14 @@ All notable changes to Astro Site Playbook are recorded here. The repository fol
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-09-15
+
+### Changed
+
+- Clarified that new sites should be created with GitHub's template workflow, while direct clones are for evaluation and forks are for contributing changes upstream.
+- Added a restrained path for agencies that want help adapting the public Playbook into a bespoke delivery system.
+- Defined the licensing and ownership boundary between MIT-licensed Playbook scaffolding and adopter-created design tokens, components, schemas, content, brand assets, finished sites, and client deliverables.
+
 ## [1.0.0] - 2026-09-13
 
 ### Added
@@ -20,5 +28,6 @@ All notable changes to Astro Site Playbook are recorded here. The repository fol
 - Separated universal principles and repository conventions from replaceable implementation defaults.
 - Hardened form validation, keyboard focus, reduced-motion handling, list semantics, discovery metadata, and production cache guidance for the first stable release.
 
-[Unreleased]: https://github.com/gdcrosbie/astro-site-playbook/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/gdcrosbie/astro-site-playbook/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/gdcrosbie/astro-site-playbook/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/gdcrosbie/astro-site-playbook/releases/tag/v1.0.0
