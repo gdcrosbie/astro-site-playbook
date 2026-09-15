@@ -138,6 +138,10 @@ The public template may be all your agency needs. If you want to turn existing c
 
 ## License
 
-[MIT](LICENSE)
+The Astro Site Playbook's starter framework, verification scripts, and playbook documentation are licensed under the [MIT License](LICENSE). When a project retains copies or substantial portions of that material, it must also retain the upstream copyright and permission notice required by the MIT License.
+
+Anything original that adopters, agencies, or their clients create while building on this foundation belongs 100% to them, subject to their own agreements. This includes original design tokens, custom components, schemas, editorial content, and brand assets. The Playbook claims no ownership over that project-specific work.
+
+Adopters have full freedom to license finished sites and client deliverables under any proprietary or open-source terms they choose. Using the Playbook does not require the finished site, or original work created for it, to be released under the MIT License; the upstream MIT notice only continues to apply to Playbook material retained in the project.
 
 Release history is recorded in [CHANGELOG.md](CHANGELOG.md).

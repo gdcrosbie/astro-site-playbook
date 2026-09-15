@@ -8,6 +8,20 @@ Replace the package name and description in `package.json`, then update the lock
 
 Keep references to the upstream methodology when you still want agents and contributors to know where the project conventions came from.
 
+### License and ownership in derivative projects
+
+The Playbook's MIT License covers the starter scaffolding, verification scripts, and documentation inherited from this repository. It does not claim ownership of original project work created by an adopter, agency, or client.
+
+When preparing a client or derivative project:
+
+- keep the upstream MIT copyright and permission notice with copies or substantial portions of the Playbook material retained in the project, either in `LICENSE` or in an appropriate third-party notices file;
+- distinguish inherited or modified Playbook scaffolding from original project work in repository documentation when that boundary would otherwise be unclear;
+- treat original design tokens, custom components, schemas, editorial content, and brand assets as the property of their creator or client according to the project's own agreement;
+- apply whatever proprietary or open-source licence the project owner chooses to the finished site and its original work; and
+- if `package.json` or another project-level file names a licence, update it to describe the finished project's chosen terms without removing the upstream MIT notice that still applies to retained Playbook material.
+
+Building on this foundation does not require a finished site or client deliverable to be released under the MIT License.
+
 ## 2. Canonical URL and discovery
 
 Replace `https://example.com` in:
