@@ -38,6 +38,7 @@ Components using container units must establish or inherit a deliberate query co
 - Keep component styles in the component's scoped `<style>` block. Put resets, global element defaults, shared layout objects, and truly global behaviour in `src/styles/`.
 - Do not add Tailwind-style utility markup or inline `style` attributes.
 - Prefer shared tokens to unexplained magic numbers. A one-off value is acceptable when it represents intrinsic behaviour rather than a missing design decision.
+- Prefer `text-wrap: pretty` for large display headings translated from a design. `text-wrap: balance` shortens every line and can break headings differently from the approved layout; reserve it for short, centred headings.
 
 ## Logical properties
 
@@ -64,6 +65,8 @@ Choose one path before styling components.
 
 - If an export provides both rendered HTML and a React implementation, use the HTML as the primary reference for document structure and layout, then reproduce the behaviour in Astro. Do not retain React solely because the export used it.
 - Convert incoming sRGB or hex palette values to OKLCH primitives.
+- A design file may define no variables or styles. Derive primitives from the fills and text styles actually used, record each source value beside its OKLCH equivalent, and state that the tokens were extracted rather than imported.
+- Confirm typefaces from supplied font files and their licences rather than from names reported by design tooling, which can be truncated or mis-encoded.
 - Establish viewport and container scales appropriate to the actual layout before building components.
 
 ### Use the template baseline

@@ -16,6 +16,7 @@ Read [the Astro Site Playbook](../../docs/playbook.md), then read only the suppo
 - collections, schemas, or editorial structure: [content-modeling.md](../../docs/content-modeling.md)
 - forms or external submission services: [forms.md](../../docs/forms.md)
 - accessibility, performance, privacy, or completion checks: [quality.md](../../docs/quality.md)
+- deployment host, response headers, redirects, or indexing controls: [hosting.md](../../docs/hosting.md)
 
 The guides own the rules. If this skill and the playbook diverge, follow the playbook and repair the skill link or summary rather than copying the missing rule here.
 

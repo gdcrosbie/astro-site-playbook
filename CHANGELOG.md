@@ -4,6 +4,14 @@ All notable changes to Astro Site Playbook are recorded here. The repository fol
 
 ## [Unreleased]
 
+### Added
+
+- `docs/hosting.md` covers confirming the deployment host, per-host header and redirect configuration (Cloudflare Pages, Netlify, Vercel), verifying the live deployment, and a layered approach for sites that must not be indexed.
+
+### Changed
+
+- Architecture, customization, quality, design-system, playbook, README, agent adapter, and skill documentation now link the hosting guide. They warn that `public/_headers` is published as a public file on Vercel, clarify that `test:forms` exists only after the contact form recipe is added, and add guidance on placeholder routes and link integrity, `<picture>` sizing in fixed frames, `text-wrap` on display headings, and design files without variables.
+
 ## [2.0.0] - 2026-09-16
 
 ### Removed

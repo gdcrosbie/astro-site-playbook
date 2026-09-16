@@ -26,14 +26,14 @@ These choices demonstrate a complete deployment path, but they are replaceable w
 | Concern | Current default | What must remain true if replaced |
 | --- | --- | --- |
 | Rendering | Astro static output | Choose the smallest architecture that supports the required behaviour and retain appropriate verification. |
-| Deployment | Cloudflare Pages-compatible static output and `_headers` | Preserve equivalent routing, caching, and security-header behaviour on the chosen host. |
+| Deployment | Cloudflare Pages-compatible static output and `_headers` | Preserve equivalent routing, caching, and security-header behaviour on the chosen host, using that host's own configuration. `_headers` is not applied on Vercel, which publishes it as a public file. See [Hosting, headers, and indexing](hosting.md). |
 | Form endpoint | None bundled; reference recipe uses a Cloudflare Pages Function | Keep server-side validation, safe secret handling, progressive responses, and accessible failure paths. |
 | Email delivery | None bundled; reference recipe uses Mailgun REST API | Document configuration, handle provider failures safely, and never expose credentials to the browser. |
 | Bot mitigation | None bundled; reference recipe uses honeypot, elapsed-time check, and optional Turnstile | Keep layered abuse protection proportionate, accessible, and privacy-conscious. |
 | Fonts | Self-hosted Fraunces and DM Sans via Fontsource | Keep fonts local where possible, minimise subsets and weights, and avoid layout shift. |
 | Colours and scales | The sample OKLCH palette and two-tier fluid scales | Preserve the semantic alias contract and automated token and contrast checks. |
 | Canonical site URL | `https://example.com` | Replace it before launch in `astro.config.mjs` and `public/robots.txt`. |
-| Discovery | Astro sitemap plus RSS for editorial prose | Keep canonical metadata and the discovery formats required by the site's content strategy. |
+| Discovery | Astro sitemap plus RSS for editorial prose | Keep canonical metadata and the discovery formats required by the site's content strategy. Sites that must not be indexed remove them and apply the layered approach in [Hosting, headers, and indexing](hosting.md). |
 
 ## Adding runtime behaviour
 
@@ -52,7 +52,8 @@ The starter intentionally contains placeholders. At minimum, replace:
 - the sitemap origin in `public/robots.txt`;
 - default titles, descriptions, social image, and feed metadata;
 - sample content, brand tokens, and fonts as required;
-- form endpoints, recipients, and provider configuration if implementing a form.
+- form endpoints, recipients, and provider configuration if implementing a form;
+- header, redirect, and function configuration for the chosen host, removing files that host does not read.
 
 Use [Getting started](getting-started.md) for a new project and [Customising a project](customization.md) for the complete launch checklist. Provider-specific setup for adding a contact form lives in the [Cloudflare Pages and Mailgun recipe](recipes/cloudflare-mailgun-contact.md).
 
