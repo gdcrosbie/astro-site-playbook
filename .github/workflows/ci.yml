@@ -16,12 +16,6 @@ jobs:
           node-version: 22
           cache: 'npm'
       - run: npm ci
-      - run: npm run test:docs
-      - run: npm run test:tokens
-      - run: npm run test:contrast
-      - run: npm run check
-      - run: npm run build
-      - run: npm run test:discovery
-      - run: npm run test:social-image
-      - run: npm run test:forms
-      - run: npm run test:a11y
+      # Single source of truth for the pipeline: package.json "test".
+      # Projects that add the contact form recipe extend that script with test:forms.
+      - run: npm test
