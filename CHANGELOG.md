@@ -4,6 +4,8 @@ All notable changes to Astro Site Playbook are recorded here. The repository fol
 
 ## [Unreleased]
 
+## [2.0.1] - 2026-09-16
+
 ### Added
 
 - `docs/hosting.md` covers confirming the deployment host, per-host header and redirect configuration (Cloudflare Pages, Netlify, Vercel), verifying the live deployment, and a layered approach for sites that must not be indexed.
@@ -11,6 +13,10 @@ All notable changes to Astro Site Playbook are recorded here. The repository fol
 ### Changed
 
 - Architecture, customization, quality, design-system, playbook, README, agent adapter, and skill documentation now link the hosting guide. They warn that `public/_headers` is published as a public file on Vercel, clarify that `test:forms` exists only after the contact form recipe is added, and add guidance on placeholder routes and link integrity, `<picture>` sizing in fixed frames, `text-wrap` on display headings, and design files without variables.
+
+### Fixed
+
+- CI now runs `npm test` instead of listing individual scripts. The workflow still called the `test:forms` script removed in v2.0.0, so CI failed on the default branch and on the first push of every project created from the template.
 
 ## [2.0.0] - 2026-09-16
 
@@ -48,7 +54,8 @@ All notable changes to Astro Site Playbook are recorded here. The repository fol
 - Separated universal principles and repository conventions from replaceable implementation defaults.
 - Hardened form validation, keyboard focus, reduced-motion handling, list semantics, discovery metadata, and production cache guidance for the first stable release.
 
-[Unreleased]: https://github.com/gdcrosbie/astro-site-playbook/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/gdcrosbie/astro-site-playbook/compare/v2.0.1...HEAD
+[2.0.1]: https://github.com/gdcrosbie/astro-site-playbook/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/gdcrosbie/astro-site-playbook/compare/v1.0.1...v2.0.0
 [1.0.1]: https://github.com/gdcrosbie/astro-site-playbook/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/gdcrosbie/astro-site-playbook/releases/tag/v1.0.0

@@ -1,7 +1,7 @@
 {
   "name": "astro-site-playbook",
   "type": "module",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "An opinionated system for delivering accessible, high-performance Astro sites with a shared human and agent playbook.",
   "private": true,
   "license": "MIT",
