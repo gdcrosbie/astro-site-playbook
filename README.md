@@ -70,6 +70,7 @@ The [Astro Site Playbook](docs/playbook.md) is canonical. Agent files are adapte
 | [Content modelling](docs/content-modeling.md) | Choosing among editorial prose, entities, repeaters, and global singletons. |
 | [Forms and submissions](docs/forms.md) | Provider-independent form and accessibility contracts. |
 | [Quality](docs/quality.md) | Accessibility, performance, privacy, automated checks, and manual verification. |
+| [Hosting, headers, and indexing](docs/hosting.md) | Per-host header and redirect configuration, live deployment checks, and keeping sites out of search. |
 | [Cloudflare Pages and Mailgun recipe](docs/recipes/cloudflare-mailgun-contact.md) | Adding an accessible contact form with Cloudflare Pages and Mailgun. |
 | [Releasing](docs/releasing.md) | Running the release audit, publishing a tag, and creating release notes. |
 

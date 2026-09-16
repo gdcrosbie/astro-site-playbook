@@ -27,6 +27,7 @@ Do not weaken accessibility, security, privacy, or validation obligations when r
 - Follow [docs/forms.md](docs/forms.md): stop at the form-handling decision gate, preserve a non-JavaScript path, validate server-side, and implement accessible field and status feedback.
 - Follow [docs/quality.md](docs/quality.md): WCAG 2.2 AA, local production assets, intentional external requests, production-build performance checks, and manual verification where automation is insufficient.
 - Use [docs/architecture.md](docs/architecture.md) to distinguish repository conventions from replaceable defaults such as Cloudflare Pages, Mailgun, Turnstile, sample fonts, and the example domain.
+- Follow [docs/hosting.md](docs/hosting.md): confirm the deployment host, keep only the configuration that host reads, verify headers against the live deployment, and apply every layer when a site must not be indexed.
 
 ## Commands
 

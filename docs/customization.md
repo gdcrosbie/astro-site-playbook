@@ -32,6 +32,8 @@ Replace `https://example.com` in:
 
 Confirm the resulting canonical URLs, sitemap, RSS links, and social metadata in the production build.
 
+If the site must not appear in search, such as a demonstration, staging environment, or client preview, remove the sitemap and RSS integrations and apply every layer in [Hosting, headers, and indexing](hosting.md#sites-that-must-not-be-indexed). Treat that as distinct from privacy, which needs access control on the host.
+
 ## 3. Titles, descriptions, and social image
 
 - Replace the defaults in `src/layouts/BaseLayout.astro`.
@@ -60,7 +62,8 @@ Run `npm run test:tokens` and `npm run test:contrast` after token changes.
 - Model real content using [Content modelling](content-modeling.md).
 - Keep schemas aligned with the fields templates actually consume.
 - Keep explicit editorial ordering wherever sequence matters.
-- Remove RSS and its auto-discovery link if the finished site has no syndicated editorial content.
+- Remove RSS and its auto-discovery link if the finished site has no syndicated editorial content. `scripts/test-discovery.cjs` asserts the sample post and feed, so update it in the same change.
+- Every link in navigation, footers, and calls to action must resolve. When a design links to pages outside the current scope, generate `noindex` placeholder pages from a single data file rather than using `href="#"` or inventing copy. Delete each entry when its real page ships, and add a check that every root-relative link in the built HTML resolves to a file in `dist/`.
 
 ## 6. Forms and external services
 
@@ -75,7 +78,7 @@ Review every analytics script, embed, CAPTCHA, form provider, and other external
 
 ## 7. Deployment behaviour
 
-`public/_headers` is a Cloudflare Pages-compatible reference for security and cache headers. If the project uses another host, translate those policies into that platform's configuration rather than assuming the file will be applied.
+`public/_headers` is a Cloudflare Pages-compatible reference for security and cache headers. If the project uses another host, translate those policies into that platform's configuration rather than assuming the file will be applied, and remove files the host does not read. On Vercel, `_headers` is not applied and is published as a public file. [Hosting, headers, and indexing](hosting.md) gives per-host equivalents and a live verification routine.
 
 Confirm:
 
@@ -83,7 +86,8 @@ Confirm:
 - immutable caching only for versioned or intentionally stable assets;
 - custom 404 behaviour;
 - function routing if a host-native form function is added;
-- environment variables and secrets in each deployment environment.
+- environment variables and secrets in each deployment environment;
+- headers, redirects, and 404 behaviour against the live production domain, not only the build.
 
 ## Pre-launch checklist
 
@@ -94,5 +98,8 @@ Confirm:
 - [ ] Tokens, fonts, and production media match the approved design.
 - [ ] Form handling and every external runtime request have an owner and privacy basis.
 - [ ] Success, error, keyboard, no-JavaScript, and responsive journeys have been checked.
-- [ ] Deployment headers, caching, routes, and secrets are configured on the chosen host.
+- [ ] Deployment headers, caching, routes, and secrets are configured on the chosen host, and host-irrelevant configuration files are removed.
+- [ ] Response headers, trailing-slash redirects, and 404s are verified against the live production domain.
+- [ ] Indexing intent is explicit: discovery is configured for a public site, or every layer in the hosting guide is applied for a site that must not be indexed.
+- [ ] Every internal link resolves in the production build.
 - [ ] `npm test` passes against the final production build.

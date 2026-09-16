@@ -21,6 +21,7 @@ Quality is a continuous constraint in this playbook. Automated checks protect kn
 - Self-host and subset fonts, preload only critical WOFF2 files, and avoid unnecessary weights.
 - Keep client JavaScript minimal and scoped to interactions that need it.
 - For overlapping interfaces such as carousels, reserve a stable layout area—for example, stack slides in one CSS Grid area—to avoid cumulative layout shift.
+- When an image fills a fixed-height or absolutely positioned frame, size the `<picture>` wrapper as well as the image and clip the frame. The reset makes `<picture>` a block with automatic height, so an image with `block-size: 100%` otherwise renders at its natural height and can overflow onto the next section.
 
 The playbook does not promise a universal 95–100 score. Pages, devices, content, and third-party requirements vary; record and investigate regressions against an agreed project baseline.
 
@@ -45,10 +46,10 @@ Use standard `npm`; do not switch package managers without an explicit project d
 | `npm run build` | Produces the static site and catches build-time integration failures. |
 | `npm run test:discovery` | Checks canonical, article, noindex, sitemap, and RSS metadata. |
 | `npm run test:social-image` | Checks the built default Open Graph image and its dimensions. |
-| `npm run test:forms` | Checks built form semantics and the submission endpoint contract. |
+| `npm run test:forms` | Checks built form semantics and the submission endpoint contract. Available only after adding the [contact form recipe](recipes/cloudflare-mailgun-contact.md); not part of the default `npm test`. |
 | `npm run test:a11y` | Audits the built HTML with axe-core. |
 | `npm run test:template` | Installs and tests an isolated copy for release-level adoption checks. |
-| `npm test` | Runs all of the checks above in repository order. |
+| `npm test` | Runs the default checks above in repository order (excluding `test:template`, and `test:forms` unless a project adds it). |
 
 Run `npm test` before reporting a build or refactor complete. If a failure predates the current change, do not hide it: identify the failure, show that the change did not worsen it where possible, and record the remaining risk.
 
@@ -63,6 +64,7 @@ Add focused manual checks when a change affects:
 - image loading, font loading, or likely LCP content;
 - no-JavaScript journeys;
 - provider-backed forms and their success, error, and abuse-protection paths;
-- canonical, sitemap, RSS, or social metadata.
+- canonical, sitemap, RSS, or social metadata;
+- deployment headers, redirects, 404 behaviour, or indexing controls. Verify these against the live production domain as described in [Hosting, headers, and indexing](hosting.md#verify-the-live-deployment).
 
 Use the repeatable project-level process in [Releasing](releasing.md) before publishing a repository release.
