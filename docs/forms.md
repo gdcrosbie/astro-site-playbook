@@ -6,12 +6,12 @@ Forms cross a system boundary: they combine accessible UI, server-side validatio
 
 When a design contains a form and the handling requirements are not already explicit, ask the project owner to choose:
 
-1. A host-native endpoint plus an email provider. In this starter, the default is a Cloudflare Pages Function plus Mailgun with layered anti-spam.
+1. A host-native endpoint plus an email provider. The playbook provides a reference recipe for a Cloudflare Pages Function plus Mailgun with layered anti-spam.
 2. A hosted static-form endpoint such as Formspree, Web3Forms, or Basin.
 3. A webhook to a CRM or automation platform.
 4. An accessible UI-only mock with no real submission.
 
-Confirm data destination, retention, consent, expected response, and operational ownership where relevant. Do not silently send production data to the starter's default provider.
+Confirm data destination, retention, consent, expected response, and operational ownership where relevant. The starter deliberately ships without a bundled form so projects do not send production data to an unconfigured or unintended provider.
 
 ## Provider-independent contract
 
@@ -36,25 +36,18 @@ Whichever option is chosen:
 - Announce form-level progress and results with an appropriate live status region.
 - Preserve the user's entered values when a recoverable error occurs.
 
-## Included reference recipe
+## Reference contact recipe
 
-The starter includes:
+The starter intentionally ships without a pre-bundled form so new sites start clean without unused assets or provider assumptions.
 
-- `ContactForm.astro`, posting to `/api/contact` by default;
+When a project requires a host-native contact form deployed to Cloudflare Pages, use the [Cloudflare Pages and Mailgun contact form recipe](recipes/cloudflare-mailgun-contact.md). It demonstrates the complete provider-independent and accessibility contracts:
+
+- an accessible `<ContactForm />` component posting to `/api/contact` by default;
+- shared validation rules between browser and server;
 - a Cloudflare Pages Function at `functions/api/contact.ts`;
-- a honeypot and elapsed-time heuristic;
-- optional Cloudflare Turnstile verification when configured;
+- layered abuse protection (honeypot, elapsed-time check, and optional Cloudflare Turnstile);
 - Mailgun delivery via server-side environment variables;
-- JSON responses for enhanced `fetch()` submission and `303` redirects for standard HTML submission.
+- JSON responses for enhanced `fetch()` submission and `303` redirects to `/contact/success` and `/contact/error` for standard HTML submissions;
+- automated contract tests using `node:test` and `jsdom`.
 
-Required environment variables are `MAILGUN_API_KEY`, `MAILGUN_DOMAIN`, and normally `CONTACT_TO_EMAIL`. `MAILGUN_REGION` selects the US or EU endpoint. `TURNSTILE_SECRET_KEY` enables server verification and the matching site key must be passed to the form component.
-
-Before using this path in production:
-
-- customise and test the included `/contact/success` and `/contact/error` destinations;
-- replace the example fallback recipient;
-- configure and test the chosen Mailgun region and domain;
-- test the Turnstile-enabled and Turnstile-disabled paths as applicable;
-- review the form fields and handling against the project's privacy obligations.
-
-See [Cloudflare Pages and Mailgun contact form](recipes/cloudflare-mailgun-contact.md) for the complete setup and replacement boundaries.
+See [Cloudflare Pages and Mailgun contact form](recipes/cloudflare-mailgun-contact.md) for the complete implementation files, environment variables, and pre-production checklist.

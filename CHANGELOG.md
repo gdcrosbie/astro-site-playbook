@@ -4,6 +4,18 @@ All notable changes to Astro Site Playbook are recorded here. The repository fol
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-09-16
+
+### Removed
+
+- Pre-bundled contact form components (`ContactForm.astro`, `FormResult.astro`), Cloudflare Pages Function (`functions/api/contact.ts`), outcome pages (`/contact/success`, `/contact/error`), shared validation module (`src/lib/contact-validation.ts`), and form test script (`scripts/test-contact-form.mjs`) from the starter to keep new projects lean and static-first.
+
+### Changed
+
+- Documented the Cloudflare Pages and Mailgun contact flow as a complete, self-contained recipe in `docs/recipes/cloudflare-mailgun-contact.md` with full code snippets, configuration, and verification instructions.
+- Updated forms, architecture, getting-started, customization, and agent documentation to reflect that the starter has no pre-bundled form and links directly to the recipe when forms are needed.
+- Simplified `astro.config.mjs` and `scripts/test-discovery.cjs` sitemap/discovery checks.
+
 ## [1.0.1] - 2026-09-15
 
 ### Changed
@@ -28,6 +40,7 @@ All notable changes to Astro Site Playbook are recorded here. The repository fol
 - Separated universal principles and repository conventions from replaceable implementation defaults.
 - Hardened form validation, keyboard focus, reduced-motion handling, list semantics, discovery metadata, and production cache guidance for the first stable release.
 
-[Unreleased]: https://github.com/gdcrosbie/astro-site-playbook/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/gdcrosbie/astro-site-playbook/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/gdcrosbie/astro-site-playbook/compare/v1.0.1...v2.0.0
 [1.0.1]: https://github.com/gdcrosbie/astro-site-playbook/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/gdcrosbie/astro-site-playbook/releases/tag/v1.0.0

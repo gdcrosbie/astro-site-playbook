@@ -64,11 +64,12 @@ Run `npm run test:tokens` and `npm run test:contrast` after token changes.
 
 ## 6. Forms and external services
 
-Choose the form delivery architecture before collecting real submissions. The included Cloudflare Pages, Mailgun, and optional Turnstile implementation is a reference recipe, not a requirement.
+The starter intentionally ships without a bundled contact form so new sites begin with a lean, purely static foundation.
 
-- To keep it, follow [Cloudflare Pages and Mailgun contact form](recipes/cloudflare-mailgun-contact.md).
-- To replace it, retain the provider-independent and accessibility contracts in [Forms and submissions](forms.md).
-- To remove it, delete the form UI, result routes, endpoint, shared validation, provider-specific tests, and related documentation together.
+If your site requires a contact form, choose an architecture using the decision gate in [Forms and submissions](forms.md):
+
+- To add a host-native Cloudflare Pages Function with Mailgun delivery, follow the [Cloudflare Pages and Mailgun contact form recipe](recipes/cloudflare-mailgun-contact.md).
+- To use an external hosted endpoint (e.g. Formspree, Basin) or webhook, retain the provider-independent and accessibility contracts in [Forms and submissions](forms.md).
 
 Review every analytics script, embed, CAPTCHA, form provider, and other external runtime request as an explicit privacy and performance decision.
 
@@ -81,7 +82,7 @@ Confirm:
 - HTTPS and security headers;
 - immutable caching only for versioned or intentionally stable assets;
 - custom 404 behaviour;
-- function routing if the form recipe remains;
+- function routing if a host-native form function is added;
 - environment variables and secrets in each deployment environment.
 
 ## Pre-launch checklist
@@ -89,7 +90,7 @@ Confirm:
 - [ ] Project identity and package metadata belong to the new site.
 - [ ] Canonical domain and `robots.txt` sitemap URL are correct.
 - [ ] Titles, descriptions, social images, sitemap, and RSS output are intentional.
-- [ ] Sample content and fallback email addresses are gone.
+- [ ] Sample content and placeholder metadata are replaced.
 - [ ] Tokens, fonts, and production media match the approved design.
 - [ ] Form handling and every external runtime request have an owner and privacy basis.
 - [ ] Success, error, keyboard, no-JavaScript, and responsive journeys have been checked.

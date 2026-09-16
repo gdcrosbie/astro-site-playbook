@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Card from '../components/Card.astro';
-import ContactForm from '../components/ContactForm.astro';
 import { getCollection } from 'astro:content';
 
 const sampleEntries = await getCollection('sample');
@@ -27,16 +26,6 @@ const cards = sampleEntries
             </div>
           ))}
         </div>
-      </div>
-    </section>
-
-    <section id="contact" class="l-section c-contact-section" aria-labelledby="contact-title">
-      <div class="l-container">
-        <h2 id="contact-title" class="c-contact-section__title">Reference contact flow</h2>
-        <p class="c-contact-section__lead">
-          An accessible, progressively enhanced form example. Configure or replace its delivery recipe before production.
-        </p>
-        <ContactForm />
       </div>
     </section>
   </main>
@@ -91,25 +80,5 @@ const cards = sampleEntries
     .c-playbook-hero__grid {
       grid-template-columns: 1fr;
     }
-  }
-
-  .c-contact-section {
-    padding-block: var(--space-3xl);
-    border-block-start: var(--border-subtle);
-  }
-
-  .c-contact-section__title {
-    font-family: var(--font-display);
-    font-size: var(--h2);
-    color: var(--color-text);
-    margin-block-end: var(--space-xs);
-  }
-
-  .c-contact-section__lead {
-    font-size: var(--text-m);
-    color: var(--color-muted);
-    line-height: 1.6;
-    margin-block-end: var(--space-l);
-    max-inline-size: 50ch;
   }
 </style>

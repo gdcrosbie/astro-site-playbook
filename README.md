@@ -8,11 +8,11 @@ It combines a runnable static starter, a human-readable delivery playbook, a rep
 
 | Part | Role |
 | --- | --- |
-| **Starter** | A working Astro site with static output, content collections, semantic tokens, accessible components, SEO metadata, RSS, sitemap, and a reference contact flow. |
+| **Starter** | A working Astro site with static output, content collections, semantic tokens, accessible components, SEO metadata, RSS, and sitemap. |
 | **Playbook** | `docs/playbook.md` defines the principles, workflow, decision gates, and definition of done. |
 | **Focused guides** | Detailed contracts for architecture, design systems, content modelling, forms, quality, setup, and customisation. |
 | **Agent adapters** | `AGENTS.md`, its `CLAUDE.md` symlink, and `skills/astro-site-builder/SKILL.md` route agents to the canonical guidance. |
-| **Verification** | CI and local checks cover documentation, tokens, contrast, types, builds, social metadata, forms, and accessibility. |
+| **Verification** | CI and local checks cover documentation, tokens, contrast, types, builds, social metadata, and accessibility. |
 
 ## Who it is for
 
@@ -70,7 +70,7 @@ The [Astro Site Playbook](docs/playbook.md) is canonical. Agent files are adapte
 | [Content modelling](docs/content-modeling.md) | Choosing among editorial prose, entities, repeaters, and global singletons. |
 | [Forms and submissions](docs/forms.md) | Provider-independent form and accessibility contracts. |
 | [Quality](docs/quality.md) | Accessibility, performance, privacy, automated checks, and manual verification. |
-| [Cloudflare Pages and Mailgun recipe](docs/recipes/cloudflare-mailgun-contact.md) | Configuring, replacing, or removing the included contact delivery reference. |
+| [Cloudflare Pages and Mailgun recipe](docs/recipes/cloudflare-mailgun-contact.md) | Adding an accessible contact form with Cloudflare Pages and Mailgun. |
 | [Releasing](docs/releasing.md) | Running the release audit, publishing a tag, and creating release notes. |
 
 ## Included implementation
@@ -81,10 +81,7 @@ The [Astro Site Playbook](docs/playbook.md) is canonical. Agent files are adapte
 - Scoped Astro component styles using BEM and logical properties.
 - Self-hosted variable fonts and a verified 1200×630 default social image.
 - Canonical, Open Graph, Twitter Card, sitemap, RSS, robots, and 404 foundations.
-- Accessible contact UI with shared browser/server validation and non-JavaScript outcomes.
-- A Cloudflare Pages Function, Mailgun delivery, and optional Turnstile as a reference recipe.
-
-The contact provider and deployment host are not universal requirements. No production destination or provider credentials are configured automatically.
+- Documented recipes for optional integrations such as host-native contact forms.
 
 ## Commands
 
@@ -99,7 +96,6 @@ The contact provider and deployment host are not universal requirements. No prod
 | `npm run test:contrast` | Check configured semantic colour pairings. |
 | `npm run test:discovery` | Check canonical, article, noindex, sitemap, and RSS metadata. |
 | `npm run test:social-image` | Check the built default social image and dimensions. |
-| `npm run test:forms` | Test built form semantics and endpoint behaviour. |
 | `npm run test:a11y` | Run the axe-core audit against built HTML. |
 | `npm run test:template` | Install and test a clean temporary copy of the repository. |
 | `npm test` | Run the complete verification pipeline. |
@@ -109,7 +105,6 @@ The contact provider and deployment host are not universal requirements. No prod
 ```text
 astro-site-playbook/
 ├── docs/                       # Canonical playbook, guides, and recipes
-├── functions/api/contact.ts    # Optional Cloudflare Pages contact endpoint
 ├── public/                     # Local assets, robots, and host header reference
 ├── scripts/                    # Deterministic quality checks
 ├── skills/astro-site-builder/  # Thin repository-local agent skill
@@ -117,8 +112,7 @@ astro-site-playbook/
 │   ├── components/             # Astro components with scoped styles
 │   ├── content/                # Example editorial and repeater content
 │   ├── layouts/                # Root document shell and metadata
-│   ├── lib/                    # Shared implementation logic
-│   ├── pages/                  # Static routes, RSS, and form outcomes
+│   ├── pages/                  # Static routes and RSS feed
 │   └── styles/                 # Reset, tokens, and global layout rules
 ├── AGENTS.md                   # Concise agent adapter
 └── CLAUDE.md                   # Relative symlink to AGENTS.md

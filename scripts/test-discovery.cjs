@@ -29,15 +29,13 @@ assert.match(
   /^\d{4}-\d{2}-\d{2}T/,
 );
 
-for (const relativePath of ['contact/success/index.html', 'contact/error/index.html']) {
-  const resultPage = documentFor(relativePath);
-  assert.equal(resultPage.querySelector('meta[name="robots"]')?.getAttribute('content'), 'noindex, nofollow');
-}
+const notFoundPage = documentFor('404.html');
+assert.equal(notFoundPage.querySelector('meta[name="robots"]')?.getAttribute('content'), 'noindex, nofollow');
 
 const sitemap = read('sitemap-0.xml');
 assert.match(sitemap, /<loc>https:\/\/example\.com\/<\/loc>/);
 assert.match(sitemap, /<loc>https:\/\/example\.com\/posts\/welcome\/<\/loc>/);
-assert.doesNotMatch(sitemap, /\/contact\/(success|error)\//);
+assert.doesNotMatch(sitemap, /404/);
 
 const rss = read('rss.xml');
 assert.match(rss, /<rss version="2\.0">/);

@@ -40,7 +40,6 @@ npm run check
 npm run build
 npm run test:discovery
 npm run test:social-image
-npm run test:forms   # form markup and endpoint contract
 npm run test:a11y
 npm run test:template # isolated release/adoption check
 npm test             # complete verification pipeline

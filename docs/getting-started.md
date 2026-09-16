@@ -50,7 +50,7 @@ Fork the repository only when you intend to contribute a change back to Astro Si
 
 ## Understand the three parts
 
-1. `src/`, `public/`, and `functions/` are the runnable reference implementation.
+1. `src/` and `public/` are the runnable reference implementation.
 2. `docs/playbook.md` and its supporting guides explain the decisions behind it.
 3. `AGENTS.md`, `CLAUDE.md`, and `skills/astro-site-builder/SKILL.md` help coding agents apply the same source of truth.
 
@@ -62,7 +62,7 @@ Before building pages, decide:
 
 - the production domain and deployment host;
 - whether the included content patterns match the site's editorial needs;
-- whether to keep, replace, or remove the Cloudflare Pages and Mailgun contact recipe;
+- whether a contact form is required and which delivery model from [Forms and submissions](forms.md) fits (such as the [Cloudflare Pages and Mailgun recipe](recipes/cloudflare-mailgun-contact.md));
 - whether to bring an existing token system, translate a design source, or start with the sample tokens;
 - which content, fonts, media, and metadata are placeholders.
 
@@ -80,7 +80,7 @@ Run focused checks while working and the complete suite before declaring a miles
 npm test
 ```
 
-The suite checks documentation links, design tokens, semantic contrast, Astro and TypeScript diagnostics, the production build, the default social image, form behaviour, and built-page accessibility.
+The suite checks documentation links, design tokens, semantic contrast, Astro and TypeScript diagnostics, the production build, the default social image, and built-page accessibility.
 
 Before a release or substantial template restructuring, also verify the adoption path in an isolated temporary copy:
 

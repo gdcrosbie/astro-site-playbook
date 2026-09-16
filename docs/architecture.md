@@ -4,7 +4,7 @@ This guide makes the boundary between durable playbook principles, repository co
 
 ## Current architecture
 
-The starter builds an Astro site as static files. Astro components render at build time, content is validated through the Astro Content Layer, and browser scripts are limited to progressive enhancement. A host may add endpoints alongside the static output; the included contact endpoint uses a Cloudflare Pages Function and does not turn the Astro build into a server-rendered application.
+The starter builds an Astro site as static files. Astro components render at build time, content is validated through the Astro Content Layer, and browser scripts are limited to progressive enhancement. A host may add endpoints alongside the static output; for example, host-native functions (such as a Cloudflare Pages Function) can handle form submissions without turning the Astro build into a server-rendered application.
 
 ## Repository conventions
 
@@ -27,9 +27,9 @@ These choices demonstrate a complete deployment path, but they are replaceable w
 | --- | --- | --- |
 | Rendering | Astro static output | Choose the smallest architecture that supports the required behaviour and retain appropriate verification. |
 | Deployment | Cloudflare Pages-compatible static output and `_headers` | Preserve equivalent routing, caching, and security-header behaviour on the chosen host. |
-| Form endpoint | Cloudflare Pages Function in `functions/api/contact.ts` | Keep server-side validation, safe secret handling, progressive responses, and accessible failure paths. |
-| Email delivery | Mailgun REST API | Document configuration, handle provider failures safely, and never expose credentials to the browser. |
-| Bot mitigation | Honeypot, elapsed-time check, and optional Cloudflare Turnstile | Keep layered abuse protection proportionate, accessible, and privacy-conscious. |
+| Form endpoint | None bundled; reference recipe uses a Cloudflare Pages Function | Keep server-side validation, safe secret handling, progressive responses, and accessible failure paths. |
+| Email delivery | None bundled; reference recipe uses Mailgun REST API | Document configuration, handle provider failures safely, and never expose credentials to the browser. |
+| Bot mitigation | None bundled; reference recipe uses honeypot, elapsed-time check, and optional Turnstile | Keep layered abuse protection proportionate, accessible, and privacy-conscious. |
 | Fonts | Self-hosted Fraunces and DM Sans via Fontsource | Keep fonts local where possible, minimise subsets and weights, and avoid layout shift. |
 | Colours and scales | The sample OKLCH palette and two-tier fluid scales | Preserve the semantic alias contract and automated token and contrast checks. |
 | Canonical site URL | `https://example.com` | Replace it before launch in `astro.config.mjs` and `public/robots.txt`. |
@@ -51,15 +51,12 @@ The starter intentionally contains placeholders. At minimum, replace:
 - `site` in `astro.config.mjs`;
 - the sitemap origin in `public/robots.txt`;
 - default titles, descriptions, social image, and feed metadata;
-- the example contact recipient and all provider configuration;
-- sample content, brand tokens, and fonts as required.
+- sample content, brand tokens, and fonts as required;
+- form endpoints, recipients, and provider configuration if implementing a form.
 
-The included `/contact/success` and `/contact/error` pages complete the default non-JavaScript redirect flow. Customise their copy and destinations alongside the rest of the form before launch.
+Use [Getting started](getting-started.md) for a new project and [Customising a project](customization.md) for the complete launch checklist. Provider-specific setup for adding a contact form lives in the [Cloudflare Pages and Mailgun recipe](recipes/cloudflare-mailgun-contact.md).
 
-Use [Getting started](getting-started.md) for a new project and [Customising a project](customization.md) for the complete launch checklist. Provider-specific setup for the included form lives in the [Cloudflare Pages and Mailgun recipe](recipes/cloudflare-mailgun-contact.md).
+## Contact recipe architecture decision
 
-## Version 1.0 contact-recipe decision
+The contact form is maintained as an opt-in recipe in `docs/recipes/cloudflare-mailgun-contact.md` rather than bundled into the base starter. This keeps the starter lean and static-first, avoiding unused form files, routes, or provider assumptions on new sites. The recipe demonstrates the playbook's server-side validation, layered abuse protection, accessible error handling, and progressive-enhancement contracts as a complete, copyable reference.
 
-The optional contact implementation remains bundled in version 1.0 because it demonstrates the playbook's server-side validation, layered abuse protection, accessible error handling, and progressive-enhancement contracts as a coherent working example. It stays isolated in the form component, shared validation module, result routes, Function, tests, and provider recipe so projects can replace or remove it deliberately.
-
-Bundling the example does not select Cloudflare, Mailgun, or Turnstile for a downstream project. That decision still belongs at the form-handling gate, before the project collects real submissions.
