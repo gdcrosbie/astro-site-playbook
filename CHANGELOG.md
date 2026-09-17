@@ -4,10 +4,15 @@ All notable changes to Astro Site Playbook are recorded here. The repository fol
 
 ## [Unreleased]
 
+## [2.0.2] - 2026-09-17
+
+### Fixed
+
+- `scripts/test-discovery.cjs` no longer hard-codes the sample post and feed. Article, sitemap and feed checks are derived from `src/content/posts` and the RSS route, so removing the sample post or RSS no longer requires rewriting the test. It checks two things it did not before: **every** post is checked (not only `posts/welcome`), and while the RSS route exists an RSS auto-discovery link is **required** in the built homepage. When the RSS route is removed, it asserts that no `rss.xml` or auto-discovery link remains.
+
 ### Changed
 
-- `scripts/test-discovery.cjs` now derives article, sitemap and feed checks from `src/content/posts` and the RSS route, so removing the sample post or RSS no longer requires rewriting the test. When the RSS route is removed it asserts that no feed or auto-discovery link remains.
-- `public/_headers` states that it applies to Cloudflare Pages and Netlify only, and that Vercel publishes it as a public file.
+- `public/_headers` states that it applies to Cloudflare Pages and Netlify only, and that Vercel publishes it as a public file without applying it.
 - `docs/quality.md` adds a manual viewport test matrix and notes that the jsdom-based checks do not cover layout.
 - `docs/design-system.md` covers styling classes passed to child components, matching inside strokes with inset outlines, and `em` letter spacing for fluid headings.
 - `docs/customization.md` reflects the adaptive discovery test.
@@ -62,7 +67,8 @@ All notable changes to Astro Site Playbook are recorded here. The repository fol
 - Separated universal principles and repository conventions from replaceable implementation defaults.
 - Hardened form validation, keyboard focus, reduced-motion handling, list semantics, discovery metadata, and production cache guidance for the first stable release.
 
-[Unreleased]: https://github.com/gdcrosbie/astro-site-playbook/compare/v2.0.1...HEAD
+[Unreleased]: https://github.com/gdcrosbie/astro-site-playbook/compare/v2.0.2...HEAD
+[2.0.2]: https://github.com/gdcrosbie/astro-site-playbook/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/gdcrosbie/astro-site-playbook/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/gdcrosbie/astro-site-playbook/compare/v1.0.1...v2.0.0
 [1.0.1]: https://github.com/gdcrosbie/astro-site-playbook/compare/v1.0.0...v1.0.1
