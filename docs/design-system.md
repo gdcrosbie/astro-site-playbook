@@ -39,6 +39,9 @@ Components using container units must establish or inherit a deliberate query co
 - Do not add Tailwind-style utility markup or inline `style` attributes.
 - Prefer shared tokens to unexplained magic numbers. A one-off value is acceptable when it represents intrinsic behaviour rather than a missing design decision.
 - Prefer `text-wrap: pretty` for large display headings translated from a design. `text-wrap: balance` shortens every line and can break headings differently from the approved layout; reserve it for short, centred headings.
+- A class passed to a child component (`<ButtonGroup class="c-hero__actions">`) lands on the child's root element, which does not carry the parent's style scope, so a rule for it in the parent's `<style>` never applies. Target it from the parent with `:global()` (for example `.c-hero__text > :global(.c-hero__actions)`) or expose a prop.
+- A design tool's inside stroke does not change an element's size, but a CSS `border` does. Where the rendered size must match, draw the stroke as an inset outline (`outline: 2px solid; outline-offset: -2px`) and keep the width in a token.
+- Convert design letter spacing given in pixels to `em` for headings whose size is fluid, so the tracking scales with the text. Small labels with fixed sizes can keep pixel values.
 
 ## Logical properties
 
