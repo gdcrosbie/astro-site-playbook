@@ -4,6 +4,8 @@ All notable changes to Astro Site Playbook are recorded here. The repository fol
 
 ## [Unreleased]
 
+## [2.0.3] - 2026-09-17
+
 ### Changed
 
 - `docs/customization.md` adds **Starter documentation and updates**. Projects created from the template record the starter release in `.starter-version`, keep their own project record, remove local copies of the generic guides, `docs/recipes/`, the repository-local skill and `CHANGELOG.md`, and link to the guides upstream at that release. `.starter-version` is treated as the last release reviewed, with skipped items logged in `.starter-version.log`, and changes that originated in the project are not copied back. Later sections are renumbered, and the pre-launch checklist gains an item.
@@ -72,7 +74,8 @@ All notable changes to Astro Site Playbook are recorded here. The repository fol
 - Separated universal principles and repository conventions from replaceable implementation defaults.
 - Hardened form validation, keyboard focus, reduced-motion handling, list semantics, discovery metadata, and production cache guidance for the first stable release.
 
-[Unreleased]: https://github.com/gdcrosbie/astro-site-playbook/compare/v2.0.2...HEAD
+[Unreleased]: https://github.com/gdcrosbie/astro-site-playbook/compare/v2.0.3...HEAD
+[2.0.3]: https://github.com/gdcrosbie/astro-site-playbook/compare/v2.0.2...v2.0.3
 [2.0.2]: https://github.com/gdcrosbie/astro-site-playbook/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/gdcrosbie/astro-site-playbook/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/gdcrosbie/astro-site-playbook/compare/v1.0.1...v2.0.0
