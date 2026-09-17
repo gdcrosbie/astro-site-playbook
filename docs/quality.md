@@ -67,4 +67,27 @@ Add focused manual checks when a change affects:
 - canonical, sitemap, RSS, or social metadata;
 - deployment headers, redirects, 404 behaviour, or indexing controls. Verify these against the live production domain as described in [Hosting, headers, and indexing](hosting.md#verify-the-live-deployment).
 
+### Viewport test matrix
+
+The automated checks run on jsdom, which parses HTML but does not lay pages out, so **`npm test` does not cover layout**. When a change affects layout, check it in a real browser across a fixed set of widths. The design's frame width (often 1440px) is the reference for fidelity, not an estimate of real traffic. Layouts usually break *below* it, where they compress.
+
+| Viewport | Layout width with a classic scrollbar | Represents |
+| --- | --- | --- |
+| 1920 | about 1905 | Full-HD monitors |
+| 1536 | about 1521 | Full-HD Windows laptops at 125% scaling |
+| 1440, plus a scrollbar-free 1440 | 1425 / 1440 | MacBooks; the usual design frame |
+| 1366 | about 1351 | Smaller laptops |
+| 1280 | about 1265 | Small laptops |
+| 1024 | about 1009 | Tablet landscape; side-by-side layouts at their narrowest |
+| 375 | 375 | Phones |
+
+Read the real layout width from `document.documentElement.clientWidth`; add the scrollbar to the viewport for a scrollbar-free design width. At each width confirm:
+
+- there is no horizontal overflow (`scrollWidth` equals `clientWidth`);
+- rows of buttons, navigation and cards have the expected row count and stay inside their container;
+- heading line counts match the design;
+- copy does not collide with overlapping images.
+
+Adapt the widths to the site's analytics once they exist. Automating this needs a browser-based tool such as Playwright, which is a project decision.
+
 Use the repeatable project-level process in [Releasing](releasing.md) before publishing a repository release.

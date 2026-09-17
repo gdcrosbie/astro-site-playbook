@@ -1,3 +1,6 @@
+# Cloudflare Pages / Netlify only. Vercel ignores this file AND publishes it at /_headers:
+# translate these rules to vercel.json (or your host's config) and delete this file.
+# See docs/hosting.md.
 /*
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY

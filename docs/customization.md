@@ -62,7 +62,7 @@ Run `npm run test:tokens` and `npm run test:contrast` after token changes.
 - Model real content using [Content modelling](content-modeling.md).
 - Keep schemas aligned with the fields templates actually consume.
 - Keep explicit editorial ordering wherever sequence matters.
-- Remove RSS and its auto-discovery link if the finished site has no syndicated editorial content. `scripts/test-discovery.cjs` asserts the sample post and feed, so update it in the same change.
+- Remove RSS and its auto-discovery link if the finished site has no syndicated editorial content. `scripts/test-discovery.cjs` derives its article, sitemap and feed checks from `src/content/posts` and `src/pages/rss.xml.ts`: remove the sample post, or the RSS route and its layout link, and the test adapts, including asserting that no feed or auto-discovery link remains.
 - Every link in navigation, footers, and calls to action must resolve. When a design links to pages outside the current scope, generate `noindex` placeholder pages from a single data file rather than using `href="#"` or inventing copy. Delete each entry when its real page ships, and add a check that every root-relative link in the built HTML resolves to a file in `dist/`.
 
 ## 6. Forms and external services

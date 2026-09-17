@@ -4,6 +4,14 @@ All notable changes to Astro Site Playbook are recorded here. The repository fol
 
 ## [Unreleased]
 
+### Changed
+
+- `scripts/test-discovery.cjs` now derives article, sitemap and feed checks from `src/content/posts` and the RSS route, so removing the sample post or RSS no longer requires rewriting the test. When the RSS route is removed it asserts that no feed or auto-discovery link remains.
+- `public/_headers` states that it applies to Cloudflare Pages and Netlify only, and that Vercel publishes it as a public file.
+- `docs/quality.md` adds a manual viewport test matrix and notes that the jsdom-based checks do not cover layout.
+- `docs/design-system.md` covers styling classes passed to child components, matching inside strokes with inset outlines, and `em` letter spacing for fluid headings.
+- `docs/customization.md` reflects the adaptive discovery test.
+
 ## [2.0.1] - 2026-09-16
 
 ### Added
