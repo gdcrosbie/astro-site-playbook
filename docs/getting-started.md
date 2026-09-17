@@ -56,6 +56,8 @@ Fork the repository only when you intend to contribute a change back to Astro Si
 
 The playbook is authoritative. The agent files should remain concise adapters.
 
+In a site created from the template, the guides are reference material rather than part of your project. [Customising a project](customization.md#2-starter-documentation-and-updates) records the starter release you began from, removes the local copies, and links your agent files to the guides at that release. Your repository then keeps only its own decisions.
+
 ## Make the first decisions
 
 Before building pages, decide:
@@ -70,7 +72,7 @@ Use the decision gates in [Content modelling](content-modeling.md) and [Forms an
 
 ## Replace the launch placeholders
 
-Follow [Customising a project](customization.md). It covers identity, canonical URLs, metadata, tokens, fonts, content, forms, external services, and deployment behaviour.
+Follow [Customising a project](customization.md). It covers identity, starter documentation and updates, canonical URLs, metadata, tokens, fonts, content, forms, external services, and deployment behaviour.
 
 ## Verify continuously
 

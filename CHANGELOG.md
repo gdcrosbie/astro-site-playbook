@@ -4,6 +4,11 @@ All notable changes to Astro Site Playbook are recorded here. The repository fol
 
 ## [Unreleased]
 
+### Changed
+
+- `docs/customization.md` adds **Starter documentation and updates**. Projects created from the template record the starter release in `.starter-version`, keep their own project record, remove local copies of the generic guides, `docs/recipes/`, the repository-local skill and `CHANGELOG.md`, and link to the guides upstream at that release. `.starter-version` is treated as the last release reviewed, with skipped items logged in `.starter-version.log`, and changes that originated in the project are not copied back. Later sections are renumbered, and the pre-launch checklist gains an item.
+- `docs/getting-started.md` explains that the guides are reference material in a derived project and points to the new section.
+
 ## [2.0.2] - 2026-09-17
 
 ### Fixed
