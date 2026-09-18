@@ -4,6 +4,16 @@ All notable changes to Astro Site Playbook are recorded here. The repository fol
 
 ## [Unreleased]
 
+### Added
+
+- Pointer target tokens `--target-touch` (44px) and `--target-touch-large` (48px) in section 6 of `src/styles/tokens.css`, documented against WCAG 2.2 SC 2.5.8 (AA) and SC 2.5.5 (AAA).
+- A "Pointer targets" section in `docs/design-system.md` covering which step to use, applying them as minimums rather than fixed sizes, the inline-link exemption, and binding a portable component's namespaced target variable to the site scale.
+
+### Changed
+
+- `scripts/test-tokens.cjs` now requires `--target-touch`, making the target scale part of the Standard Astro Token Schema. Derived projects adopting this release need the token present before `npm run test:tokens` passes.
+- The accessibility baseline in `docs/quality.md` now points at the target scale for standalone controls.
+
 ## [2.0.3] - 2026-09-17
 
 ### Changed

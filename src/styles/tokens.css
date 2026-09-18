@@ -96,8 +96,16 @@
   --container-narrow: 840px;
 
   /* ════════════════════════════════════════════════════════════════════════════
-     6. INTERACTION, RADIUS & ELEVATION
+     6. INTERACTION, TARGETS, RADIUS & ELEVATION
      ════════════════════════════════════════════════════════════════════════════ */
+  /* Pointer target sizes. WCAG 2.2 SC 2.5.8 (AA) requires 24x24 CSS px for a
+     control that is not inline in running text; both steps below clear it.
+     44 is SC 2.5.5 (AAA) and matches iOS and Android platform guidance; 48 is
+     the comfortable step for stacked rows whose neighbours are adjacent.
+     Apply to standalone controls, not to inline links, which are exempt. */
+  --target-touch: 2.75rem;       /* 44 — icon buttons, toggles, isolated controls */
+  --target-touch-large: 3rem;    /* 48 — stacked list rows, menu items */
+
   --radius-xs: 2px;
   --radius-s: 4px;
   --radius-m: 8px;

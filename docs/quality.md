@@ -7,6 +7,7 @@ Quality is a continuous constraint in this playbook. Automated checks protect kn
 - Target WCAG 2.2 Level AA.
 - Use semantic landmarks, a logical heading structure, native controls, and a skip link where repeated navigation warrants one.
 - Ensure all interactive behaviour works from a keyboard and has a visible focus state.
+- Size standalone controls from the pointer target scale in [Design system and CSS](design-system.md); WCAG 2.2 SC 2.5.8 requires 24x24 CSS px, and the scale's 44px and 48px steps clear it. Inline links in running text are exempt.
 - Give controls accessible names and relationships; announce dynamic status changes appropriately.
 - Provide text alternatives for meaningful images and hide decorative imagery from assistive technology.
 - Respect reduced-motion preferences when motion is introduced.

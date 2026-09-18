@@ -32,6 +32,24 @@ The starter uses two responsive tiers:
 
 Components using container units must establish or inherit a deliberate query container. The existing card establishes that context with `:has(> .c-card) { container-type: inline-size; }`; use the pattern only where the parent relationship is appropriate.
 
+## Pointer targets
+
+Standalone controls draw their minimum size from the target scale rather than from
+padding alone, so the hit area survives changes to type size and spacing:
+
+- `--target-touch` (44px) for icon buttons, toggles, and other isolated controls.
+- `--target-touch-large` (48px) for stacked rows whose neighbours are immediately
+  adjacent, such as drawer and menu items.
+
+Apply them with `min-block-size` and `min-inline-size`, not fixed sizing, so a
+control can still grow with its content. Links inline in running text are exempt
+from WCAG 2.2 SC 2.5.8 and take no minimum; adding one breaks the line box.
+
+A portable component that exposes its own namespaced variable for a target should
+be bound to this scale in `tokens.css` (`--nav-drawer-toggle-size: var(--target-touch)`)
+even when the component's own default already matches, so the site scale stays the
+single source of truth.
+
 ## CSS architecture
 
 - Use BEM names for component and layout classes: `.c-block`, `.c-block__element`, `.c-block--modifier`, `.l-section`, and `.l-container`.
