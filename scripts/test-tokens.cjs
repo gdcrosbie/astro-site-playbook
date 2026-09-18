@@ -24,7 +24,6 @@ const requiredTokens = [
   '--space-xl',
   '--gutter',
   '--container-max',
-  '--target-touch',
   '--cq-text-m',
   '--cq-card-padding',
   '--cq-gap'
