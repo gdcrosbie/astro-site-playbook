@@ -6,7 +6,7 @@ const { spawnSync } = require('node:child_process');
 const source = path.resolve(__dirname, '..');
 const temporaryRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'astro-site-playbook-'));
 const project = path.join(temporaryRoot, 'site-from-template');
-const excludedRoots = new Set(['.astro', '.git', 'dist', 'node_modules']);
+const excludedRoots = new Set(['.astro', '.cache', '.git', '.wrangler', 'dist', 'node_modules']);
 
 function copyFilter(entry) {
   const relative = path.relative(source, entry);

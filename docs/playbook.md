@@ -121,4 +121,5 @@ This covers the token contract, semantic colour contrast, Astro/TypeScript diagn
 - [Quality, accessibility, performance, and privacy](quality.md)
 - [Hosting, headers, and indexing](hosting.md)
 - [Cloudflare Pages and Mailgun contact form](recipes/cloudflare-mailgun-contact.md)
+- [Sveltia CMS (Git-based editorial UI)](recipes/sveltia-cms.md)
 - [Releasing](releasing.md)
