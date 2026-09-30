@@ -83,6 +83,7 @@ Run `npm run test:tokens` and `npm run test:contrast` after token changes.
 - Keep explicit editorial ordering wherever sequence matters.
 - Remove RSS and its auto-discovery link if the finished site has no syndicated editorial content. `scripts/test-discovery.cjs` derives its article, sitemap and feed checks from `src/content/posts` and `src/pages/rss.xml.ts`: remove the sample post, or the RSS route and its layout link, and the test adapts, including asserting that no feed or auto-discovery link remains.
 - Every link in navigation, footers, and calls to action must resolve. When a design links to pages outside the current scope, generate `noindex` placeholder pages from a single data file rather than using `href="#"` or inventing copy. Delete each entry when its real page ships, and add a check that every root-relative link in the built HTML resolves to a file in `dist/`.
+- If non-technical editors need a browser-based Git CMS, follow the optional [Sveltia CMS recipe](recipes/sveltia-cms.md); otherwise keep the default direct-in-Git workflow or connect the project's chosen CMS.
 
 ## 7. Forms and external services
 
@@ -97,7 +98,7 @@ Review every analytics script, embed, CAPTCHA, form provider, and other external
 
 ## 8. Deployment behaviour
 
-`public/_headers` is a Cloudflare Pages-compatible reference for security and cache headers. If the project uses another host, translate those policies into that platform's configuration rather than assuming the file will be applied, and remove files the host does not read. On Vercel, `_headers` is not applied and is published as a public file. [Hosting, headers, and indexing](hosting.md) gives per-host equivalents and a live verification routine.
+`public/_headers` is a Cloudflare Workers (Static Assets), Cloudflare Pages, and Netlify reference for security and cache headers. If the project uses Cloudflare Workers (Static Assets), add a `wrangler.jsonc` file at the repository root so Wrangler 4.68+ does not trigger SSR autoconfig (`@astrojs/cloudflare`). If the project uses another host, translate those policies into that platform's configuration rather than assuming `_headers` will be applied, and remove files the host does not read. On Vercel, `_headers` is not applied and is published as a public file. [Hosting, headers, and indexing](hosting.md) gives per-host equivalents and a live verification routine.
 
 Confirm:
 

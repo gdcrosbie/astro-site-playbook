@@ -19,6 +19,7 @@ Components must consume semantic aliases and shared scale tokens. They must not 
 - Do not introduce hex or RGB colour definitions in token or component stylesheets.
 - Derive related tones with relative colour syntax where appropriate.
 - Maintain WCAG 2.2 AA contrast: at least 4.5:1 for normal text and 3:1 for large text and applicable UI graphics.
+- When a page alternates between light and dark sections, remap the semantic aliases (`--color-bg`, `--color-surface`, `--color-text`, `--color-muted`, `--color-dim`) inside a contextual surface class (such as `.c-surface-night`) rather than duplicating component selectors for dark sections, and extend `scripts/test-contrast.cjs` so both the `:root` surface and every contextual surface class are checked.
 - Run `npm run test:tokens` and `npm run test:contrast` immediately after token changes.
 
 OKLCH improves the predictability of lightness adjustments, but the colour format alone does not guarantee accessible contrast; the automated check remains authoritative for the token pairs it covers.

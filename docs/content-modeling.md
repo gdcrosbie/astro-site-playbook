@@ -50,3 +50,7 @@ When Pattern A represents public editorial content:
 - include RSS auto-discovery in the base layout.
 
 The included `posts` collection, `[slug].astro`, and `rss.xml.ts` demonstrate this default. RSS is a content-strategy choice for a new collection, not a universal requirement for every structured record.
+
+## Editorial UI (optional)
+
+The starter ships with **no CMS** by default so content can be maintained directly in Git and any editor. When non-technical editors need a browser-based UI over the four storage patterns above without introducing a database or runtime content API, see the optional [Sveltia CMS recipe](recipes/sveltia-cms.md).

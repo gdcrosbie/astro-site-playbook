@@ -4,27 +4,51 @@ The starter's static output runs on any host, but response headers, redirects, t
 
 ## Confirm the host before launch work
 
-The starter's defaults are written for Cloudflare Pages:
+The starter's defaults are written for Cloudflare (Workers with Static Assets or Cloudflare Pages):
 
 - `public/_headers` defines caching and security headers;
-- the [contact form recipe](recipes/cloudflare-mailgun-contact.md) uses a Cloudflare Pages Function.
+- the [contact form recipe](recipes/cloudflare-mailgun-contact.md) uses a Cloudflare Pages Function (or a Worker handler).
 
 Treat the host as a project decision and record it. Then keep only the configuration that host reads:
 
-| Host | Headers and redirects | Functions |
+| Host | Headers and redirects | Functions / Worker entry |
 | --- | --- | --- |
-| Cloudflare Pages | `public/_headers`, `public/_redirects` | `functions/` |
-| Netlify | `public/_headers` and `public/_redirects`, or `netlify.toml` | `netlify/functions/` |
-| Vercel | `vercel.json` | `api/` |
-| Other static hosts or CDNs | Host or CDN configuration outside the repository | Host-specific |
+| **Cloudflare Workers (Static Assets)** | `wrangler.jsonc` + `public/_headers`, `public/_redirects` | Optional `main` in `wrangler.jsonc` (`assets.run_worker_first`) |
+| **Cloudflare Pages (Legacy)** | `public/_headers`, `public/_redirects` | `functions/` |
+| **Netlify** | `public/_headers` and `public/_redirects`, or `netlify.toml` | `netlify/functions/` |
+| **Vercel** | `vercel.json` | `api/` |
+| **Other static hosts or CDNs** | Host or CDN configuration outside the repository | Host-specific |
 
 Remove configuration files the chosen host does not use. **Vercel does not apply `public/_headers`: it publishes it as an ordinary file at `/_headers`**, so the site loses its security headers while exposing the intended policy.
+
+## Cloudflare Workers (Static Assets)
+
+Cloudflare's current Git integration (**Compute (Workers) → Workers & Pages → Create application**) deploys Astro sites as **Workers with Static Assets** rather than legacy Cloudflare Pages.
+
+When deploying to Cloudflare Workers, add `wrangler.jsonc` at the repository root (and keep `.wrangler/` in `.gitignore`):
+
+```jsonc
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "your-project-name",
+  "compatibility_date": "2026-09-30",
+  "workers_dev": true,
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  }
+}
+```
+
+- **Do not omit `wrangler.jsonc`:** When a repository with `"astro"` in `package.json` has no `wrangler.jsonc`, Wrangler 4.68+ runs framework autoconfig during `wrangler deploy`, installs `@astrojs/cloudflare` (converting the static site to SSR), opens a pull request instead of deploying `main`, and leaves the Worker with no active routes (`workers.dev: Disabled`).
+- **Omit `main` for purely static sites:** Static Assets natively applies `public/_headers` and `public/_redirects` at the edge without a Worker script. If you add a Worker entrypoint (for example, `src/worker.js` for the [Sveltia CMS GitHub OAuth recipe](recipes/sveltia-cms.md)), scope it with `assets.run_worker_first` (such as `["/auth", "/callback", "/oauth/*"]`) and `binding: "ASSETS"` so static pages continue to be served directly from the edge.
 
 ## Translating the default headers
 
 Preserve the behaviour described in [Architecture and implementation defaults](architecture.md): baseline security headers on every response, and long-lived immutable caching for versioned `/_astro/` assets only.
 
-For Vercel, an equivalent `vercel.json` is:
+For Vercel, remove `public/_headers` (and any `wrangler.jsonc`) and add an equivalent `vercel.json`:
 
 ```json
 {

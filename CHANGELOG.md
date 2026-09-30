@@ -4,6 +4,20 @@ All notable changes to Astro Site Playbook are recorded here. The repository fol
 
 ## [Unreleased]
 
+## [2.0.4] - 2026-09-30
+
+### Added
+
+- `docs/recipes/sveltia-cms.md` documents an optional, zero-dependency Git-based CMS at `/admin` mapping onto the four content patterns in `docs/content-modeling.md`, including an `astro:assets` image glob helper, local File System Access API editing, Personal Access Token sign-in, and a self-contained Cloudflare Workers GitHub OAuth handler (`src/worker.js` + `wrangler.jsonc` `run_worker_first`). **No CMS** remains the starter's default.
+
+### Changed
+
+- Updated `astro` to `^7.3.3` (`7.3.3` in `package-lock.json`).
+- `docs/hosting.md` and `public/_headers` cover **Cloudflare Workers (Static Assets)** alongside Cloudflare Pages, Netlify, and Vercel, including the required `wrangler.jsonc` configuration (`assets.directory: "./dist"`, `html_handling: "auto-trailing-slash"`, `not_found_handling: "404-page"`, `workers_dev: true`, and no `main` entry for purely static sites) so Wrangler 4.68+ does not trigger `@astrojs/cloudflare` SSR autoconfig.
+- `docs/design-system.md` documents contextual section surface tokens (`.c-surface-*`) that re-alias semantic text, surface, and border tokens on dark or inverted bands on light-first pages, and recommends verifying every distinct section surface in `scripts/check-contrast.cjs`.
+- `docs/quality.md` adds guidance on progressive-enhancement fallbacks and viewport/tab lifecycle pausing for decorative WebGL/`<canvas>` scenes (`html.gl` class gate), and on providing a Node-based `sharp` fallback whenever `predev`/`prebuild` asset scripts call system CLI binaries such as `cwebp`.
+- `.gitignore` and `scripts/test-template-copy.cjs` ignore `.wrangler/` and `.cache/`.
+
 ## [2.0.3] - 2026-09-17
 
 ### Changed
@@ -74,10 +88,12 @@ All notable changes to Astro Site Playbook are recorded here. The repository fol
 - Separated universal principles and repository conventions from replaceable implementation defaults.
 - Hardened form validation, keyboard focus, reduced-motion handling, list semantics, discovery metadata, and production cache guidance for the first stable release.
 
-[Unreleased]: https://github.com/gdcrosbie/astro-site-playbook/compare/v2.0.3...HEAD
+[Unreleased]: https://github.com/gdcrosbie/astro-site-playbook/compare/v2.0.4...HEAD
+[2.0.4]: https://github.com/gdcrosbie/astro-site-playbook/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/gdcrosbie/astro-site-playbook/compare/v2.0.2...v2.0.3
 [2.0.2]: https://github.com/gdcrosbie/astro-site-playbook/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/gdcrosbie/astro-site-playbook/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/gdcrosbie/astro-site-playbook/compare/v1.0.1...v2.0.0
 [1.0.1]: https://github.com/gdcrosbie/astro-site-playbook/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/gdcrosbie/astro-site-playbook/releases/tag/v1.0.0
+

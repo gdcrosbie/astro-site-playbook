@@ -72,6 +72,7 @@ The [Astro Site Playbook](docs/playbook.md) is canonical. Agent files are adapte
 | [Quality](docs/quality.md) | Accessibility, performance, privacy, automated checks, and manual verification. |
 | [Hosting, headers, and indexing](docs/hosting.md) | Per-host header and redirect configuration, live deployment checks, and keeping sites out of search. |
 | [Cloudflare Pages and Mailgun recipe](docs/recipes/cloudflare-mailgun-contact.md) | Adding an accessible contact form with Cloudflare Pages and Mailgun. |
+| [Sveltia CMS recipe](docs/recipes/sveltia-cms.md) | Adding an optional Git-based editorial UI at `/admin` with zero npm overhead. |
 | [Releasing](docs/releasing.md) | Running the release audit, publishing a tag, and creating release notes. |
 
 ## Included implementation
@@ -82,7 +83,7 @@ The [Astro Site Playbook](docs/playbook.md) is canonical. Agent files are adapte
 - Scoped Astro component styles using BEM and logical properties.
 - Self-hosted variable fonts and a verified 1200×630 default social image.
 - Canonical, Open Graph, Twitter Card, sitemap, RSS, robots, and 404 foundations.
-- Documented recipes for optional integrations such as host-native contact forms.
+- Documented recipes for optional integrations such as host-native contact forms and Git-backed editorial UIs.
 
 ## Commands
 

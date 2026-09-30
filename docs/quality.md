@@ -20,6 +20,7 @@ Quality is a continuous constraint in this playbook. Automated checks protect kn
 - Preload only the likely LCP image and set its priority deliberately; do not preload every prominent asset.
 - Self-host and subset fonts, preload only critical WOFF2 files, and avoid unnecessary weights.
 - Keep client JavaScript minimal and scoped to interactions that need it.
+- When a page includes a decorative `<canvas>` or WebGL scene, render a complete static HTML/CSS fallback by default and hide it only after the WebGL context initialises and compiles its shaders (`html.gl` class toggle). Pause the `requestAnimationFrame` loop when the `<canvas>` scrolls out of view (`IntersectionObserver`) or the tab is hidden (`visibilitychange`), and skip WebGL startup when `prefers-reduced-motion: reduce` matches.
 - For overlapping interfaces such as carousels, reserve a stable layout area—for example, stack slides in one CSS Grid area—to avoid cumulative layout shift.
 - When an image fills a fixed-height or absolutely positioned frame, size the `<picture>` wrapper as well as the image and clip the frame. The reset makes `<picture>` a block with automatic height, so an image with `block-size: 100%` otherwise renders at its natural height and can overflow onto the next section.
 
@@ -28,6 +29,7 @@ The playbook does not promise a universal 95–100 score. Pages, devices, conten
 ## Privacy and external assets
 
 - Store production images in `public/images/` or process them through an equivalent local asset pipeline; do not hotlink third-party media.
+- When a `predev` or `prebuild` script generates or converts local assets, do not rely solely on system-installed CLI binaries (such as `cwebp` or `imagemagick`) that may be absent on CI or Cloudflare Workers build images. Provide a Node-based fallback (`sharp`, which Astro already installs via `astro:assets`) so clean CI builds succeed without OS packages.
 - Prefer modern, appropriately compressed formats such as WebP or AVIF where browser and content requirements allow.
 - Self-host fonts rather than loading them from a third-party CDN.
 - Treat every external runtime request—including analytics, embeds, form providers, and bot protection—as an explicit project decision.

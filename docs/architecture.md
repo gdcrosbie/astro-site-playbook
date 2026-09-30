@@ -26,7 +26,8 @@ These choices demonstrate a complete deployment path, but they are replaceable w
 | Concern | Current default | What must remain true if replaced |
 | --- | --- | --- |
 | Rendering | Astro static output | Choose the smallest architecture that supports the required behaviour and retain appropriate verification. |
-| Deployment | Cloudflare Pages-compatible static output and `_headers` | Preserve equivalent routing, caching, and security-header behaviour on the chosen host, using that host's own configuration. `_headers` is not applied on Vercel, which publishes it as a public file. See [Hosting, headers, and indexing](hosting.md). |
+| Deployment | Cloudflare Workers (Static Assets) or Cloudflare Pages with `public/_headers` | Preserve equivalent routing, caching, and security-header behaviour on the chosen host, using that host's own configuration (`wrangler.jsonc` + `public/_headers` on Cloudflare Workers, `vercel.json` on Vercel). `_headers` is not applied on Vercel, which publishes it as a public file. See [Hosting, headers, and indexing](hosting.md). |
+| Editorial UI | None bundled (Git/IDE editing); optional [Sveltia CMS recipe](recipes/sveltia-cms.md) | Preserve build-time schema validation in `src/content.config.ts` and explicit `order` sorting regardless of editing interface. |
 | Form endpoint | None bundled; reference recipe uses a Cloudflare Pages Function | Keep server-side validation, safe secret handling, progressive responses, and accessible failure paths. |
 | Email delivery | None bundled; reference recipe uses Mailgun REST API | Document configuration, handle provider failures safely, and never expose credentials to the browser. |
 | Bot mitigation | None bundled; reference recipe uses honeypot, elapsed-time check, and optional Turnstile | Keep layered abuse protection proportionate, accessible, and privacy-conscious. |
@@ -55,9 +56,10 @@ The starter intentionally contains placeholders. At minimum, replace:
 - form endpoints, recipients, and provider configuration if implementing a form;
 - header, redirect, and function configuration for the chosen host, removing files that host does not read.
 
-Use [Getting started](getting-started.md) for a new project and [Customising a project](customization.md) for the complete launch checklist. Provider-specific setup for adding a contact form lives in the [Cloudflare Pages and Mailgun recipe](recipes/cloudflare-mailgun-contact.md).
+Use [Getting started](getting-started.md) for a new project and [Customising a project](customization.md) for the complete launch checklist. Provider-specific setup for adding a contact form lives in the [Cloudflare Pages and Mailgun recipe](recipes/cloudflare-mailgun-contact.md), and optional Git-based CMS setup lives in the [Sveltia CMS recipe](recipes/sveltia-cms.md).
 
-## Contact recipe architecture decision
+## Recipe architecture decision
 
-The contact form is maintained as an opt-in recipe in `docs/recipes/cloudflare-mailgun-contact.md` rather than bundled into the base starter. This keeps the starter lean and static-first, avoiding unused form files, routes, or provider assumptions on new sites. The recipe demonstrates the playbook's server-side validation, layered abuse protection, accessible error handling, and progressive-enhancement contracts as a complete, copyable reference.
+Optional integrations—such as the contact form in `docs/recipes/cloudflare-mailgun-contact.md` and the Git-based editorial UI in `docs/recipes/sveltia-cms.md`—are maintained as opt-in recipes rather than bundled into the base starter. This keeps the starter lean and static-first, avoiding unused routes, functions, or provider assumptions on new sites while providing complete, copyable references when a project needs them.
+
 
