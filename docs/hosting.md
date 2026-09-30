@@ -44,6 +44,24 @@ When deploying to Cloudflare Workers, add `wrangler.jsonc` at the repository roo
 - **Do not omit `wrangler.jsonc`:** When a repository with `"astro"` in `package.json` has no `wrangler.jsonc`, Wrangler 4.68+ runs framework autoconfig during `wrangler deploy`, installs `@astrojs/cloudflare` (converting the static site to SSR), opens a pull request instead of deploying `main`, and leaves the Worker with no active routes (`workers.dev: Disabled`).
 - **Omit `main` for purely static sites:** Static Assets natively applies `public/_headers` and `public/_redirects` at the edge without a Worker script. If you add a Worker entrypoint (for example, `src/worker.js` for the [Sveltia CMS GitHub OAuth recipe](recipes/sveltia-cms.md)), scope it with `assets.run_worker_first` (such as `["/auth", "/callback", "/oauth/*"]`) and `binding: "ASSETS"` so static pages continue to be served directly from the edge.
 
+### Choose one deploy path per Worker
+
+Git-connected Workers Builds and a manual `npx wrangler deploy` both create deployments on the same Worker, and **whichever finishes last goes live, not the newest commit**. Don't mix them. In practice, builds have queued for 15–20 minutes; a build of an older commit then landed seconds after a manual deploy of a newer one and silently rolled it back, and later pushes triggered no build at all. Nothing in the dashboard flagged it.
+
+Pick one path when you confirm the host, and record it in the project's own docs:
+
+| Path | Use when | Set-up |
+| --- | --- | --- |
+| Git-connected builds only | Cloudflare's builds are prompt for the account | Never run `wrangler deploy` by hand against that Worker. |
+| Manual only | Builds are slow or unreliable, or one person deploys | Disconnect Git (Worker → **Settings → Build**). Deploy from a clean `main` after pushing, with `--message "<commit>: <summary>"`. |
+| GitHub Actions | Automatic deploys wanted, in commit order | Disconnect Git. Add a deploy job after `npm test` that runs `wrangler deploy` (for example with `cloudflare/wrangler-action`) under a `concurrency` group with `cancel-in-progress: true`, so an older run can't land after a newer one. It needs Cloudflare API token and account ID repository secrets. |
+
+To see which commit is live:
+
+- `npx wrangler deployments list` shows each deployment's message: manual deploys carry their `--message`, and Git builds show none.
+- A Git build leaves a `Workers Builds: <worker>` check run on the commit in GitHub. A commit with no such check never triggered a build.
+- Comparing a hashed file name under `/_astro/` in the live HTML with the local `dist/` build of the commit you expect is the only check that proves which code is served.
+
 ## Translating the default headers
 
 Preserve the behaviour described in [Architecture and implementation defaults](architecture.md): baseline security headers on every response, and long-lived immutable caching for versioned `/_astro/` assets only.
@@ -103,6 +121,8 @@ Confirm that:
 - `/_astro/` assets are cached as immutable.
 
 Check the production domain itself. Preview or deployment URLs protected by the host's authentication return a login redirect and hide the site's real headers.
+
+On Cloudflare Workers, requests in the first seconds after a deploy can return Cloudflare's placeholder 404, which carries Cloudflare's own headers rather than yours. Wait about ten seconds and check again before debugging. Also confirm that the live build is the commit you expect; see [Choose one deploy path per Worker](#choose-one-deploy-path-per-worker).
 
 ## Sites that must not be indexed
 
