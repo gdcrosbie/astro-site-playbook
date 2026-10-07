@@ -4,9 +4,11 @@ All notable changes to Astro Site Playbook are recorded here. The repository fol
 
 ## [Unreleased]
 
+## [2.0.5] - 2026-10-07
+
 ### Changed
 
-- Rename the contact recipe to `docs/recipes/cloudflare-workers-turnstile-mailgun-contact.md` and make Workers Static Assets the primary runtime, retaining an existing Pages wrapper. Require server-side Turnstile verification, correct browser timing/reset and JavaScript-disabled contact guidance, and replace fake-success heuristic drops with recoverable errors. Update copyable provider and router tests and all recipe links.
+- Renamed the contact recipe to `docs/recipes/cloudflare-workers-turnstile-mailgun-contact.md` and made Workers Static Assets the primary runtime, retaining an existing Pages wrapper. Required server-side Turnstile verification, corrected browser timing/reset and JavaScript-disabled contact guidance, and replaced fake-success heuristic drops with recoverable errors. Updated copyable provider and router tests and all recipe links.
 
 - `docs/hosting.md` adds **Choose one deploy path per Worker**: Git-connected Workers Builds and manual `wrangler deploy` must not be mixed, because the deployment that finishes last goes live and a late build of an older commit can silently roll back a newer one. It lists the three paths (Git builds only, manual only, GitHub Actions with a concurrency group) and how to check which commit is live. **Verify the live deployment** notes Cloudflare's placeholder 404 in the first seconds after a deploy and asks for the live commit to be confirmed.
 
@@ -94,7 +96,8 @@ All notable changes to Astro Site Playbook are recorded here. The repository fol
 - Separated universal principles and repository conventions from replaceable implementation defaults.
 - Hardened form validation, keyboard focus, reduced-motion handling, list semantics, discovery metadata, and production cache guidance for the first stable release.
 
-[Unreleased]: https://github.com/gdcrosbie/astro-site-playbook/compare/v2.0.4...HEAD
+[Unreleased]: https://github.com/gdcrosbie/astro-site-playbook/compare/v2.0.5...HEAD
+[2.0.5]: https://github.com/gdcrosbie/astro-site-playbook/compare/v2.0.4...v2.0.5
 [2.0.4]: https://github.com/gdcrosbie/astro-site-playbook/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/gdcrosbie/astro-site-playbook/compare/v2.0.2...v2.0.3
 [2.0.2]: https://github.com/gdcrosbie/astro-site-playbook/compare/v2.0.1...v2.0.2
