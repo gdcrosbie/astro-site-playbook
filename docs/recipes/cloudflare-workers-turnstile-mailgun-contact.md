@@ -1,10 +1,10 @@
-# Cloudflare Pages and Mailgun contact form
+# Contact forms with Cloudflare Workers, Turnstile and Mailgun
 
-This recipe is an implementation of the provider-independent contract in [Forms and submissions](../forms.md). It provides an accessible, progressively enhanced contact form with server-side validation, layered anti-spam, non-JavaScript fallback pages, and email delivery via Mailgun on Cloudflare Pages.
+This recipe is an implementation of the provider-independent contract in [Forms and submissions](../forms.md). It provides an accessible, progressively enhanced contact form with server-side validation, server-side Turnstile verification, native HTML outcome pages, and Mailgun dispatch on Workers with Static Assets. Turnstile needs JavaScript; provide a useful contact alternative when JavaScript is unavailable. The 303 response path works without the fetch enhancement, but is not a JavaScript-free verification path.
 
 ## Choose this recipe when
 
-- the site is deployed to Cloudflare Pages;
+- the site is deployed to Workers with Static Assets (preferred for new Cloudflare projects), or is an existing supported Pages deployment;
 - submissions should arrive by email through Mailgun;
 - a small host-native endpoint is preferable to a separate application server;
 - the project accepts Cloudflare and Mailgun as explicit runtime data processors.
@@ -17,7 +17,7 @@ To add this contact form to your site, create the following files in your reposi
 
 ### 1. Shared validation logic
 
-Create `src/lib/contact-validation.ts` to share field limits and validation rules between browser JavaScript and the Cloudflare Pages Function:
+Create `src/lib/contact-validation.ts` to share field limits and validation rules between browser JavaScript and the Worker handler:
 
 ```typescript
 export interface ContactFields {
@@ -72,7 +72,7 @@ export function validateContactFields(fields: ContactFields): ContactFieldErrors
 
 ### 2. Form result component
 
-Create `src/components/FormResult.astro` for rendering standard non-JavaScript outcome pages:
+Create `src/components/FormResult.astro` for rendering native HTML submission outcome pages:
 
 ```astro
 ---
@@ -161,19 +161,20 @@ import { CONTACT_FIELD_LIMITS } from '../lib/contact-validation';
 
 interface Props {
   action?: string;
-  turnstileSiteKey?: string;
+  turnstileSiteKey: string;
+  contactEmail: string; // Approved alternative for visitors without JavaScript
 }
 
-const { action = '/api/contact', turnstileSiteKey } = Astro.props;
-const timestamp = Math.floor(Date.now() / 1000);
+const { action = '/api/contact', turnstileSiteKey, contactEmail } = Astro.props;
 ---
 
 <form class="c-contact-form" method="POST" action={action}>
+  <noscript>This form requires JavaScript for security verification. <a href={`mailto:${contactEmail}`}>Email us instead</a>.</noscript>
   <!-- Anti-spam: Honeypot & Timestamp -->
   <div class="c-contact-form__honey" aria-hidden="true">
     <label for="contact-form-hp">Do not fill this out if human</label>
     <input type="text" id="contact-form-hp" name="_hp" tabindex="-1" autocomplete="off" />
-    <input type="hidden" name="_timestamp" value={timestamp} />
+    <input type="hidden" name="_timestamp" value="" />
   </div>
 
   <div class="c-contact-form__field">
@@ -231,7 +232,7 @@ const timestamp = Math.floor(Date.now() / 1000);
 
   {turnstileSiteKey && (
     <div class="c-contact-form__turnstile">
-      <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="light"></div>
+      <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="light" data-action="contact"></div>
     </div>
   )}
 
@@ -296,6 +297,16 @@ const timestamp = Math.floor(Date.now() / 1000);
         fields[field]?.addEventListener('input', () => setFieldError(field));
       });
 
+      const timestampInput = form.elements.namedItem('_timestamp') as HTMLInputElement;
+      const refreshTimestamp = () => { timestampInput.value = String(Math.floor(Date.now() / 1000)); };
+      refreshTimestamp(); // For modal forms, initialise when the modal opens.
+      form.addEventListener('reset', () => queueMicrotask(refreshTimestamp));
+      const resetTurnstile = () => {
+        const api = (window as Window & { turnstile?: { reset: (container: HTMLElement) => void } }).turnstile;
+        const widget = form.querySelector<HTMLElement>('.cf-turnstile');
+        if (widget) api?.reset(widget);
+      };
+
       form.addEventListener('submit', async (e) => {
         const fieldErrors = validateContactFields({
           name: fields.name?.value ?? '',
@@ -345,11 +356,14 @@ const timestamp = Math.floor(Date.now() / 1000);
 
           if (response.ok && data?.success !== false) {
             form.reset();
+            resetTurnstile();
             if (statusEl) {
               statusEl.textContent = 'Thank you! Your message has been sent successfully.';
               statusEl.className = 'c-contact-form__status c-contact-form__status--success';
             }
           } else {
+            resetTurnstile();
+            refreshTimestamp();
             if (data?.fieldErrors) {
               renderFieldErrors(data.fieldErrors);
               const firstInvalid = form.querySelector<HTMLElement>('[aria-invalid="true"]');
@@ -362,6 +376,8 @@ const timestamp = Math.floor(Date.now() / 1000);
             }
           }
         } catch {
+          resetTurnstile();
+          refreshTimestamp();
           if (statusEl) {
             statusEl.textContent = 'Network error. Please check your connection and try again.';
             statusEl.className = 'c-contact-form__status c-contact-form__status--error';
@@ -526,7 +542,7 @@ const timestamp = Math.floor(Date.now() / 1000);
 </style>
 ```
 
-### 4. Non-JavaScript outcome pages
+### 4. Native HTML outcome pages
 
 Create `src/pages/contact/success.astro`:
 
@@ -574,12 +590,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 </BaseLayout>
 ```
 
-### 5. Cloudflare Pages Function endpoint
+### 5. Shared submission handler and host routing
 
-Create `functions/api/contact.ts`. This endpoint runs on Cloudflare Pages without altering Astro's static build output:
+Create `src/contact.ts`. The handler validates requests, verifies Turnstile, then dispatches through Mailgun. Astro keeps `output: 'static'`.
 
 ```typescript
-import { validateContactFields } from '../../src/lib/contact-validation.ts';
+import { validateContactFields } from './lib/contact-validation.ts';
 
 interface Env {
   TURNSTILE_SECRET_KEY?: string;
@@ -589,17 +605,27 @@ interface Env {
   CONTACT_TO_EMAIL?: string;
 }
 
-interface EventContext {
-  request: Request;
-  env: Env;
+async function readBoundedForm(request: Request): Promise<FormData> {
+  if (!/^(multipart\/form-data|application\/x-www-form-urlencoded)\b/i.test(
+      request.headers.get('Content-Type') || '')) throw new Error('Unsupported format');
+  const reader = request.body?.getReader();
+  if (!reader) throw new Error('Missing body');
+  const chunks: ArrayBuffer[] = [];
+  let size = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.byteLength;
+    if (size > 16_384) { await reader.cancel(); throw new Error('Body too large'); }
+    const copy = new Uint8Array(value.byteLength);
+    copy.set(value);
+    chunks.push(copy.buffer);
+  }
+  const body = await new Blob(chunks).text();
+  return new Request(request.url, { method: 'POST', headers: request.headers, body }).formData();
 }
 
-export async function onRequestGet(context: EventContext): Promise<Response> {
-  return Response.redirect(new URL('/#contact', context.request.url).toString(), 302);
-}
-
-export async function onRequestPost(context: EventContext): Promise<Response> {
-  const { request, env } = context;
+export async function handleContact(request: Request, env: Env): Promise<Response> {
   const wantsJson = request.headers.get('Accept')?.includes('application/json');
 
   const redirectOrJson = (path: string, status = 303, jsonError?: string) => {
@@ -607,40 +633,56 @@ export async function onRequestPost(context: EventContext): Promise<Response> {
       if (jsonError) {
         return new Response(JSON.stringify({ success: false, error: jsonError }), {
           status: 400,
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' },
         });
       }
       return new Response(JSON.stringify({ success: true }), {
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' },
       });
     }
-    return Response.redirect(new URL(path, request.url).toString(), status);
+    return new Response(null, { status, headers: { Location: new URL(path, request.url).toString(), 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } });
   };
 
   try {
-    const formData = await request.formData();
+    if (request.headers.get('Origin') !== new URL(request.url).origin) {
+      return redirectOrJson('/contact/error', 303, 'Please submit from this website');
+    }
+    const formData = await readBoundedForm(request);
 
-    // 1. Honeypot check: if filled, quietly drop request without alerting bots
+    // 1. Optional server-side honeypot heuristic
     const honeypot = formData.get('_hp');
     if (honeypot && String(honeypot).trim() !== '') {
-      return redirectOrJson('/contact/success');
+      return redirectOrJson('/contact/error', 303, 'Please clear the hidden field and try again');
     }
 
-    // 2. Timestamp check: if submitted under 2 seconds, quietly drop
+    // 2. Timestamp heuristic: allow a recoverable retry
     const timestampStr = formData.get('_timestamp');
-    if (timestampStr) {
-      const formTime = parseInt(String(timestampStr), 10);
-      const now = Math.floor(Date.now() / 1000);
-      if (!isNaN(formTime) && now - formTime < 2) {
-        return redirectOrJson('/contact/success');
-      }
+    const formTime = Number(timestampStr);
+    const age = Math.floor(Date.now() / 1000) - formTime;
+    if (!timestampStr || !Number.isFinite(age) || age < 2) {
+      return redirectOrJson('/contact/error', 303, 'Please reopen the form and try again');
     }
 
-    // 3. Cloudflare Turnstile verification (if secret key configured)
-    if (env.TURNSTILE_SECRET_KEY) {
+    // 4. Input validation
+    const name = String(formData.get('name') || '').trim();
+    const email = String(formData.get('email') || '').trim();
+    const message = String(formData.get('message') || '').trim();
+
+    const fieldErrors = validateContactFields({ name, email, message });
+    if (Object.keys(fieldErrors).length > 0) {
+      if (wantsJson) return Response.json({ success: false, error: 'Check the highlighted fields and try again.', fieldErrors }, {
+        status: 400, headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' },
+      });
+      return redirectOrJson('/contact/error', 303, 'Check the highlighted fields and try again.');
+    }
+
+    // 3. Fail closed when the selected Turnstile integration is unconfigured
+    if (!env.TURNSTILE_SECRET_KEY) {
+      return redirectOrJson('/contact/error', 303, 'Security verification unavailable');
+    }
+    {
       const turnstileToken = formData.get('cf-turnstile-response');
-      if (!turnstileToken || String(turnstileToken).trim() === '') {
-        console.error('Turnstile token missing');
+      if (!turnstileToken || String(turnstileToken).trim() === '' || String(turnstileToken).length > 2048) {
         return redirectOrJson('/contact/error', 303, 'Turnstile verification token missing');
       }
 
@@ -648,44 +690,22 @@ export async function onRequestPost(context: EventContext): Promise<Response> {
       const verifyFormData = new FormData();
       verifyFormData.append('secret', env.TURNSTILE_SECRET_KEY);
       verifyFormData.append('response', String(turnstileToken));
-      if (clientIp) {
-        verifyFormData.append('remoteip', clientIp);
-      }
+      if (clientIp) verifyFormData.append('remoteip', clientIp);
 
       const verifyRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
         method: 'POST',
         body: verifyFormData,
+        signal: AbortSignal.timeout(10_000),
       });
 
-      const verifyData = (await verifyRes.json()) as { success: boolean; 'error-codes'?: string[] };
-      if (!verifyData.success) {
-        console.error('Turnstile verification failed:', verifyData['error-codes']);
+      const verifyData = verifyRes.ok ? await verifyRes.json() : {};
+      if (!verifyData.success || verifyData.action !== 'contact' ||
+          verifyData.hostname !== new URL(request.url).hostname) {
         return redirectOrJson('/contact/error', 303, 'Turnstile verification failed');
       }
     }
 
-    // 4. Form inputs validation
-    const name = String(formData.get('name') || '').trim();
-    const email = String(formData.get('email') || '').trim();
-    const message = String(formData.get('message') || '').trim();
-
-    const fieldErrors = validateContactFields({ name, email, message });
-    if (Object.keys(fieldErrors).length > 0) {
-      if (wantsJson) {
-        return new Response(JSON.stringify({
-          success: false,
-          error: 'Check the highlighted fields and try again.',
-          fieldErrors,
-        }), {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' },
-        });
-      }
-
-      return redirectOrJson('/contact/error');
-    }
-
-    // 5. Send via Mailgun REST API
+    // 5. Dispatch via Mailgun REST API
     if (!env.MAILGUN_API_KEY || !env.MAILGUN_DOMAIN) {
       console.error('Missing Mailgun configuration (MAILGUN_API_KEY or MAILGUN_DOMAIN)');
       return redirectOrJson('/contact/error', 303, 'Email service not configured');
@@ -695,7 +715,8 @@ export async function onRequestPost(context: EventContext): Promise<Response> {
     const mailgunHost = isEu ? 'api.eu.mailgun.net' : 'api.mailgun.net';
     const mailgunUrl = `https://${mailgunHost}/v3/${env.MAILGUN_DOMAIN}/messages`;
 
-    const recipient = env.CONTACT_TO_EMAIL || 'hello@example.com';
+    const recipient = env.CONTACT_TO_EMAIL;
+    if (!recipient) return redirectOrJson('/contact/error', 303, 'Recipient not configured');
     const sender = `Website Enquiry <mailgun@${env.MAILGUN_DOMAIN}>`;
     const subject = `Website enquiry from ${name}`;
 
@@ -713,7 +734,8 @@ export async function onRequestPost(context: EventContext): Promise<Response> {
     const mailgunData = new FormData();
     mailgunData.append('from', sender);
     mailgunData.append('to', recipient);
-    mailgunData.append('h:Reply-To', `${name} <${email}>`);
+    mailgunData.append('h:Reply-To', email);
+    mailgunData.append('o:tracking', 'no');
     mailgunData.append('subject', subject);
     mailgunData.append('text', textBody);
 
@@ -723,21 +745,80 @@ export async function onRequestPost(context: EventContext): Promise<Response> {
         Authorization: 'Basic ' + btoa(`api:${env.MAILGUN_API_KEY}`),
       },
       body: mailgunData,
+      signal: AbortSignal.timeout(10_000),
     });
 
     if (!mailgunRes.ok) {
-      const errText = await mailgunRes.text();
-      console.error('Mailgun send failed:', mailgunRes.status, errText);
+      console.error('Mailgun send failed:', mailgunRes.status);
       return redirectOrJson('/contact/error', 303, 'Failed to dispatch email');
     }
 
     return redirectOrJson('/contact/success');
   } catch (error) {
-    console.error('Unexpected error in contact function:', error);
+    console.error('Contact function failed');
     return redirectOrJson('/contact/error', 303, 'Server error');
   }
 }
 ```
+
+
+
+For a site hosted on **Workers Static Assets**, `functions/api/contact.ts` is not a
+routable Pages Function. Keep Astro `output: 'static'` and handle submissions in a
+Worker entrypoint; do not add an SSR adapter solely for forms. Reuse an existing
+Worker when appropriate (for example a separately authorized CMS OAuth handler),
+preserving its routes and bindings. Add only the independently required runtime code.
+
+```jsonc
+{
+  "name": "your-project",
+  "compatibility_date": "2026-10-07",
+  "main": "./src/worker.ts",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash",
+    "run_worker_first": ["/api/contact", "/api/contact-config"]
+  },
+  "workers_dev": true
+}
+```
+
+Use the shared `handleContact(request, env)` handler in `src/worker.ts`;
+the Pages wrapper and Worker router are host-specific, not interchangeable:
+
+```typescript
+import { handleContact } from './contact.ts';
+export default {
+  async fetch(request: Request, env: Parameters<typeof handleContact>[1] & { TURNSTILE_SITE_KEY?: string; ASSETS: { fetch(request: Request): Promise<Response> } }) {
+    const pathname = new URL(request.url).pathname;
+    if (pathname === '/api/contact') {
+      if (request.method !== 'POST') {
+        return new Response('Method not allowed', { status: 405, headers: { Allow: 'POST' } });
+      }
+      return handleContact(request, env);
+    }
+    if (pathname === '/api/contact-config' && request.method === 'GET') {
+      return Response.json({ sitekey: env.TURNSTILE_SITE_KEY || '' },
+        { headers: { 'Cache-Control': 'no-store' } });
+    }
+    // Preserve any existing authorized runtime routes before delegating assets.
+    return env.ASSETS.fetch(request);
+  },
+};
+```
+
+For an existing Pages deployment, create `functions/api/contact.ts` instead of the Worker router:
+
+```typescript
+import { handleContact } from '../../src/contact.ts';
+export const onRequestPost = ({ request, env }: { request: Request; env: Parameters<typeof handleContact>[1] }) => handleContact(request, env);
+export const onRequestGet = ({ request }: { request: Request }) =>
+  Response.redirect(new URL('/#contact', request.url).toString(), 302);
+```
+
+Static asset `_headers` rules do not configure responses generated by the handler. Set API response headers in code, including `Cache-Control: no-store`, and verify both asset and API responses.
 
 ### 6. Sitemap filter (optional)
 
@@ -767,7 +848,8 @@ import path from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
-import { onRequestGet, onRequestPost } from '../functions/api/contact.ts';
+import { handleContact } from '../src/contact.ts';
+import worker from '../src/worker.ts';
 import { CONTACT_FIELD_LIMITS } from '../src/lib/contact-validation.ts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -778,18 +860,16 @@ function builtDocument(relativePath) {
   return new JSDOM(fs.readFileSync(file, 'utf8')).window.document;
 }
 
-function postRequest(fields, { acceptJson = true, env = {} } = {}) {
+const validFields = { name: 'Ada', email: 'ada@example.com', message: 'Hello',
+  _timestamp: Math.floor(Date.now() / 1000) - 5, 'cf-turnstile-response': 'test-token' };
+const configuredEnv = { TURNSTILE_SECRET_KEY: 'test-secret', MAILGUN_API_KEY: 'test-key',
+  MAILGUN_DOMAIN: 'mg.example.com', MAILGUN_REGION: 'eu', CONTACT_TO_EMAIL: 'team@example.com' };
+function postRequest(fields = {}, { acceptJson = true, env = configuredEnv, origin = 'https://example.com' } = {}) {
   const body = new FormData();
-  Object.entries(fields).forEach(([name, value]) => body.set(name, String(value)));
-
-  return onRequestPost({
-    request: new Request('https://example.com/api/contact', {
-      method: 'POST',
-      headers: acceptJson ? { Accept: 'application/json' } : {},
-      body,
-    }),
-    env,
-  });
+  Object.entries({ ...validFields, ...fields }).forEach(([name, value]) => body.set(name, String(value)));
+  return handleContact(new Request('https://example.com/api/contact', {
+    method: 'POST', headers: { Origin: origin, ...(acceptJson ? { Accept: 'application/json' } : {}) }, body,
+  }), env);
 }
 
 test('built form exposes labels, requirements, descriptions, and status semantics', () => {
@@ -813,6 +893,7 @@ test('built form exposes labels, requirements, descriptions, and status semantic
     assert.ok(document.getElementById(descriptionId), `Expected ${descriptionId} error container`);
   }
 
+  assert.ok(form.querySelector('noscript a[href^="mailto:"]'), 'Expected a contact alternative without JavaScript');
   assert.equal(form.elements.namedItem('email').getAttribute('type'), 'email');
   const status = form.querySelector('[role="status"]');
   assert.ok(status);
@@ -832,119 +913,72 @@ test('built success and error destinations provide one heading and a recovery li
   }
 });
 
-test('endpoint returns field-specific errors for missing and malformed values', async () => {
-  const response = await postRequest({ name: 'Ada', email: 'not-an-email', message: 'Hello' });
+test('invalid input returns accessible field errors before provider requests', async () => {
+  const response = await postRequest({ email: 'invalid' });
   assert.equal(response.status, 400);
-  const data = await response.json();
-  assert.equal(data.success, false);
-  assert.equal(data.fieldErrors.email, 'Enter a valid email address.');
-
-  const emptyResponse = await postRequest({ name: '', email: '', message: '' });
-  const emptyData = await emptyResponse.json();
-  assert.deepEqual(Object.keys(emptyData.fieldErrors).sort(), ['email', 'message', 'name']);
+  assert.ok((await response.json()).fieldErrors.email);
+  const native = await postRequest({ email: 'invalid' }, { acceptJson: false });
+  assert.equal(native.status, 303);
+  assert.equal(native.headers.get('Location'), 'https://example.com/contact/error');
+  assert.equal(native.headers.get('Cache-Control'), 'no-store');
 });
 
-test('endpoint rejects excessive input and name header injection', async () => {
-  const response = await postRequest({
-    name: 'Ada\r\nBcc: target@example.com',
-    email: `${'a'.repeat(245)}@example.com`,
-    message: 'x'.repeat(CONTACT_FIELD_LIMITS.message + 1),
-  });
-  assert.equal(response.status, 400);
-  const data = await response.json();
-  assert.equal(data.fieldErrors.name, 'Enter your name without line breaks.');
-  assert.equal(data.fieldErrors.email, `Email must be ${CONTACT_FIELD_LIMITS.email} characters or fewer.`);
-  assert.equal(data.fieldErrors.message, `Message must be ${CONTACT_FIELD_LIMITS.message} characters or fewer.`);
-});
-
-test('standard HTML submission redirects invalid input to the error page', async () => {
-  const response = await postRequest(
-    { name: 'Ada', email: 'not-an-email', message: 'Hello' },
-    { acceptJson: false },
-  );
-  assert.equal(response.status, 303);
-  assert.equal(response.headers.get('Location'), 'https://example.com/contact/error');
-});
-
-test('endpoint rejects valid input when delivery is not configured', async () => {
-  const originalConsoleError = console.error;
-  const errors = [];
-  console.error = (...messages) => errors.push(messages.join(' '));
-
-  try {
-    const response = await postRequest({ name: 'Ada', email: 'ada@example.com', message: 'Hello' });
+test('heuristics and origin failures are recoverable errors, never fake success', async () => {
+  for (const fields of [{ _hp: 'autofill' }, { _timestamp: Math.floor(Date.now() / 1000) }, { _timestamp: 'NaN' }]) {
+    const response = await postRequest(fields);
     assert.equal(response.status, 400);
-    const data = await response.json();
-    assert.equal(data.error, 'Email service not configured');
-    assert.ok(errors.some((message) => message.includes('Missing Mailgun configuration')));
-  } finally {
-    console.error = originalConsoleError;
+    assert.equal((await response.json()).success, false);
   }
+  assert.equal((await postRequest({}, { origin: 'https://other.example' })).status, 400);
+  assert.equal((await postRequest({}, { env: {} })).status, 400);
 });
 
-test('endpoint sends validated input to the configured Mailgun region', async () => {
+test('Turnstile gates delivery; Mailgun uses the configured domain, region and recipient', async () => {
   const originalFetch = globalThis.fetch;
-  let delivery;
-
+  const calls = [];
+  let verified = true;
+  let providerOk = true;
   globalThis.fetch = async (url, init) => {
-    delivery = { url: String(url), init };
-    return new Response('queued', { status: 200 });
+    calls.push({ url: String(url), init });
+    if (String(url).includes('/siteverify')) return Response.json({ success: verified, action: 'contact', hostname: 'example.com' });
+    return new Response('queued', { status: providerOk ? 200 : 503 });
   };
-
   try {
-    const response = await postRequest(
-      { name: 'Ada Lovelace', email: 'ada@example.com', message: 'Hello' },
-      {
-        env: {
-          MAILGUN_API_KEY: 'test-key',
-          MAILGUN_DOMAIN: 'mg.example.com',
-          MAILGUN_REGION: 'eu',
-          CONTACT_TO_EMAIL: 'team@example.com',
-        },
-      },
-    );
-
-    assert.equal(response.status, 200);
+    const response = await postRequest();
     assert.deepEqual(await response.json(), { success: true });
-    assert.equal(delivery.url, 'https://api.eu.mailgun.net/v3/mg.example.com/messages');
-    assert.match(delivery.init.headers.Authorization, /^Basic /);
-    assert.equal(delivery.init.body.get('to'), 'team@example.com');
-    assert.equal(delivery.init.body.get('h:Reply-To'), 'Ada Lovelace <ada@example.com>');
-  } finally {
-    globalThis.fetch = originalFetch;
-  }
+    assert.equal(calls.length, 2);
+    assert.equal(calls[1].url, 'https://api.eu.mailgun.net/v3/mg.example.com/messages');
+    assert.equal(calls[1].init.body.get('to'), 'team@example.com');
+    assert.equal(calls[1].init.body.get('h:Reply-To'), 'ada@example.com');
+    assert.equal(calls[1].init.body.get('o:tracking'), 'no');
+    calls.length = 0; verified = false;
+    assert.equal((await postRequest()).status, 400);
+    assert.equal(calls.length, 1, 'Rejected tokens must not dispatch email');
+    verified = true; providerOk = false;
+    assert.equal((await postRequest()).status, 400);
+  } finally { globalThis.fetch = originalFetch; }
 });
 
-test('anti-spam short circuits return success without contacting the provider', async () => {
+test('bounded parsing and invalid verification metadata cannot dispatch email', async () => {
+  const huge = await postRequest({ message: 'x'.repeat(20_000) });
+  assert.equal(huge.status, 400);
   const originalFetch = globalThis.fetch;
-  globalThis.fetch = async () => {
-    throw new Error('Provider should not be called');
-  };
-
+  let calls = 0;
+  globalThis.fetch = async () => { calls++; return Response.json({ success: true, action: 'other', hostname: 'example.com' }); };
   try {
-    const honeypot = await postRequest({ _hp: 'bot', name: '', email: '', message: '' });
-    assert.deepEqual(await honeypot.json(), { success: true });
-
-    const timestamp = Math.floor(Date.now() / 1000);
-    const tooFast = await postRequest({
-      _timestamp: timestamp,
-      name: 'Ada',
-      email: 'ada@example.com',
-      message: 'Hello',
-    });
-    assert.deepEqual(await tooFast.json(), { success: true });
-  } finally {
-    globalThis.fetch = originalFetch;
-  }
+    assert.equal((await postRequest()).status, 400);
+    assert.equal(calls, 1);
+    globalThis.fetch = async () => Response.json({ success: true, action: 'contact', hostname: 'other.example' });
+    assert.equal((await postRequest()).status, 400);
+    globalThis.fetch = async () => Response.json({ success: true, action: 'contact', hostname: 'example.com' });
+    assert.equal((await postRequest({}, { env: { TURNSTILE_SECRET_KEY: 'secret' } })).status, 400);
+  } finally { globalThis.fetch = originalFetch; }
 });
 
-test('GET requests return visitors to the form on the home page', async () => {
-  const response = await onRequestGet({
-    request: new Request('https://example.com/api/contact'),
-    env: {},
-  });
-  assert.equal(response.status, 302);
-  assert.equal(response.headers.get('Location'), 'https://example.com/#contact');
+test('Worker routes contact requests and delegates static assets', async () => {
+  const env = { ASSETS: { fetch: async () => new Response('asset') } };
+  assert.equal((await worker.fetch(new Request('https://example.com/api/contact'), env)).status, 405);
+  assert.equal(await (await worker.fetch(new Request('https://example.com/about/'), env)).text(), 'asset');
 });
 ```
 
@@ -958,17 +992,17 @@ Add the script to `package.json`:
 
 ## Required configuration
 
-Configure secrets and variables in your Cloudflare Pages deployment environment, never in committed files:
+Configure runtime secrets and variables on the selected Worker (or the production/preview bindings of an existing Pages deployment), never in committed files:
 
 | Variable | Required | Purpose |
 | --- | --- | --- |
 | `MAILGUN_API_KEY` | Yes | Mailgun sending credential. |
 | `MAILGUN_DOMAIN` | Yes | Verified sending domain. |
-| `CONTACT_TO_EMAIL` | Yes for production | Destination mailbox. |
+| `CONTACT_TO_EMAIL` | Yes | Destination mailbox. |
 | `MAILGUN_REGION` | No | Set to `eu` for the EU API; otherwise the US API is used. |
-| `TURNSTILE_SECRET_KEY` | Only when Turnstile is enabled | Server-side challenge verification secret. |
+| `TURNSTILE_SECRET_KEY` | Yes for this recipe | Server-side challenge verification secret. |
 
-When Turnstile is enabled, pass the matching public site key to `<ContactForm turnstileSiteKey="0x4AAAAAA..." />`. The site key may be present in browser-rendered markup; the secret key must never be.
+Pass the matching public site key to `<ContactForm turnstileSiteKey="0x4AAAAAA..." contactEmail="<approved-contact-address>" />`. The site key may be present in browser-rendered markup; the secret key must never be.
 
 ## Behaviour
 
@@ -978,15 +1012,17 @@ Abuse protection is layered:
 
 1. a visually hidden honeypot;
 2. an elapsed-time heuristic;
-3. optional Cloudflare Turnstile verification.
+3. required server-side Cloudflare Turnstile verification.
 
-The endpoint validates all trusted inputs again before contacting Mailgun. Honeypot and implausibly fast submissions return an indistinguishable success response so bots do not learn which rule they triggered.
+The endpoint validates all trusted inputs again before contacting Mailgun. Turnstile is the authoritative bot gate. Honeypot and timestamp checks are supplementary and return recoverable errors, preserving entered values rather than pretending an email was accepted. Never intercept submissions using client-side honeypots or ordinary autofill fields. Mailgun acceptance does not establish inbox delivery.
 
 ## Pre-production checklist
 
-1. Configure Mailgun credentials, region, verified domain, and destination for preview and production environments in Cloudflare Pages.
-2. Decide whether Turnstile is necessary and document the privacy implications.
+1. Configure Mailgun credentials, region, verified domain, and destination for preview and production environments on the selected Worker or existing Pages deployment.
+2. Configure the required Turnstile widget and secret, allowed hostname and contact action. Use a domain-restricted Mailgun Sending Key.
 3. Customise the fields, consent copy, success page, error page, sender identity, and operational alerts.
-4. Test valid, invalid, provider-failure, no-JavaScript, keyboard, and abuse-protection paths in the deployed environment.
+4. Test valid, invalid, provider-failure, native HTML response, JavaScript-disabled contact alternative, keyboard, and abuse-protection paths in the deployed environment.
 5. Run `npm run test:forms` to exercise the local contract with a mocked provider. Astro's static preview does not reproduce host-native function routing, so it is not a substitute for a deployed integration test.
 
+
+Use implicit Turnstile rendering for a static form present at page load. For modals or dynamic insertion, use explicit rendering, retain the widget ID, reset on retry and remove on teardown. Merge runtime routes into an existing authorised Worker instead of replacing unrelated CMS/OAuth routes.

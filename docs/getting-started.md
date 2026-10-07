@@ -64,7 +64,7 @@ Before building pages, decide:
 
 - the production domain and deployment host;
 - whether the included content patterns match the site's editorial needs;
-- whether a contact form is required and which delivery model from [Forms and submissions](forms.md) fits (such as the [Cloudflare Pages and Mailgun recipe](recipes/cloudflare-mailgun-contact.md));
+- whether a contact form is required and which delivery model from [Forms and submissions](forms.md) fits (such as the [Cloudflare Workers, Turnstile and Mailgun recipe](recipes/cloudflare-workers-turnstile-mailgun-contact.md));
 - whether to bring an existing token system, translate a design source, or start with the sample tokens;
 - which content, fonts, media, and metadata are placeholders.
 

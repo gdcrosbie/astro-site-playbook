@@ -6,6 +6,8 @@ All notable changes to Astro Site Playbook are recorded here. The repository fol
 
 ### Changed
 
+- Rename the contact recipe to `docs/recipes/cloudflare-workers-turnstile-mailgun-contact.md` and make Workers Static Assets the primary runtime, retaining an existing Pages wrapper. Require server-side Turnstile verification, correct browser timing/reset and JavaScript-disabled contact guidance, and replace fake-success heuristic drops with recoverable errors. Update copyable provider and router tests and all recipe links.
+
 - `docs/hosting.md` adds **Choose one deploy path per Worker**: Git-connected Workers Builds and manual `wrangler deploy` must not be mixed, because the deployment that finishes last goes live and a late build of an older commit can silently roll back a newer one. It lists the three paths (Git builds only, manual only, GitHub Actions with a concurrency group) and how to check which commit is live. **Verify the live deployment** notes Cloudflare's placeholder 404 in the first seconds after a deploy and asks for the live commit to be confirmed.
 
 ## [2.0.4] - 2026-09-30

@@ -91,7 +91,7 @@ The starter intentionally ships without a bundled contact form so new sites begi
 
 If your site requires a contact form, choose an architecture using the decision gate in [Forms and submissions](forms.md):
 
-- To add a host-native Cloudflare Pages Function with Mailgun delivery, follow the [Cloudflare Pages and Mailgun contact form recipe](recipes/cloudflare-mailgun-contact.md).
+- To add a host-native Cloudflare Worker endpoint with Turnstile verification and Mailgun delivery, follow the [Contact forms with Cloudflare Workers, Turnstile and Mailgun recipe](recipes/cloudflare-workers-turnstile-mailgun-contact.md).
 - To use an external hosted endpoint (e.g. Formspree, Basin) or webhook, retain the provider-independent and accessibility contracts in [Forms and submissions](forms.md).
 
 Review every analytics script, embed, CAPTCHA, form provider, and other external runtime request as an explicit privacy and performance decision.

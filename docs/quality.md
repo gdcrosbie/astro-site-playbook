@@ -48,7 +48,7 @@ Use standard `npm`; do not switch package managers without an explicit project d
 | `npm run build` | Produces the static site and catches build-time integration failures. |
 | `npm run test:discovery` | Checks canonical, article, noindex, sitemap, and RSS metadata. |
 | `npm run test:social-image` | Checks the built default Open Graph image and its dimensions. |
-| `npm run test:forms` | Checks built form semantics and the submission endpoint contract. Available only after adding the [contact form recipe](recipes/cloudflare-mailgun-contact.md); not part of the default `npm test`. |
+| `npm run test:forms` | Checks built form semantics and the submission endpoint contract. Available only after adding the [contact form recipe](recipes/cloudflare-workers-turnstile-mailgun-contact.md); not part of the default `npm test`. |
 | `npm run test:a11y` | Audits the built HTML with axe-core. |
 | `npm run test:template` | Installs and tests an isolated copy for release-level adoption checks. |
 | `npm test` | Runs the default checks above in repository order (excluding `test:template`, and `test:forms` unless a project adds it). |
