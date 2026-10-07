@@ -11,5 +11,5 @@ Welcome to your new Astro project. Astro Site Playbook combines a working starte
 
 - **Two-Tier Fluid Design Tokens**: Native OKLCH colors with viewport (`vw`) and container query (`cqi`) scales.
 - **4-Tier Content Modeling**: Clean separation between Editorial Prose (Markdown), Entity Records (YAML), In-Page Repeaters (JSON), and Global Singletons.
-- **Contact Form Recipe**: A documented recipe (`docs/recipes/cloudflare-mailgun-contact.md`) demonstrates how to add an accessible, progressively enhanced contact form with Cloudflare Pages Functions and Mailgun when forms are needed.
+- **Contact Form Recipe**: A documented recipe (`docs/recipes/cloudflare-workers-turnstile-mailgun-contact.md`) demonstrates how to add an accessible, progressively enhanced contact form with Cloudflare Workers, Turnstile and Mailgun when forms are needed.
 - **Automated Verification**: Automated tests for tokens, WCAG 2.2 color contrast, TypeScript checks, and `axe-core` accessibility.

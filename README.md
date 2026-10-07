@@ -55,7 +55,7 @@ Guidance is deliberately split into three layers:
 
 1. **Principles** protect outcomes such as accessibility, progressive enhancement, privacy, performance, and evidence-based completion.
 2. **Repository conventions** keep this implementation coherent: Astro static output, BEM, logical properties, semantic tokens, validated content, and npm-based verification.
-3. **Implementation defaults** are replaceable examples: Cloudflare Pages, Mailgun, Turnstile, the sample fonts and palette, and `example.com`.
+3. **Implementation defaults** are replaceable examples: Cloudflare Workers, Mailgun, Turnstile, the sample fonts and palette, and `example.com`.
 
 The [Astro Site Playbook](docs/playbook.md) is canonical. Agent files are adapters, not parallel copies.
 
@@ -71,7 +71,7 @@ The [Astro Site Playbook](docs/playbook.md) is canonical. Agent files are adapte
 | [Forms and submissions](docs/forms.md) | Provider-independent form and accessibility contracts. |
 | [Quality](docs/quality.md) | Accessibility, performance, privacy, automated checks, and manual verification. |
 | [Hosting, headers, and indexing](docs/hosting.md) | Per-host header and redirect configuration, live deployment checks, and keeping sites out of search. |
-| [Cloudflare Pages and Mailgun recipe](docs/recipes/cloudflare-mailgun-contact.md) | Adding an accessible contact form with Cloudflare Pages and Mailgun. |
+| [Cloudflare Workers, Turnstile and Mailgun recipe](docs/recipes/cloudflare-workers-turnstile-mailgun-contact.md) | Adding an accessible contact form with Cloudflare Workers, Turnstile and Mailgun. |
 | [Sveltia CMS recipe](docs/recipes/sveltia-cms.md) | Adding an optional Git-based editorial UI at `/admin` with zero npm overhead. |
 | [Releasing](docs/releasing.md) | Running the release audit, publishing a tag, and creating release notes. |
 

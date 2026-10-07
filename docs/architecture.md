@@ -4,7 +4,7 @@ This guide makes the boundary between durable playbook principles, repository co
 
 ## Current architecture
 
-The starter builds an Astro site as static files. Astro components render at build time, content is validated through the Astro Content Layer, and browser scripts are limited to progressive enhancement. A host may add endpoints alongside the static output; for example, host-native functions (such as a Cloudflare Pages Function) can handle form submissions without turning the Astro build into a server-rendered application.
+The starter builds an Astro site as static files. Astro components render at build time, content is validated through the Astro Content Layer, and browser scripts are limited to progressive enhancement. A host may add endpoints alongside the static output; for example, host-native functions (such as a Cloudflare Worker handler) can handle form submissions without turning the Astro build into a server-rendered application.
 
 ## Repository conventions
 
@@ -26,11 +26,11 @@ These choices demonstrate a complete deployment path, but they are replaceable w
 | Concern | Current default | What must remain true if replaced |
 | --- | --- | --- |
 | Rendering | Astro static output | Choose the smallest architecture that supports the required behaviour and retain appropriate verification. |
-| Deployment | Cloudflare Workers (Static Assets) or Cloudflare Pages with `public/_headers` | Preserve equivalent routing, caching, and security-header behaviour on the chosen host, using that host's own configuration (`wrangler.jsonc` + `public/_headers` on Cloudflare Workers, `vercel.json` on Vercel). `_headers` is not applied on Vercel, which publishes it as a public file. See [Hosting, headers, and indexing](hosting.md). |
+| Deployment | Cloudflare Workers (Static Assets) for new projects; supported existing Pages deployments with `public/_headers` | Preserve equivalent routing, caching, and security-header behaviour on the chosen host, using that host's own configuration (`wrangler.jsonc` + `public/_headers` on Cloudflare Workers, `vercel.json` on Vercel). `_headers` is not applied on Vercel, which publishes it as a public file. See [Hosting, headers, and indexing](hosting.md). |
 | Editorial UI | None bundled (Git/IDE editing); optional [Sveltia CMS recipe](recipes/sveltia-cms.md) | Preserve build-time schema validation in `src/content.config.ts` and explicit `order` sorting regardless of editing interface. |
-| Form endpoint | None bundled; reference recipe uses a Cloudflare Pages Function | Keep server-side validation, safe secret handling, progressive responses, and accessible failure paths. |
+| Form endpoint | None bundled; reference recipe uses a Worker handler with an existing Pages wrapper | Keep server-side validation, safe secret handling, progressive responses, and accessible failure paths. |
 | Email delivery | None bundled; reference recipe uses Mailgun REST API | Document configuration, handle provider failures safely, and never expose credentials to the browser. |
-| Bot mitigation | None bundled; reference recipe uses honeypot, elapsed-time check, and optional Turnstile | Keep layered abuse protection proportionate, accessible, and privacy-conscious. |
+| Bot mitigation | None bundled; reference recipe requires Turnstile; optional heuristics produce recoverable errors | Keep layered abuse protection proportionate, accessible, and privacy-conscious. |
 | Fonts | Self-hosted Fraunces and DM Sans via Fontsource | Keep fonts local where possible, minimise subsets and weights, and avoid layout shift. |
 | Colours and scales | The sample OKLCH palette and two-tier fluid scales | Preserve the semantic alias contract and automated token and contrast checks. |
 | Canonical site URL | `https://example.com` | Replace it before launch in `astro.config.mjs` and `public/robots.txt`. |
@@ -56,10 +56,10 @@ The starter intentionally contains placeholders. At minimum, replace:
 - form endpoints, recipients, and provider configuration if implementing a form;
 - header, redirect, and function configuration for the chosen host, removing files that host does not read.
 
-Use [Getting started](getting-started.md) for a new project and [Customising a project](customization.md) for the complete launch checklist. Provider-specific setup for adding a contact form lives in the [Cloudflare Pages and Mailgun recipe](recipes/cloudflare-mailgun-contact.md), and optional Git-based CMS setup lives in the [Sveltia CMS recipe](recipes/sveltia-cms.md).
+Use [Getting started](getting-started.md) for a new project and [Customising a project](customization.md) for the complete launch checklist. Provider-specific setup for adding a contact form lives in the [Cloudflare Workers, Turnstile and Mailgun recipe](recipes/cloudflare-workers-turnstile-mailgun-contact.md), and optional Git-based CMS setup lives in the [Sveltia CMS recipe](recipes/sveltia-cms.md).
 
 ## Recipe architecture decision
 
-Optional integrations—such as the contact form in `docs/recipes/cloudflare-mailgun-contact.md` and the Git-based editorial UI in `docs/recipes/sveltia-cms.md`—are maintained as opt-in recipes rather than bundled into the base starter. This keeps the starter lean and static-first, avoiding unused routes, functions, or provider assumptions on new sites while providing complete, copyable references when a project needs them.
+Optional integrations—such as the contact form in `docs/recipes/cloudflare-workers-turnstile-mailgun-contact.md` and the Git-based editorial UI in `docs/recipes/sveltia-cms.md`—are maintained as opt-in recipes rather than bundled into the base starter. This keeps the starter lean and static-first, avoiding unused routes, functions, or provider assumptions on new sites while providing complete, copyable references when a project needs them.
 
 

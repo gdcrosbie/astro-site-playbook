@@ -7,14 +7,14 @@ The starter's static output runs on any host, but response headers, redirects, t
 The starter's defaults are written for Cloudflare (Workers with Static Assets or Cloudflare Pages):
 
 - `public/_headers` defines caching and security headers;
-- the [contact form recipe](recipes/cloudflare-mailgun-contact.md) uses a Cloudflare Pages Function (or a Worker handler).
+- the [contact form recipe](recipes/cloudflare-workers-turnstile-mailgun-contact.md) uses a Worker handler, with a wrapper for existing Pages deployments.
 
 Treat the host as a project decision and record it. Then keep only the configuration that host reads:
 
 | Host | Headers and redirects | Functions / Worker entry |
 | --- | --- | --- |
 | **Cloudflare Workers (Static Assets)** | `wrangler.jsonc` + `public/_headers`, `public/_redirects` | Optional `main` in `wrangler.jsonc` (`assets.run_worker_first`) |
-| **Cloudflare Pages (Legacy)** | `public/_headers`, `public/_redirects` | `functions/` |
+| **Cloudflare Pages (existing deployments)** | `public/_headers`, `public/_redirects` | `functions/` |
 | **Netlify** | `public/_headers` and `public/_redirects`, or `netlify.toml` | `netlify/functions/` |
 | **Vercel** | `vercel.json` | `api/` |
 | **Other static hosts or CDNs** | Host or CDN configuration outside the repository | Host-specific |
@@ -23,7 +23,7 @@ Remove configuration files the chosen host does not use. **Vercel does not apply
 
 ## Cloudflare Workers (Static Assets)
 
-Cloudflare's current Git integration (**Compute (Workers) → Workers & Pages → Create application**) deploys Astro sites as **Workers with Static Assets** rather than legacy Cloudflare Pages.
+Cloudflare's current Git integration (**Compute (Workers) → Workers & Pages → Create application**) deploys Astro sites as **Workers with Static Assets** ; Pages remains supported for existing deployments.
 
 When deploying to Cloudflare Workers, add `wrangler.jsonc` at the repository root (and keep `.wrangler/` in `.gitignore`):
 
@@ -144,3 +144,5 @@ Extend `scripts/test-discovery.cjs` so removing any layer fails the build.
 These signals only bind well-behaved crawlers, and they interact. `Disallow: /` stops compliant crawlers from fetching pages, so they never read the page-level `noindex`, and a URL linked from elsewhere can still be listed without content. **None of this makes a site private.** If content must not be seen, use the host's access control, such as deployment protection or password protection applied to the production domain, and state that distinction to the project owner.
 
 For an ordinary public site, keep the starter's defaults: a sitemap, `robots.txt` pointing to it, and `noindex` only on the 404 page and any placeholder routes.
+
+When Cloudflare is selected, prefer Workers with Static Assets for new projects. Pages remains supported; do not migrate an existing project solely to follow this preference. A form endpoint adds a `main` Worker entrypoint without changing Astro static output. `_headers` applies to static asset responses; attach headers directly to Worker-generated responses. See [Cloudflare header behaviour](https://developers.cloudflare.com/workers/static-assets/headers/).

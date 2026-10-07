@@ -10,7 +10,7 @@ The repository deliberately separates three kinds of guidance:
 
 1. **Principles** describe the outcomes every site should protect. They are independent of a particular hosting or form provider.
 2. **Repository conventions** keep work in this Astro starter consistent. Change them deliberately and update the playbook and automated checks together.
-3. **Implementation defaults** are replaceable starting points, such as Cloudflare Pages, Mailgun, Turnstile, the sample fonts, and the example domain. They are not universal requirements.
+3. **Implementation defaults** are replaceable starting points, such as Cloudflare Workers, Mailgun, Turnstile, the sample fonts, and the example domain. They are not universal requirements.
 
 The current boundaries and replacement points are listed in [Architecture and implementation defaults](architecture.md).
 
@@ -120,6 +120,6 @@ This covers the token contract, semantic colour contrast, Astro/TypeScript diagn
 - [Forms and submissions](forms.md)
 - [Quality, accessibility, performance, and privacy](quality.md)
 - [Hosting, headers, and indexing](hosting.md)
-- [Cloudflare Pages and Mailgun contact form](recipes/cloudflare-mailgun-contact.md)
+- [Contact forms with Cloudflare Workers, Turnstile and Mailgun](recipes/cloudflare-workers-turnstile-mailgun-contact.md)
 - [Sveltia CMS (Git-based editorial UI)](recipes/sveltia-cms.md)
 - [Releasing](releasing.md)
