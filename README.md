@@ -1,5 +1,7 @@
 # Astro Site Playbook
 
+> **Final release: [v2.0.5](https://github.com/gdcrosbie/astro-site-playbook/releases/tag/v2.0.5) (October 2026).** This repository is no longer maintained and is archived as a reference for the approach. The template option is switched off, and issues and pull requests are closed. Working on Astro delivery for an agency? See [grahamcrosbie.com/astro-site-playbook](https://grahamcrosbie.com/astro-site-playbook/).
+
 An opinionated system for delivering accessible, high-performance, content-led Astro websites—with people and coding agents working from the same source of truth.
 
 It combines a runnable static starter, a human-readable delivery playbook, a repository-local agent skill, and automated quality gates. The goal is not simply to start an Astro project quickly; it is to keep design translation, content architecture, accessibility, performance, privacy, and implementation decisions coherent through delivery.
@@ -26,28 +28,22 @@ Choose another foundation when the primary requirement is a highly stateful appl
 
 The playbook can still inform those projects, but this starter should not be forced into a role it was not designed to fill.
 
-## Start a new site
+## Evaluate it locally
 
 Requirements: Node.js 22.13 or newer, npm, and Git.
 
-On GitHub, select **Use this template**, then **Create a new repository**. This creates a separate project from the playbook without carrying its development history into the new site.
-
-The equivalent GitHub CLI workflow is:
+The template option is switched off now that the repository is archived. To evaluate the final release, clone it at its tag:
 
 ```bash
-gh repo create my-astro-site \
-  --template gdcrosbie/astro-site-playbook \
-  --private \
-  --clone
-cd my-astro-site
+git clone --branch v2.0.5 https://github.com/gdcrosbie/astro-site-playbook.git
+cd astro-site-playbook
 npm install
 npm test
 npm run dev
 ```
 
-Use `--public` if the new repository should be public. See [Getting started](docs/getting-started.md) for the first architecture decisions, then work through [Customising a project](docs/customization.md) before launch.
+See [Getting started](docs/getting-started.md) and [Customising a project](docs/customization.md) for how a project was set up from this starter.
 
-Clone this repository directly when you only want to evaluate the playbook locally. Fork it when you intend to contribute a change back to Astro Site Playbook.
 
 ## How the playbook works
 
@@ -128,7 +124,7 @@ When adapting this repository, keep universal principles separate from project c
 
 ## Adapting it for an agency
 
-The public template may be all your agency needs. If you want to turn existing conventions, review practices, and delivery constraints into a bespoke playbook and working foundation, I can help you establish and test that system with your team.
+This final release shows the approach. If you want to turn existing conventions, review practices, and delivery constraints into a bespoke playbook and working foundation, I can help you establish and test that system with your team.
 
 [See how I adapt Astro Site Playbook for agencies](https://grahamcrosbie.com/astro-site-playbook/).
 
